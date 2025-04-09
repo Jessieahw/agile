@@ -6,7 +6,7 @@
 Jessie
 ### Page 2: NBA Basketball Team Reccomendation
 Darryl Max (breeke)
-### Page 3: NHL (Ice Hockey) Team Recommendation:
+### Page 3: BBL (Cricket):
 Pranav Rajput (praj107).
 
 ### Page 4: MLB, AFL etc. 
