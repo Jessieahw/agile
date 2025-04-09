@@ -2,8 +2,8 @@
 
 ## Landing Page
 
-### Page 1: English Premier League Team(Jessie) Reccomendation Page
-
+### Page 1: English Premier League Team Reccomendation Page
+Jessie
 ### Page 2: NBA Basketball Team Reccomendation
 Darryl Max (breeke)
 ### Page 3: NHL (Ice Hockey) Team Recommendation:
