@@ -19,3 +19,7 @@ Max
 - This is based on an observation that people range from casual to competitive interest, and data of their own local play will reflect that in W/L or other quanitifiable metrics.
 - This makes it useful to recommend certain teams to them in a quantifiable way.
 - This can be specified down further from team to even player stats, in different roles for that team.
+
+## User input example
+The user will enter their own data from the same sport into columns that match the stats to that of the league stats we have compiled.
+This will be most suited to a table format.
