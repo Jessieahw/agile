@@ -2,7 +2,7 @@
 
 ## Landing Page
 
-### Page 1: English Premier League Team Reccomendation Page
+### Page 1: English Premier League Team(Jessie) Reccomendation Page
 
 ### Page 2: NBA Basketball Team Reccomendation
 
