@@ -6,6 +6,7 @@
 
 ### Page 2: NBA Basketball Team Reccomendation
 
-### Page 3: NHL (Ice Hockey) Team Reccomandation
+### Page 3: NHL (Ice Hockey) Team Recommendation:
+Pranav Rajput (praj107).
 
 ### Page 4: MLB, AFL etc. 
