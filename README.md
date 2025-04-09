@@ -14,7 +14,8 @@ Max
 
 ## Algorithm
 
-- Collect user attributes through dropdown menus that answeer certain questions about the sport.
-- Questions may include:
-    - Do you have any specific cultural background?
-    - Do you like a large fanbase?
+- User can upload their own casual or semi pro data set (think local or college level team data: W/L + draw ratios, team counts, etc).
+- The algorithm will match by ratio to closest matching team by these ratios in that sport and area (say the English Premier League for casual soccer in that area).
+- This is based on an observation that people range from casual to competitive interest, and data of their own local play will reflect that in W/L or other quanitifiable metrics.
+- This makes it useful to recommend certain teams to them in a quantifiable way.
+- This can be specified down further from team to even player stats, in different roles for that team.
