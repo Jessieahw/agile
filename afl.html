@@ -16,6 +16,73 @@
 
     <h2>Provide Your Stats Here</h2>
 
+    <h2>Your Stats</h2>
+
+    <!-- Users should be able to add/remove stat columns depending on what stats they know about themselves -->
+     
+    <table border="1">
+    <tr>
+        <th><a href="#Disposals">Disposals</a></th>
+        <th><a href="#Kicks">Kicks</a></th>
+        <th><a href="#Marks">Marks</a></th>
+        <th><a href="#Handballs">Handballs</a></th>
+        <th><a href="#Goals">Goals</a></th>
+        <th><a href="#Behinds">Behinds</a></th>
+        <th><a href="#HitOuts">HitOuts</a></th>
+        <th><a href="#Tackles">Tackles</a></th>
+        <th><a href="#Rebounds">Rebounds</a></th>
+        <th><a href="#Inside50s">Inside50s</a></th>
+        <th><a href="#Clearances">Clearances</a></th>
+        <th><a href="#Clangers">Clangers</a></th>
+        <th><a href="#Frees">Frees</a></th>
+        <th><a href="#FreesAgainst">FreesAgainst</a></th>
+        <th><a href="#ContestedPossessions">Contested Possessions</a></th>
+        <th><a href="#UncontestedPossessions">Uncontested Possessions</a></th>
+        <th><a href="#ContestedMarks">Contested Marks</a></th>
+        <th><a href="#MarksInside50">Marks inside 50</a></th>
+        <th><a href="#GoalAssists">GoalAssists</a></th>
+        <th><a href="#PercentagePlayed">Percentage Played</a></th>
+    </tr>
+    <tr>
+        <td><input type="number" name="Disposals" /></td>
+        <td><input type="number" name="Kicks" /></td>
+        <td><input type="number" name="Marks" /></td>
+        <td><input type="number" name="Handballs" /></td>
+        <td><input type="number" name="Goals" /></td>
+        <td><input type="number" name="Behinds" /></td>
+        <td><input type="number" name="HitOuts" /></td>
+        <td><input type="number" name="Tackles" /></td>
+        <td><input type="number" name="Rebounds" /></td>
+        <td><input type="number" name="Inside50s" /></td>
+        <td><input type="number" name="Clearances" /></td>
+        <td><input type="number" name="Clangers" /></td>
+        <td><input type="number" name="Frees" /></td>
+        <td><input type="number" name="FreesAgainst" /></td>
+        <td><input type="number" name="ContestedPossessions" /></td>
+        <td><input type="number" name="UncontestedPossessions" /></td>
+        <td><input type="number" name="ContestedMarks" /></td>
+        <td><input type="number" name="MarksInside50" /></td>
+        <td><input type="number" name="GoalAssists" /></td>
+        <td><input type="number" name="PercentagePlayed" step="0.1" /></td>
+    </tr>
+    </table>
+
+    <br />
+    <button onclick="submitStats()">Submit Stats</button>
+
+    <script>
+    function submitStats() {
+        const inputs = document.querySelectorAll('input');
+        const stats = {};
+        inputs.forEach(input => {
+        stats[input.name] = input.value || "0";
+        });
+        console.log("Submitted Player Stats:", stats);
+        alert("Stats submitted! Check the browser console for the result.");
+    }
+    </script>
+
+
     <!-- Users should be able to add/remove stat columns depending on what stats they know about themselves -->
 
     <h3>Player Stats</h3>
