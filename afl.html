@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AFL</title>
+    <link rel="stylesheet" href="afl_style.css">
+  </head>
+  <body>
+    <script src="index.js"></script>
+
+    <h1>Which AFL Player Are You?</h1>
+
+    <h3>Compare your stats to those playing in the AFL, to see how YOU would perform at the highest level!</h3>
+
+    <h2>Provide Your Stats Here</h2>
+
+    <!-- Users should be able to add/remove stat columns depending on what stats they know about themselves -->
+
+    <h3>Player Stats</h3>
+
+    <table>
+        <tr>
+        <th><a href="#Disposals">Disposals</a></th>
+        <th><a href="#Kicks">Kicks</a></th>
+        <th><a href="#Marks">Marks</a></th>
+        <th><a href="#Handballs">Handballs</a></th>
+        <th><a href="#Goals">Goals</a></th>
+        <th><a href="#Behinds">Behinds</a></th>
+        <th><a href="#HitOuts">HitOuts</a></th>
+        <th><a href="#Tackles">Tackles</a></th>
+        <th><a href="#Rebounds">Rebounds</a></th>
+        <th><a href="#Inside50s">Inside50s</a></th>
+        <th><a href="#Clearances">Clearances</a></th>
+        <th><a href="#Clangers">Clangers</a></th>
+        <th><a href="#Frees">Frees</a></th>
+        <th><a href="#FreesAgainst">FreesAgainst</a></th>
+        <th><a href="#ContestedPossessions">Contested Possessions</a></th>
+        <th><a href="#UncontestedPossessions">Uncontested Possessions</a></th>
+        <th><a href="#ContestedMarks">Contested Marks</a></th>
+        <th><a href="#MarksInside50">Marks inside 50</a></th>
+        <th><a href="#GoalAssists">GoalAssists</a></th>
+        <th><a href="#PercentagePlayed">Percentage Played</a></th>
+        </tr>
+        <tr>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        </tr>
+        <tr>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
+        </tr>
+    </table>
+
+    <h2>Unfamiliar with the Stat Terms? Read the table below that explains each stat</h2>
+
+    <h3>Stat Definitions</h3>
+    <table>
+        <tr id="Disposals">
+            <th>Disposals</th>
+            <td>Total number of times a player successfully passes the ball by either a kick or a handball.</td>
+        </tr>
+        <tr id="Kicks">
+            <th>Kicks</th>
+            <td>When a player disposes of the ball by kicking it.</td>
+        </tr>
+        <tr id="Marks">
+            <th>Marks</th>
+            <td>When a player cleanly catches a ball that has been kicked at least 15 metres without being touched.</td>
+        </tr>
+        <tr id="Handballs">
+            <th>Handballs</th>
+            <td>When a player disposes of the ball using their fist (a legal pass alternative to kicking).</td>
+        </tr>
+        <tr id="Goals">
+            <th>Goals</th>
+            <td>When a player kicks the ball between the two central goalposts without it being touched (worth 6 points).</td>
+        </tr>
+        <tr id="Behinds">
+            <th>Behinds</th>
+            <td>When the ball passes between a goal and behind post or hits a goalpost (worth 1 point).</td>
+        </tr>
+        <tr id="HitOuts">
+            <th>HitOuts</th>
+            <td>When a ruckman taps the ball after a ball-up or throw-in to the advantage of a teammate.</td>
+        </tr>
+        <tr id="Tackles">
+            <th>Tackles</th>
+            <td>When a player stops an opponent by grabbing and holding them, preventing a disposal.</td>
+        </tr>
+        <tr id="Rebounds">
+            <th>Rebounds</th>
+            <td>When a player helps move the ball from the defensive 50m area back into attack.</td>
+        </tr>
+        <tr id="Inside50s">
+            <th>Inside50s</th>
+            <td>When a player delivers the ball into their team’s forward 50 metre arc.</td>
+        </tr>
+        <tr id="Clearances">
+            <th>Clearances</th>
+            <td>When a player gains possession and clears the ball from a stoppage (ball-up or throw-in).</td>
+        </tr>
+        <tr id="Clangers">
+            <th>Clangers</th>
+            <td>Mistakes made by a player, including turnovers, free kicks conceded, or dropped marks.</td>
+        </tr>
+        <tr id="Frees">
+            <th>Frees</th>
+            <td>The number of free kicks a player has received from the umpire for being infringed.</td>
+        </tr>
+        <tr id="FreesAgainst">
+            <th>FreesAgainst</th>
+            <td>The number of free kicks a player has given away due to a rule infringement.</td>
+        </tr>
+        <tr id="ContestedPossessions">
+            <th>Contested Possessions</th>
+            <td>When a player wins the ball while under physical pressure or in a contest.</td>
+        </tr>
+        <tr id="UncontestedPossessions">
+            <th>Uncontested Possessions</th>
+            <td>When a player receives or collects the ball without direct opposition pressure.</td>
+        </tr>
+        <tr id="ContestedMarks">
+            <th>Contested Marks</th>
+            <td>A mark taken while under physical pressure or in a pack with opponents.</td>
+        </tr>
+        <tr id="MarksInside50">
+            <th>Marks inside 50</th>
+            <td>Marks taken within the attacking 50m zone, often leading to goal opportunities.</td>
+        </tr>
+        <tr id="GoalAssists">
+            <th>GoalAssists</th>
+            <td>When a player directly sets up a goal, such as with a pass or handball.</td>
+        </tr>
+        <tr id="PercentagePlayed">
+            <th>Percentage Played</th>
+            <td>The percentage of the game a player was on the field (not on the interchange bench).</td>
+        </tr>
+    </table>
+
+    
+
+    
+      
+
+  </body>
+</html>
