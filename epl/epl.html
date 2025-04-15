@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Which EPL Team and Player Are You?</title>
+    <!-- <link rel="stylesheet" href="styles/style.css"> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('./2009-3-14_ManUtd_vs_LFC_Ronaldo_Freekick_Back.JPG') no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(0, 0, 0, 0.5); /* Fallback for transparency */
+            background-blend-mode: overlay; /* Makes the image slightly transparent */
+            color: white; /* Ensures text is readable */
+        }
+        h1, h2{
+            color: #fff;
+            text-align: center;
+        }
+        h3{
+            color: black;
+            text-align: center;
+        }
+        .white-box {
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent white background */
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            color: #333; /* Text color inside the box */
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #007bff;
+            text-align: center;
+        }
+        .logo {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 150px; /* Increased size */
+        height: auto;
+        background-color: white; /* Added white background */
+        padding: 10px; /* Added padding around the logo */
+        /* border-radius: 8px; Rounded corners for the background */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow for better visibility */
+    }
+    .header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Ensure it stays above other content */
+
+        }
+        .content {
+            margin-top: 80px; /* Add space to avoid overlap with the fixed header */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            color: black; /* Black text */
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="header-bar">
+        <img src="./Premier_League_Logo.svg" alt="Premier League Logo" class="logo">
+        <h1>Which EPL Team and Player Are You?</h1>
+    </header>
+
+    <!-- Part 1: Team Recommendation -->
+     <div class="content">
+        <div class="white-box">
+            <h3>Find Your EPL Team</h3>
+            <p>Enter your stats below to find out which EPL team matches your play style. Please ensure your stats are realistic and within the suggested ranges:</p>
+            <ul>
+                <li><strong>Average Shots per Match:</strong> The average number of shots your team takes per match (e.g., 10).</li>
+                <li><strong>Average Goals per Match:</strong> The average number of goals your team scores per match (e.g., 1.5).</li>
+                <li><strong>Fouls per Match:</strong> The average number of fouls your team commits per match (e.g., 8).</li>
+                <li><strong>Cards per Match:</strong> The average number of yellow and red cards your team receives per match (e.g., 1.2).</li>
+                <li><strong>Shot Accuracy:</strong> The percentage of shots on target, represented as a decimal (e.g., 0.5 for 50%).</li>
+            </ul>
+            <form id="teamForm">
+                <label for="avgShots">Average Shots per Match:</label>
+                <input type="number" id="avgShots" name="avgShots" step="0.01" min="0" required>
+        
+                <label for="avgGoals">Average Goals per Match:</label>
+                <input type="number" id="avgGoals" name="avgGoals" step="0.01" min="0" required>
+        
+                <label for="avgFouls">Fouls per Match:</label>
+                <input type="number" id="avgFouls" name="avgFouls" step="0.01" min="0" required>
+        
+                <label for="avgCards">Cards per Match:</label>
+                <input type="number" id="avgCards" name="avgCards" step="0.01" min="0" required>
+        
+                <label for="shotAccuracy">Shot Accuracy (e.g., 0.75 for 75%):</label>
+                <input type="number" id="shotAccuracy" name="shotAccuracy" step="0.01" min="0" max="1" required>
+        
+                <button type="button" onclick="recommendTeam()">Find Your EPL Team</button>
+            </form>
+        </div>
+    
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <p id="modalText"></p>
+        </div>
+    </div>
+
+        
+    <script>
+        function openModal(resultText) {
+    console.log('Opening modal with text:', resultText); // Debugging: Check the text being passed
+    const modalTextElement = document.getElementById("modalText");
+    const modalElement = document.getElementById("resultModal");
+
+    if (!modalTextElement || !modalElement) {
+        console.error("Modal or modal text element not found!");
+        return;
+    }
+
+    modalTextElement.textContent = resultText;
+    modalElement.style.display = "block";
+
+    console.log('Modal text updated to:', modalTextElement.textContent); // Debugging: Check if text is updated
+    console.log('Modal display style:', modalElement.style.display); // Debugging: Check if modal is visible
+}
+
+        function closeModal() {
+            document.getElementById("resultModal").style.display = "none";
+        }
+        
+        let eplTeams = [];
+
+        
+
+        function fetchCSV() {
+            Papa.parse('epl data/team_comparison_stats.csv', {
+                download: true,
+                header: true,
+                dynamicTyping: true, // Automatically convert numbers
+                complete: function(results) {
+                    eplTeams = results.data;
+                    console.log('Teams loaded:', eplTeams);
+
+                    // Enable the button once data is loaded
+                    document.querySelector('button[onclick="recommendTeam()"]').disabled = false;
+                },
+                error: function(error) {
+                    console.error('Error parsing CSV:', error);
+                }
+            });
+        }
+
+        // Disable the button initially
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('button[onclick="recommendTeam()"]').disabled = true;
+            fetchCSV();
+        });
+
+
+
+        function recommendTeam() {
+            // Check if eplTeams is loaded
+            if (eplTeams.length === 0) {
+                openModal("Team data is still loading. Please try again in a moment.");
+                return;
+            }
+
+            const avgShots = parseFloat(document.getElementById("avgShots").value);
+            const avgGoals = parseFloat(document.getElementById("avgGoals").value);
+            const avgFouls = parseFloat(document.getElementById("avgFouls").value);
+            const avgCards = parseFloat(document.getElementById("avgCards").value);
+            const shotAccuracy = parseFloat(document.getElementById("shotAccuracy").value);
+            
+            console.log('User Input:', { avgShots, avgGoals, avgFouls, avgCards, shotAccuracy }); // Debugging: Check user input
+
+            if (!avgShots || !avgGoals || !avgFouls || !avgCards || !shotAccuracy) {
+                openModal("Please enter valid stats.");
+                return;
+            }
+
+            if (avgShots > 50 || avgGoals > 10 || avgFouls > 50 || avgCards > 10 || shotAccuracy > 1 || shotAccuracy < 0) {
+                openModal("Please enter realistic stats.");
+                return;
+            }
+
+            let closestTeam = null;
+            let smallestDistance = Infinity;
+
+            eplTeams.forEach(team => {
+                console.log('Comparing with team:', team); 
+                const distance = Math.sqrt(
+                    Math.pow(avgShots - team['Average Shots per Match'], 2) +
+                    Math.pow(avgGoals - team['Average Goals per Match'], 2) +
+                    Math.pow(avgFouls - team['Average Fouls per Match'], 2) +
+                    Math.pow(avgCards - team['Average Cards per Match'], 2) +
+                    Math.pow(shotAccuracy - team['Shot Accuracy'], 2)
+                );
+
+                if (distance < smallestDistance) {
+                    smallestDistance = distance;
+                    closestTeam = team['Team'];
+                }
+            });
+
+            console.log('Closest Team:', closestTeam);
+            openModal(`You are most like: ${closestTeam}`);
+        }
+    </script>
+
+
+
+
+
+
+    <!-- Part 2: Player Comparison -->
+    <!-- <div class="white-box">
+        <h3>Compare Your Stats to EPL Players</h3>
+        <p>Enter your stats to see how you compare to professional EPL players:</p>
+        <form id="playerForm">
+            <label for="goals">Goals:</label>
+            <input type="number" id="goals" name="goals" required>
+
+            <label for="assists">Assists:</label>
+            <input type="number" id="assists" name="assists" required>
+
+            <label for="passes">Passes:</label>
+            <input type="number" id="passes" name="passes" required>
+
+            <label for="tackles">Tackles:</label>
+            <input type="number" id="tackles" name="tackles" required>
+
+            <label for="interceptions">Interceptions:</label>
+            <input type="number" id="interceptions" name="interceptions" required>
+
+            <label for="minutesPlayed">Minutes Played:</label>
+            <input type="number" id="minutesPlayed" name="minutesPlayed" required>
+
+            <button type="button" onclick="comparePlayer()">Compare Your Stats</button>
+        </form>
+        <div id="playerResult"></div>
+    </div> -->
+</div>
+
+    <!-- <script>
+
+        
+        // Part 2: Player Comparison
+        function comparePlayer() {
+            const userStats = {
+                goals: parseInt(document.getElementById("goals").value),
+                assists: parseInt(document.getElementById("assists").value),
+                passes: parseInt(document.getElementById("passes").value),
+                tackles: parseInt(document.getElementById("tackles").value),
+                interceptions: parseInt(document.getElementById("interceptions").value),
+                minutesPlayed: parseInt(document.getElementById("minutesPlayed").value)
+            };
+
+            const examplePlayer = {
+                name: "Kevin De Bruyne",
+                goals: 10,
+                assists: 15,
+                passes: 2000,
+                tackles: 50,
+                interceptions: 30,
+                minutesPlayed: 3000
+            };
+
+            let comparison = `Compared to ${examplePlayer.name}: `;
+            for (const stat in userStats) {
+                comparison += `Your ${stat} (${userStats[stat]}) vs ${examplePlayer[stat]} | `;
+            }
+
+            document.getElementById("playerResult").textContent = comparison;
+        }
+    </script> -->
+</body>
+</html>
