@@ -1,0 +1,135 @@
+/* Font Import */
+@font-face {
+    font-family: "MontserratMedium";
+    src: url("../font/Montserrat-Medium.otf") format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+  
+/* Reset & Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+  
+/* Navbar */
+.navbar {
+    background-color: #000;
+    color: #fff;
+    display: flex; /* Use flexbox for layout */
+    align-items: center;
+    justify-content: space-around; /* Center items */
+    padding: 0.25rem;
+}
+
+.nav-logo {
+    max-height: 80px; /* Don't want this too large. */
+    aspect-ratio: 500 / 281; /* Maintain aspect ratio of 500:281 to prevent distortions */
+    background-color: #000;
+}
+
+/* Navbar Buttons */
+.nav-btn {
+    position: relative;
+    background: none;
+    border: none;
+    color: #fff;
+    font-family: "MonserratMedium", Helvetica, sans-serif;
+    font-size: 1.2rem;
+    margin: 0 1rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    overflow: hidden;
+  }
+  
+  /* Underline with transform */
+  .nav-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: #fff;
+  
+    transform: scaleX(0); /* Start with no width */
+    transform-origin: left; /* Start from left */
+    transition: transform 0.3s ease-in-out; /* Animation speed and easing */
+  }
+  
+  /* Scale to full width (of the underline animation) on hover */
+  .nav-btn:hover::after {
+    transform: scaleX(1);
+  }
+  
+  /* When hover ends, animate from right to left */
+  .nav-btn:not(:hover)::after {
+    transform-origin: right;
+  }
+
+/* Front Banner */
+.front-banner {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+.front-banner-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-image: url('../media/mcg_background_pic.jpg'); /* Change to your image */
+    background-color: #000;
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+.banner-title {
+    position: relative;
+    font-family: "MontserratMedium", Helvetica, sans-serif;
+    z-index: 1;
+    font-size: 2.5rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* Article Visibility */
+.page-content {
+    display: none;
+    padding: 2rem;
+    font-family: "MontserratMedium", Helvetica, sans-serif;
+    background-color: #000;
+    color: #f5f5f5;
+}
+
+.page-content.active {
+    display: block;
+}
+
+/* Main Style */
+main {
+    background-color: #000;
+    height: 90vh;
+}
+
+/* Footer */
+footer {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    font-family: "MontserratMedium", Helvetica, sans-serif;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    min-height:60px;
+}

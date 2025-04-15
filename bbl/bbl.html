@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BBL/Big Bash League Stats and Information">
+  <meta name="author" content="praj107">
+  <title>BBL - Statistics</title>
+
+  <link rel="stylesheet" href="css/bbl_main.css">
+  <script src="js/navbarscript.js" defer></script>
+  <link rel="icon" href="media/favicon.png" type="image/x-icon">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <button class="nav-btn" data-target="home">Home</button>
+      <button class="nav-btn" data-target="stats">Stats & You</button>
+      <img src="media/bbl_nav_logo.png" alt="Big Bash League Logo" class="nav-logo">
+      <button class="nav-btn" data-target="players">Players</button>
+      <button class="nav-btn" data-target="teams">Teams</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Back Ground Banner -->
+    <section class="front-banner">
+      <div class="front-banner-bg"></div>
+      <h1 class="banner-title">Which BBL Player are you most similar to?</h1>
+    </section>
+
+    <!--
+    Here is the main content of the page. Each article represents a different section of the page.
+    The "active" class is used to show the current section, while the others are hidden (controlled by JavaScript).
+    This is simpler than using multiple HTML files for each section.
+    The Home section is the default active section when the page loads.
+    -->
+    <article id="home" class="page-content active">
+      <h2>Big Bash League - How do you fare?</h2>
+      <p>Add your data in below and see how you stack up, and whom statistically is similar as a player and a team with similar stats</p>
+    </article>
+
+    <article id="stats" class="page-content">
+      <h2>Your Stats & Sharing</h2>
+      <p>See your stats & share them accordingly</p>
+    </article>
+
+    <article id="players" class="page-content">
+      <h2>Players</h2>
+      <p>Search the stats of the Players of BBL.</p>
+    </article>
+
+    <article id="teams" class="page-content">
+      <h2>Teams</h2>
+      <p>Search the team level stats of the BBL teams over the years.</p>
+    </article>
+  </main>
+
+  <footer>
+    <!-- Dunno what to put here. Figure something out later -->
+    <p>WIP</p>
+  </footer>
+</body>
+
+</html>
