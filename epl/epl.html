@@ -157,69 +157,125 @@
 
 
 
+<!-- Part 2: Player Comparison -->
+<div class="white-box">
+    <h3>Compare Your Stats to EPL Players</h3>
+    <p>Enter your stats to see how you compare to professional EPL players:</p>
 
+    <!-- Dropdown to select position -->
+    <label for="position">Select Your Position:</label>
+    <select id="position" name="position" onchange="updateForm()">
+        <option value="">--Select Position--</option>
+        <option value="Forward">Forward</option>
+        <option value="Midfielder">Midfielder</option>
+        <option value="Defender">Defender</option>
+        <option value="Goalkeeper">Goalkeeper</option>
+    </select>
 
+    <!-- Dynamic form fields -->
+    <form id="playerForm">
+        <div id="formFields"></div>
+        <button type="button" onclick="comparePlayer()">Compare Your Stats</button>
+    </form>
 
-    <!-- Part 2: Player Comparison -->
-    <!-- <div class="white-box">
-        <h3>Compare Your Stats to EPL Players</h3>
-        <p>Enter your stats to see how you compare to professional EPL players:</p>
-        <form id="playerForm">
-            <label for="goals">Goals:</label>
-            <input type="number" id="goals" name="goals" required>
-
-            <label for="assists">Assists:</label>
-            <input type="number" id="assists" name="assists" required>
-
-            <label for="passes">Passes:</label>
-            <input type="number" id="passes" name="passes" required>
-
-            <label for="tackles">Tackles:</label>
-            <input type="number" id="tackles" name="tackles" required>
-
-            <label for="interceptions">Interceptions:</label>
-            <input type="number" id="interceptions" name="interceptions" required>
-
-            <label for="minutesPlayed">Minutes Played:</label>
-            <input type="number" id="minutesPlayed" name="minutesPlayed" required>
-
-            <button type="button" onclick="comparePlayer()">Compare Your Stats</button>
-        </form>
-        <div id="playerResult"></div>
-    </div> -->
+    <div id="playerResult"></div>
 </div>
 
-    <!-- <script>
+<script>
+    // Define the fields for each position
+    const positionFields = {
+        Forward: [
+            { label: "Goals", id: "goals" },
+            { label: "Assists", id: "assists" },
+            { label: "Shots", id: "shots" },
+            { label: "Shots on Target", id: "shotsOnTarget" },
+            { label: "Shooting Accuracy (%)", id: "shootingAccuracy" }
+        ],
+        Midfielder: [
+            { label: "Goals", id: "goals" },
+            { label: "Assists", id: "assists" },
+            { label: "Passes", id: "passes" },
+            { label: "Tackles", id: "tackles" },
+            { label: "Interceptions", id: "interceptions" }
+        ],
+        Defender: [
+            { label: "Tackles", id: "tackles" },
+            { label: "Interceptions", id: "interceptions" },
+            { label: "Clearances", id: "clearances" },
+            { label: "Blocked Shots", id: "blockedShots" },
+            { label: "Duels Won", id: "duelsWon" }
+        ],
+        Goalkeeper: [
+            { label: "Clean Sheets", id: "cleanSheets" },
+            { label: "Goals Conceded", id: "goalsConceded" },
+            { label: "Saves", id: "saves" },
+            { label: "Penalties Saved", id: "penaltiesSaved" },
+            { label: "High Claims", id: "highClaims" }
+        ]
+    };
 
-        
-        // Part 2: Player Comparison
-        function comparePlayer() {
-            const userStats = {
-                goals: parseInt(document.getElementById("goals").value),
-                assists: parseInt(document.getElementById("assists").value),
-                passes: parseInt(document.getElementById("passes").value),
-                tackles: parseInt(document.getElementById("tackles").value),
-                interceptions: parseInt(document.getElementById("interceptions").value),
-                minutesPlayed: parseInt(document.getElementById("minutesPlayed").value)
-            };
+    // Function to update the form based on the selected position
+    function updateForm() {
+        const position = document.getElementById("position").value;
+        const formFields = document.getElementById("formFields");
 
-            const examplePlayer = {
-                name: "Kevin De Bruyne",
-                goals: 10,
-                assists: 15,
-                passes: 2000,
-                tackles: 50,
-                interceptions: 30,
-                minutesPlayed: 3000
-            };
+        // Clear existing fields
+        formFields.innerHTML = "";
 
-            let comparison = `Compared to ${examplePlayer.name}: `;
-            for (const stat in userStats) {
-                comparison += `Your ${stat} (${userStats[stat]}) vs ${examplePlayer[stat]} | `;
-            }
+        // Add fields for the selected position
+        if (positionFields[position]) {
+            positionFields[position].forEach(field => {
+                const label = document.createElement("label");
+                label.setAttribute("for", field.id);
+                label.textContent = field.label;
 
-            document.getElementById("playerResult").textContent = comparison;
+                const input = document.createElement("input");
+                input.setAttribute("type", "number");
+                input.setAttribute("id", field.id);
+                input.setAttribute("name", field.id);
+                input.setAttribute("required", true);
+
+                formFields.appendChild(label);
+                formFields.appendChild(input);
+            });
         }
-    </script> -->
+    }
+
+    // Function to compare player stats (example logic)
+    function comparePlayer() {
+        const position = document.getElementById("position").value;
+        if (!position) {
+            alert("Please select a position.");
+            return;
+        }
+
+        const userStats = {};
+        positionFields[position].forEach(field => {
+            userStats[field.id] = parseFloat(document.getElementById(field.id).value) || 0;
+        });
+
+        console.log("User Stats:", userStats);
+
+        // Example comparison logic 
+        // const examplePlayer = {
+        //     Forward: { goals: 20, assists: 10, shots: 50, shotsOnTarget: 30, shootingAccuracy: 60 },
+        //     Midfielder: { goals: 10, assists: 15, passes: 2000, tackles: 50, interceptions: 30 },
+        //     Defender: { tackles: 100, interceptions: 80, clearances: 150, blockedShots: 20, duelsWon: 120 },
+        //     Goalkeeper: { cleanSheets: 15, goalsConceded: 30, saves: 100, penaltiesSaved: 5, highClaims: 50 }
+        // };
+
+        const comparison = examplePlayer[position];
+        let result = `Comparison for ${position}: `;
+        for (const stat in userStats) {
+            result += `${stat}: You (${userStats[stat]}) vs Pro (${comparison[stat]}) | `;
+        }
+
+        document.getElementById("playerResult").textContent = result;
+    }
+</script>
+
+
+
+</div>
 </body>
 </html>
