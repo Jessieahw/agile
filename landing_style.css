@@ -147,6 +147,15 @@ body {
     background-color: #040f1f;
 }
 
+.league-card:nth-child(4) .league-button {
+    background-color: #FF7F00; /* NBA Orange */
+    color: white;
+}
+
+.league-card:nth-child(4) .league-button:hover {
+    background-color: #CC6600;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .header-background h1 {
