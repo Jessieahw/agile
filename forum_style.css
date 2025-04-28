@@ -1,0 +1,195 @@
+:root {
+    --epl-primary: #5D3FD3; /* Lion Purple */
+    --bbl-primary: #FFFF00; /* Fluro Yellow */
+    --afl-primary: #061A33; /* AFL navy */
+    --text-light: #FFFFFF;
+    --text-dark: #333333;
+    --background-light: #F8F9FA;
+    --background-dark: #1a1a1a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+}
+
+.forum-nav {
+    background-color: var(--background-dark);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.league-tabs {
+    display: flex;
+    gap: 1rem;
+}
+
+.tab-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    color: white;
+}
+
+.tab-button[data-league="epl"] {
+    background-color: var(--epl-primary);
+    color: white;
+}
+
+.tab-button[data-league="bbl"] {
+    background-color: var(--bbl-primary);
+    color: black;
+}
+
+.tab-button[data-league="afl"] {
+    background-color: var(--afl-primary);
+    color: white;
+}
+
+.forum-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.forum-section {
+    display: none;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.forum-section.active {
+    display: block;
+}
+
+#epl-forum {
+    background-color: rgba(93, 63, 211, 0.05);
+    border: 2px solid var(--epl-primary);
+}
+
+#bbl-forum {
+    background-color: rgba(255, 255, 0, 0.05);
+    border: 2px solid var(--bbl-primary);
+}
+
+#afl-forum {
+    background-color: rgba(6, 26, 51, 0.05);
+    border: 2px solid var(--afl-primary);
+}
+
+.post-form {
+    margin-top: 2rem;
+}
+
+.post-textarea {
+    width: 100%;
+    height: 200px;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.post-textarea::placeholder {
+    color: #999;
+}
+
+.media-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.media-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+
+/* League-specific button colors */
+#epl-forum .media-button,
+#epl-forum .submit-button {
+    background-color: var(--epl-primary);
+    color: white;
+}
+
+#bbl-forum .media-button,
+#bbl-forum .submit-button {
+    background-color: var(--bbl-primary);
+    color: black;
+}
+
+#afl-forum .media-button,
+#afl-forum .submit-button {
+    background-color: var(--afl-primary);
+    color: white;
+}
+
+/* Hover effects */
+.media-button:hover,
+.submit-button:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .forum-nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .league-tabs {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .tab-button {
+        width: 100%;
+    }
+} 

@@ -1,0 +1,195 @@
+/* Modern Sports Website Theme */
+:root {
+    --epl-primary: #1B4D3E; /* Premier League green */
+    --bbl-primary: #FF6B00; /* BBL orange */
+    --afl-primary: #061A33; /* AFL navy */
+    --text-light: #FFFFFF;
+    --text-dark: #333333;
+    --background-light: #F8F9FA;
+    --background-dark: #1a1a1a;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.header-background {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('./assets/sports_stadium.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.header-background h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--text-light);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    color: var(--text-light);
+    font-size: 1.4rem;
+    text-align: center;
+    max-width: 800px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.league-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.league-card {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.league-card:hover {
+    transform: translateY(-5px);
+}
+
+.league-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    padding: 20px;
+}
+
+.league-info {
+    flex: 1;
+    padding: 2rem;
+}
+
+.league-info h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.league-info p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+.league-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: var(--text-dark);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.league-button:hover {
+    background-color: #555;
+}
+
+/* League-specific colors */
+.league-card:nth-child(1) .league-button {
+    background-color: #5D3FD3; /* Lion Purple */
+    color: white;
+}
+
+.league-card:nth-child(1) .league-button:hover {
+    background-color: #4A32A8;
+}
+
+.league-card:nth-child(2) .league-button {
+    background-color: #FFFF00; /* Fluro Yellow */
+    color: black;
+}
+
+.league-card:nth-child(2) .league-button:hover {
+    background-color: #E6E600;
+}
+
+.league-card:nth-child(3) .league-button {
+    background-color: var(--afl-primary);
+}
+
+.league-card:nth-child(3) .league-button:hover {
+    background-color: #040f1f;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-background h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .league-card {
+        flex-direction: column;
+    }
+    
+    .league-logo {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .league-info {
+        text-align: center;
+    }
+}
+
+.main-nav {
+    background-color: var(--background-dark);
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.main-nav .nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.main-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+} 
