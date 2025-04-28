@@ -9,8 +9,8 @@ Darryl Max (breeke)
 ### Page 3: BBL (Cricket):
 Pranav Rajput (praj107).
 
-### Page 4: MLB, AFL etc. 
-Max
+### Page 4: AFL etc. 
+Max (Robert Turner) (vfbmdcccxciii)
 
 ## Algorithm
 
