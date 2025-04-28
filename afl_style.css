@@ -1,97 +1,318 @@
+/* Modern Sports Website Theme */
+:root {
+    --afl-primary: #061A33; /* Dark navy blue */
+    --afl-secondary: #CC0000; /* Deep red */
+    --afl-accent: #FFFFFF; /* White */
+    --afl-green: #1B4D3E; /* Deep green */
+    --text-light: #FFFFFF;
+    --text-dark: #333333;
+    --background-light: #F8F9FA;
+    --background-dark: #1a1a1a;
+}
+
 * {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    background-color: #1a0dab;
-    color: white;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    line-height: 1.6;
 }
 
 .header-background {
-    background-image: url('./assets/afl_mcg_stadium.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('./assets/afl_mcg_stadium.jpg');
     background-size: cover;
     background-position: center;
     width: 100%;
-    height: 300px; /* Adjust as needed */
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+    position: relative;
+    margin-bottom: 2rem;
 }
 
 .header-background h1 {
-    font-size: 3rem;
-    margin: 0;
-    background-color: blue;
-    color: red;
-    border-color: white;
-    border-style: solid;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--text-light);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: none;
+    border: none;
 }
 
 .content {
-    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.white-box {
+    background-color: var(--afl-green);
+    color: var(--text-light);
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.white-box h3 {
+    color: var(--text-light);
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 1.4rem;
+    line-height: 1.6;
+    font-weight: 500;
+    max-width: 800px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 h2 {
     text-align: center;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    color: rgb(255, 208, 0)
+    padding: 1.5rem 0;
+    color: var(--afl-primary);
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 h3 {
     text-align: center;
-    color: black;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    background-color: white;
-}
-
-.white-box {
-    background-color: white;
-    color: black;
-    padding-left: 50px;
-    padding-right: 50px;
-    margin-left: 2em;
-    margin-right: 2em;
-    border-radius: 2px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
+    color: var(--afl-secondary);
+    padding: 1rem 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    background: none;
 }
 
 .translucent-box {
-    background-color: rgba(255, 255, 255, 0.5); 
-    color: black;
-    padding-left: 50px;
-    padding-right: 50px;
-    margin-left: 2em;
-    margin-right: 2em;
-    border-radius: 2px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-}
-a {
-    color: black;
-    text-decoration: none;
-    background-color: white;
+    background-color: var(--afl-green);
+    color: var(--text-light);
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-.button {
-    align-items: center;
-}
-html {
-    scroll-behavior: smooth;
-}
-table {
-    border-collapse: collapse;
+.stats-container {
     width: 100%;
-    margin-bottom: 30px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
 }
-th, td {
-    border: 1px solid #aaa;
-    padding: 8px;
-    text-align: left;
+
+.stats-container::-webkit-scrollbar {
+    height: 8px;
 }
+
+.stats-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.stats-container::-webkit-scrollbar-thumb {
+    background: var(--afl-secondary);
+    border-radius: 4px;
+}
+
+.stats-container::-webkit-scrollbar-thumb:hover {
+    background: var(--afl-primary);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
 th {
-    background-color: #f0f0f0;
-    color: black
+    padding: 12px;
+    text-align: center;
+    background-color: var(--afl-primary);
+    color: white;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
 }
+
+th img {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+th span {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+td span {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.center-button {
+    display: block;
+    margin: 2rem auto;
+    padding: 1rem 2rem;
+    background-color: var(--afl-primary);
+    color: var(--text-light);
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.center-button:hover {
+    background-color: var(--afl-secondary);
+    transform: translateY(-2px);
+}
+
+.definitions-table {
+    background-color: var(--afl-primary);
+}
+
+.definitions-table th {
+    background-color: var(--afl-secondary);
+}
+
+/* Similar Player Container Styles */
+.similar-player-container {
+    background-color: var(--afl-green);
+    color: var(--text-light);
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.similar-player-container h2 {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.player-info {
+    background-color: var(--afl-primary);
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.player-info h3 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.player-info p {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.player-info strong {
+    color: var(--afl-secondary);
+}
+
+.similar-player-container .stats-container {
+    background-color: var(--afl-primary);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.similar-player-container table {
+    min-width: 800px;
+}
+
+.similar-player-container th {
+    background-color: var(--afl-secondary);
+}
+
+.similar-player-container td {
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-background h1 {
+        font-size: 2.5rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    h3 {
+        font-size: 1.5rem;
+    }
+    
+    .white-box, .translucent-box, .similar-player-container {
+        padding: 1.5rem;
+    }
+    
+    .white-box h3 {
+        font-size: 1.8rem;
+    }
+    
+    .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    table {
+        min-width: 1000px;
+    }
+    
+    .player-info {
+        padding: 1rem;
+    }
+    
+    .player-info p {
+        font-size: 1rem;
+    }
+}
+
+/* Stat icon styles */
+.stat-icon {
+    width: 192px;
+    height: 192px;
+    vertical-align: middle;
+    margin-right: 8px;
+    object-fit: contain;
+}
+
   

@@ -4,258 +4,194 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>AFL</title>
+    <title>AFL Player Comparison</title>
     <link rel="stylesheet" href="afl_style.css">
   </head>
   <body>
-    <script src="index.js"></script>
-
     <div class="header-background">
-    <h1>Which AFL Player Are You?</h1>
+      <h1>AFL Player Comparison</h1>
     </div>
 
-    <div class="white-box">
-        <h3>Compare your stats to those playing in the AFL, to see how YOU would perform at the highest level!</h3>
-    </div>
+    <div class="content">
+      <div class="white-box">
+        <h3>Compare Your Stats</h3>
+        <p class="subtitle">Compare your stats to those playing in the AFL</p>
+      </div>
 
-    <h2>Provide Your Stats Here</h2>
-
-    <div class="translucent-box">
-        <h3>Your Stats</h3>
-
-        <!-- Users should be able to add/remove stat columns depending on what stats they know about themselves -->
-
-        <style>
-            table {
-                table-layout: fixed;
-                width: 100%;
-            }
-            th, td {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                width: 50px;
-                cursor: pointer;
-            }
-            th.expanded, td.expanded {
-                width: auto;
-                white-space: normal;
-            }
-        </style>
-
-        <table border="1">
+      <div class="stats-container">
+        <table>
+          <thead>
             <tr>
-                <th onclick="toggleColumn(this)"><a href="#Disposals">Disposals</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Kicks">Kicks</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Marks">Marks</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Handballs">Handballs</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Goals">Goals</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Behinds">Behinds</a></th>
-                <th onclick="toggleColumn(this)"><a href="#HitOuts">HitOuts</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Tackles">Tackles</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Rebounds">Rebounds</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Inside50s">Inside50s</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Clearances">Clearances</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Clangers">Clangers</a></th>
-                <th onclick="toggleColumn(this)"><a href="#Frees">Frees</a></th>
-                <th onclick="toggleColumn(this)"><a href="#FreesAgainst">FreesAgainst</a></th>
-                <th onclick="toggleColumn(this)"><a href="#ContestedPossessions">Contested Possessions</a></th>
-                <th onclick="toggleColumn(this)"><a href="#UncontestedPossessions">Uncontested Possessions</a></th>
-                <th onclick="toggleColumn(this)"><a href="#ContestedMarks">Contested Marks</a></th>
-                <th onclick="toggleColumn(this)"><a href="#MarksInside50">Marks inside 50</a></th>
-                <th onclick="toggleColumn(this)"><a href="#GoalAssists">GoalAssists</a></th>
-                <th onclick="toggleColumn(this)"><a href="#PercentagePlayed">Percentage Played</a></th>
+              <th><img src="assets/AFL_icons_transparent/Kicks.png" alt="Kicks" class="stat-icon"><span>Kicks</span></th>
+              <th><img src="assets/AFL_icons_transparent/Handballs.png" alt="Handballs" class="stat-icon"><span>Handballs</span></th>
+              <th><img src="assets/AFL_icons_transparent/Marks.png" alt="Marks" class="stat-icon"><span>Marks</span></th>
+              <th><img src="assets/AFL_icons_transparent/Goals.png" alt="Goals" class="stat-icon"><span>Goals</span></th>
+              <th><img src="assets/AFL_icons_transparent/Behinds.png" alt="Behinds" class="stat-icon"><span>Behinds</span></th>
+              <th><img src="assets/AFL_icons_transparent/Tackles.png" alt="Tackles" class="stat-icon"><span>Tackles</span></th>
+              <th><img src="assets/AFL_icons_transparent/Hitouts.png" alt="Hitouts" class="stat-icon"><span>Hitouts</span></th>
+              <th><img src="assets/AFL_icons_transparent/Clearances.png" alt="Clearances" class="stat-icon"><span>Clearances</span></th>
             </tr>
+          </thead>
+          <tbody>
             <tr>
-                <td><input type="number" name="Disposals" /></td>
-                <td><input type="number" name="Kicks" /></td>
-                <td><input type="number" name="Marks" /></td>
-                <td><input type="number" name="Handballs" /></td>
-                <td><input type="number" name="Goals" /></td>
-                <td><input type="number" name="Behinds" /></td>
-                <td><input type="number" name="HitOuts" /></td>
-                <td><input type="number" name="Tackles" /></td>
-                <td><input type="number" name="Rebounds" /></td>
-                <td><input type="number" name="Inside50s" /></td>
-                <td><input type="number" name="Clearances" /></td>
-                <td><input type="number" name="Clangers" /></td>
-                <td><input type="number" name="Frees" /></td>
-                <td><input type="number" name="FreesAgainst" /></td>
-                <td><input type="number" name="ContestedPossessions" /></td>
-                <td><input type="number" name="UncontestedPossessions" /></td>
-                <td><input type="number" name="ContestedMarks" /></td>
-                <td><input type="number" name="MarksInside50" /></td>
-                <td><input type="number" name="GoalAssists" /></td>
-                <td><input type="number" name="PercentagePlayed" step="0.1" /></td>
+              <td><input type="number" name="Kicks" placeholder="Enter kicks"></td>
+              <td><input type="number" name="Handballs" placeholder="Enter handballs"></td>
+              <td><input type="number" name="Marks" placeholder="Enter marks"></td>
+              <td><input type="number" name="Goals" placeholder="Enter goals"></td>
+              <td><input type="number" name="Behinds" placeholder="Enter behinds"></td>
+              <td><input type="number" name="Tackles" placeholder="Enter tackles"></td>
+              <td><input type="number" name="HitOuts" placeholder="Enter hitouts"></td>
+              <td><input type="number" name="Clearances" placeholder="Enter clearances"></td>
             </tr>
+          </tbody>
         </table>
+      </div>
 
-        <script>
-            function toggleColumn(header) {
-                const table = header.closest('table');
-                const index = Array.from(header.parentNode.children).indexOf(header);
-                const allHeaders = table.querySelectorAll('th');
-                const allCells = table.querySelectorAll(`td:nth-child(${index + 1})`);
+      <button class="center-button" onclick="submitStats()">
+        <i class="fas fa-chart-line"></i> Compare Stats
+      </button>
 
-                // Collapse any previously expanded column
-                allHeaders.forEach(h => h.classList.remove('expanded'));
-                table.querySelectorAll('td').forEach(td => td.classList.remove('expanded'));
+      <div class="similar-player-container" id="similarPlayerContainer" style="display: none;">
+        <h2>Most Similar AFL Player</h2>
+        <div class="player-info" id="playerInfo"></div>
+        <div class="stats-container">
+          <table id="similarPlayerStats">
+            <thead>
+              <tr>
+                <th><img src="assets/AFL_icons_transparent/Kicks.png" alt="Kicks" class="stat-icon"><span>Kicks</span></th>
+                <th><img src="assets/AFL_icons_transparent/Handballs.png" alt="Handballs" class="stat-icon"><span>Handballs</span></th>
+                <th><img src="assets/AFL_icons_transparent/Marks.png" alt="Marks" class="stat-icon"><span>Marks</span></th>
+                <th><img src="assets/AFL_icons_transparent/Goals.png" alt="Goals" class="stat-icon"><span>Goals</span></th>
+                <th><img src="assets/AFL_icons_transparent/Behinds.png" alt="Behinds" class="stat-icon"><span>Behinds</span></th>
+                <th><img src="assets/AFL_icons_transparent/Tackles.png" alt="Tackles" class="stat-icon"><span>Tackles</span></th>
+                <th><img src="assets/AFL_icons_transparent/Hitouts.png" alt="Hitouts" class="stat-icon"><span>Hitouts</span></th>
+                <th><img src="assets/AFL_icons_transparent/Clearances.png" alt="Clearances" class="stat-icon"><span>Clearances</span></th>
+              </tr>
+            </thead>
+            <tbody id="similarPlayerStatsBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-                // Expand the clicked column if it wasn't already expanded
-                if (!header.classList.contains('expanded')) {
-                    header.classList.add('expanded');
-                    allCells.forEach(cell => cell.classList.add('expanded'));
-                }
-            }
-        </script>
-
-        <br />
-        <button class="center-button" onclick="submitStats()">Submit Stats</button>
-
-        <script>
-        function submitStats() {
-            const inputs = document.querySelectorAll('input');
-            const stats = {};
-            inputs.forEach(input => {
-            stats[input.name] = input.value || "0";
-            });
-            console.log("Submitted Player Stats:", stats);
-            alert("Stats submitted! Check the browser console for the result.");
-        }
-        </script>
+      <div class="translucent-box">
+        <h3>Stat Definitions</h3>
+        <table class="definitions-table">
+          <thead>
+            <tr>
+              <th>Stat</th>
+              <th>Definition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Kicks.png" alt="Kicks" class="stat-icon"><span>Kicks</span></td>
+              <td>Number of times the ball is kicked</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Handballs.png" alt="Handballs" class="stat-icon"><span>Handballs</span></td>
+              <td>Number of times the ball is handballed</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Marks.png" alt="Marks" class="stat-icon"><span>Marks</span></td>
+              <td>Number of successful catches of the ball</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Goals.png" alt="Goals" class="stat-icon"><span>Goals</span></td>
+              <td>Number of goals scored</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Behinds.png" alt="Behinds" class="stat-icon"><span>Behinds</span></td>
+              <td>Number of behinds scored</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Tackles.png" alt="Tackles" class="stat-icon"><span>Tackles</span></td>
+              <td>Number of successful tackles</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Hitouts.png" alt="Hitouts" class="stat-icon"><span>Hitouts</span></td>
+              <td>Number of hitouts in ruck contests</td>
+            </tr>
+            <tr>
+              <td><img src="assets/AFL_icons_transparent/Clearances.png" alt="Clearances" class="stat-icon"><span>Clearances</span></td>
+              <td>Number of times the ball is cleared from stoppages</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Users should be able to add/remove stat columns depending on what stats they know about themselves -->
-
-    <h3>Player Stats</h3>
-
-    <table>
-        <tr>
-        <th><a href="#Disposals">Disposals</a></th>
-        <th><a href="#Kicks">Kicks</a></th>
-        <th><a href="#Marks">Marks</a></th>
-        <th><a href="#Handballs">Handballs</a></th>
-        <th><a href="#Goals">Goals</a></th>
-        <th><a href="#Behinds">Behinds</a></th>
-        <th><a href="#HitOuts">HitOuts</a></th>
-        <th><a href="#Tackles">Tackles</a></th>
-        <th><a href="#Rebounds">Rebounds</a></th>
-        <th><a href="#Inside50s">Inside50s</a></th>
-        <th><a href="#Clearances">Clearances</a></th>
-        <th><a href="#Clangers">Clangers</a></th>
-        <th><a href="#Frees">Frees</a></th>
-        <th><a href="#FreesAgainst">FreesAgainst</a></th>
-        <th><a href="#ContestedPossessions">Contested Possessions</a></th>
-        <th><a href="#UncontestedPossessions">Uncontested Possessions</a></th>
-        <th><a href="#ContestedMarks">Contested Marks</a></th>
-        <th><a href="#MarksInside50">Marks inside 50</a></th>
-        <th><a href="#GoalAssists">GoalAssists</a></th>
-        <th><a href="#PercentagePlayed">Percentage Played</a></th>
-        </tr>
-        <tr>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        </tr>
-        <tr>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        <td>x</td><td>x</td><td>x</td><td>x</td><td>x</td>
-        </tr>
-    </table>
-
-    <h2>Unfamiliar with the Stat Terms? Read the table below that explains each stat</h2>
-
-    <h3>Stat Definitions</h3>
-    <table>
-        <tr id="Disposals">
-            <th>Disposals</th>
-            <td>Total number of times a player successfully passes the ball by either a kick or a handball.</td>
-        </tr>
-        <tr id="Kicks">
-            <th>Kicks</th>
-            <td>When a player disposes of the ball by kicking it.</td>
-        </tr>
-        <tr id="Marks">
-            <th>Marks</th>
-            <td>When a player cleanly catches a ball that has been kicked at least 15 metres without being touched.</td>
-        </tr>
-        <tr id="Handballs">
-            <th>Handballs</th>
-            <td>When a player disposes of the ball using their fist (a legal pass alternative to kicking).</td>
-        </tr>
-        <tr id="Goals">
-            <th>Goals</th>
-            <td>When a player kicks the ball between the two central goalposts without it being touched (worth 6 points).</td>
-        </tr>
-        <tr id="Behinds">
-            <th>Behinds</th>
-            <td>When the ball passes between a goal and behind post or hits a goalpost (worth 1 point).</td>
-        </tr>
-        <tr id="HitOuts">
-            <th>HitOuts</th>
-            <td>When a ruckman taps the ball after a ball-up or throw-in to the advantage of a teammate.</td>
-        </tr>
-        <tr id="Tackles">
-            <th>Tackles</th>
-            <td>When a player stops an opponent by grabbing and holding them, preventing a disposal.</td>
-        </tr>
-        <tr id="Rebounds">
-            <th>Rebounds</th>
-            <td>When a player helps move the ball from the defensive 50m area back into attack.</td>
-        </tr>
-        <tr id="Inside50s">
-            <th>Inside50s</th>
-            <td>When a player delivers the ball into their team’s forward 50 metre arc.</td>
-        </tr>
-        <tr id="Clearances">
-            <th>Clearances</th>
-            <td>When a player gains possession and clears the ball from a stoppage (ball-up or throw-in).</td>
-        </tr>
-        <tr id="Clangers">
-            <th>Clangers</th>
-            <td>Mistakes made by a player, including turnovers, free kicks conceded, or dropped marks.</td>
-        </tr>
-        <tr id="Frees">
-            <th>Frees</th>
-            <td>The number of free kicks a player has received from the umpire for being infringed.</td>
-        </tr>
-        <tr id="FreesAgainst">
-            <th>FreesAgainst</th>
-            <td>The number of free kicks a player has given away due to a rule infringement.</td>
-        </tr>
-        <tr id="ContestedPossessions">
-            <th>Contested Possessions</th>
-            <td>When a player wins the ball while under physical pressure or in a contest.</td>
-        </tr>
-        <tr id="UncontestedPossessions">
-            <th>Uncontested Possessions</th>
-            <td>When a player receives or collects the ball without direct opposition pressure.</td>
-        </tr>
-        <tr id="ContestedMarks">
-            <th>Contested Marks</th>
-            <td>A mark taken while under physical pressure or in a pack with opponents.</td>
-        </tr>
-        <tr id="MarksInside50">
-            <th>Marks inside 50</th>
-            <td>Marks taken within the attacking 50m zone, often leading to goal opportunities.</td>
-        </tr>
-        <tr id="GoalAssists">
-            <th>GoalAssists</th>
-            <td>When a player directly sets up a goal, such as with a pass or handball.</td>
-        </tr>
-        <tr id="PercentagePlayed">
-            <th>Percentage Played</th>
-            <td>The percentage of the game a player was on the field (not on the interchange bench).</td>
-        </tr>
-    </table>
-
-    
-
-    
-      
-
+    <script>
+      // Include the CSV data directly in the page
+      const playerData = [
+        {
+          "GameId": "2012R0105",
+          "Team": "Adelaide",
+          "Year": "2012",
+          "Round": "R1",
+          "PlayerId": "2011675768",
+          "DisplayName": "Callinan, Ian",
+          "GameNumber": "4",
+          "Disposals": "18",
+          "Kicks": "14",
+          "Marks": "5",
+          "Handballs": "4",
+          "Goals": "2",
+          "Behinds": "5",
+          "HitOuts": "0",
+          "Tackles": "5",
+          "Rebounds": "0",
+          "Inside50s": "2",
+          "Clearances": "1",
+          "Clangers": "4",
+          "Frees": "0",
+          "FreesAgainst": "1",
+          "BrownlowVotes": "0",
+          "ContestedPossessions": "9",
+          "UncontestedPossessions": "9",
+          "ContestedMarks": "0",
+          "MarksInside50": "3",
+          "OnePercenters": "0",
+          "Bounces": "0",
+          "GoalAssists": "0",
+          "%Played": "84",
+          "Subs": "-"
+        },
+        {
+          "GameId": "2012R0105",
+          "Team": "Adelaide",
+          "Year": "2012",
+          "Round": "R1",
+          "PlayerId": "2008681760",
+          "DisplayName": "Dangerfield, Patrick",
+          "GameNumber": "65",
+          "Disposals": "25",
+          "Kicks": "13",
+          "Marks": "3",
+          "Handballs": "12",
+          "Goals": "2",
+          "Behinds": "0",
+          "HitOuts": "0",
+          "Tackles": "2",
+          "Rebounds": "0",
+          "Inside50s": "6",
+          "Clearances": "9",
+          "Clangers": "4",
+          "Frees": "0",
+          "FreesAgainst": "1",
+          "BrownlowVotes": "0",
+          "ContestedPossessions": "14",
+          "UncontestedPossessions": "11",
+          "ContestedMarks": "0",
+          "MarksInside50": "1",
+          "OnePercenters": "1",
+          "Bounces": "1",
+          "GoalAssists": "0",
+          "%Played": "92",
+          "Subs": "-"
+        }
+      ];
+    </script>
+    <script src="index.js"></script>
   </body>
 </html>
