@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NBA Team Matcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS only -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body { background-color: #f8f9fa; }
+  </style>
+</head>
+<!-- Make body a full-height flex column -->
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Top navbar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <button class="btn btn-outline-light me-2"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasSidebar"
+              aria-controls="offcanvasSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">NBA Stats</a>
+    </div>
+  </nav>
+
+  <!-- Offcanvas sidebar -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Dashboard</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <ul class="nav nav-pills flex-column mb-0">
+        <li class="nav-item"><a href="/"          class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="teams.html" class="nav-link">Teams</a></li>
+        <li class="nav-item"><a href="data.html"  class="nav-link active">Your Team</a></li>
+        <li class="nav-item"><a href="#"          class="nav-link">Reports</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main Content grows to push footer down -->
+  <main class="flex-fill">
+    <div class="container my-4">
+      <!-- Card: Form -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Find Your NBA Team Match</h5>
+        </div>
+        <div class="card-body">
+          <form id="userForm" class="row g-3">
+            <div class="col-md-4">
+              <label for="wpct" class="form-label">Win %</label>
+              <input type="number" class="form-control" id="wpct" name="wpct" step="0.1" placeholder="e.g. 55" required>
+            </div>
+            <div class="col-md-4">
+              <label for="pf" class="form-label">Pts/Game (for)</label>
+              <input type="number" class="form-control" id="pf" name="pf" step="0.1" placeholder="e.g. 110.5" required>
+            </div>
+            <div class="col-md-4">
+              <label for="pa" class="form-label">Pts/Game (against)</label>
+              <input type="number" class="form-control" id="pa" name="pa" step="0.1" placeholder="e.g. 105.3" required>
+            </div>
+            <div class="col-12 text-end">
+              <button type="submit" class="btn btn-primary">Compare</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Results go here -->
+      <div id="results" class="mt-4"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <!-- Contact column -->
+        <div class="col-sm-6 mb-3">
+          <h6>Contact Us</h6>
+          <ul class="list-unstyled">
+            <li><a href="mailto:info@nbastats.com" class="text-white text-decoration-none">Email</a></li>
+            <li><a href="/contact" class="text-white text-decoration-none">Contact Form</a></li>
+          </ul>
+        </div>
+        <!-- FAQ column -->
+        <div class="col-sm-6 mb-3">
+          <h6>FAQ</h6>
+          <ul class="list-unstyled">
+            <li><a href="/faq" class="text-white text-decoration-none">General FAQ</a></li>
+            <li><a href="/support" class="text-white text-decoration-none">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        &copy; 2025 NBA Stats. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap Bundle (includes Offcanvas JS) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js (if you’re plotting later) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Comparison logic -->
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
