@@ -3,64 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BBL/Big Bash League Stats and Information">
-  <meta name="author" content="praj107">
-  <title>BBL - Statistics</title>
 
+  <title>BBL Stats</title>
+  <meta name="description" content="Big Bash League – compare players, teams and seasons">
+  <meta name="author"      content="praj107">
+
+  <!-- styles & scripts -->
   <link rel="stylesheet" href="css/bbl_main.css">
   <script src="js/navbarscript.js" defer></script>
   <link rel="icon" href="media/favicon.png" type="image/x-icon">
 </head>
 
 <body>
+  <!-- ===== HEADER / NAV ===== -->
   <header>
     <nav class="navbar">
       <button class="nav-btn" data-target="home">Home</button>
       <button class="nav-btn" data-target="stats">Stats & You</button>
+
       <img src="media/bbl_nav_logo.png" alt="Big Bash League Logo" class="nav-logo">
+
       <button class="nav-btn" data-target="players">Players</button>
       <button class="nav-btn" data-target="teams">Teams</button>
     </nav>
   </header>
 
+  <!-- ===== MAIN ===== -->
   <main>
-    <!-- Back Ground Banner -->
+    <!-- hero banner -->
     <section class="front-banner">
       <div class="front-banner-bg"></div>
-      <h1 class="banner-title">Which BBL Player are you most similar to?</h1>
+      <h1 class="banner-title">
+        Which BBL player are you most similar to?
+      </h1>
     </section>
 
-    <!--
-    Here is the main content of the page. Each article represents a different section of the page.
-    The "active" class is used to show the current section, while the others are hidden (controlled by JavaScript).
-    This is simpler than using multiple HTML files for each section.
-    The Home section is the default active section when the page loads.
-    -->
+    <!-- Page sections -->
     <article id="home" class="page-content active">
-      <h2>Big Bash League - How do you fare?</h2>
-      <p>Add your data in below and see how you stack up, and whom statistically is similar as a player and a team with similar stats</p>
+      <div class="intro-box">
+        <h2>Big Bash League – How do you fare?</h2>
+        <p>Add your data below to see which player and team you resemble.</p>
+      </div>
+
+      <!-- ===== USER INPUT TABLES ===== -->
+      <form id="user-stats-form" class="stats-form" action="#" method="post">
+        <!-- Batting -->
+        <table class="stat-table">
+          <caption>Batting&nbsp;Stats</caption>
+          <tbody>
+            <tr>
+              <td>Innings Played</td>
+              <td><input type="number" name="bat_innings" min="0" required></td>
+            </tr>
+            <tr>
+              <td>Total Runs</td>
+              <td><input type="number" name="bat_runs" min="0" required></td>
+            </tr>
+            <tr>
+              <td>Highest Score</td>
+              <td><input type="number" name="bat_high" min="0" required></td>
+            </tr>
+            <tr>
+              <td>Batting Average</td>
+              <td><input type="number" name="bat_avg" min="0" step="0.01" required></td>
+            </tr>
+            <tr>
+              <td>Strike-Rate</td>
+              <td><input type="number" name="bat_sr" min="0" step="0.01" required></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Bowling -->
+        <table class="stat-table">
+          <caption>Bowling&nbsp;Stats</caption>
+          <tbody>
+            <tr>
+              <td>Overs Bowled</td>
+              <td><input type="number" name="bowl_overs" min="0" step="0.1" required></td>
+            </tr>
+            <tr>
+              <td>Wickets Taken</td>
+              <td><input type="number" name="bowl_wkts" min="0" required></td>
+            </tr>
+            <tr>
+              <td>Runs Conceded</td>
+              <td><input type="number" name="bowl_runs" min="0" required></td>
+            </tr>
+            <tr>
+              <td>Bowling Average</td>
+              <td><input type="number" name="bowl_avg" min="0" step="0.01" required></td>
+            </tr>
+            <tr>
+              <td>Economy Rate</td>
+              <td><input type="number" name="bowl_eco" min="0" step="0.01" required></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button class="submit-btn">
+          <span class="flip-box">
+            <span class="flip-face flip-face-front">Compare my stats</span>
+            <span class="flip-face flip-face-back">Compare my stats</span>
+          </span>
+        </button>
+      </form>
     </article>
 
+    <!-- other articles unchanged -->
     <article id="stats" class="page-content">
-      <h2>Your Stats & Sharing</h2>
-      <p>See your stats & share them accordingly</p>
+      <div class="intro-box">
+        <h2>Your Stats &amp; Sharing</h2>
+        <p>See your stats &amp; share them.</p>
+      </div>
     </article>
 
     <article id="players" class="page-content">
-      <h2>Players</h2>
-      <p>Search the stats of the Players of BBL.</p>
+      <div class="intro-box">
+        <h2>Players</h2>
+        <p>Search the stats of every BBL player.</p>
+      </div>
     </article>
 
     <article id="teams" class="page-content">
-      <h2>Teams</h2>
-      <p>Search the team level stats of the BBL teams over the years.</p>
+      <div class="intro-box">
+        <h2>Teams</h2>
+        <p>Explore team-level performance across all seasons.</p>
+      </div>
     </article>
   </main>
 
+  <!-- ===== FOOTER ===== -->
   <footer>
-    <!-- Dunno what to put here. Figure something out later -->
-    <p>WIP</p>
+    <p>© Big Bash League Stats — Work in Progress</p>
   </footer>
 </body>
-
 </html>

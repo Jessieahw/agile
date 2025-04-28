@@ -1,135 +1,230 @@
-/* Font Import */
+/* ─────────── Font ─────────── */
 @font-face {
     font-family: "MontserratMedium";
     src: url("../font/Montserrat-Medium.otf") format("opentype");
     font-weight: normal;
     font-style: normal;
-}
+  }
   
-/* Reset & Base */
-* {
+  /* ─────────── Reset / base ─────────── */
+*, *::before, *::after {
     box-sizing: border-box;
+}
+
+html, body {
     margin: 0;
     padding: 0;
-}
-  
-/* Navbar */
-.navbar {
-    background-color: #000;
-    color: #fff;
-    display: flex; /* Use flexbox for layout */
-    align-items: center;
-    justify-content: space-around; /* Center items */
-    padding: 0.25rem;
-}
-
-.nav-logo {
-    max-height: 80px; /* Don't want this too large. */
-    aspect-ratio: 500 / 281; /* Maintain aspect ratio of 500:281 to prevent distortions */
-    background-color: #000;
-}
-
-/* Navbar Buttons */
-.nav-btn {
-    position: relative;
-    background: none;
-    border: none;
-    color: #fff;
-    font-family: "MonserratMedium", Helvetica, sans-serif;
-    font-size: 1.2rem;
-    margin: 0 1rem;
-    cursor: pointer;
-    padding: 0.5rem 0;
-    overflow: hidden;
-  }
-  
-  /* Underline with transform */
-  .nav-btn::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    background-color: #fff;
-  
-    transform: scaleX(0); /* Start with no width */
-    transform-origin: left; /* Start from left */
-    transition: transform 0.3s ease-in-out; /* Animation speed and easing */
-  }
-  
-  /* Scale to full width (of the underline animation) on hover */
-  .nav-btn:hover::after {
-    transform: scaleX(1);
-  }
-  
-  /* When hover ends, animate from right to left */
-  .nav-btn:not(:hover)::after {
-    transform-origin: right;
-  }
-
-/* Front Banner */
-.front-banner {
-    position: relative;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    overflow: hidden;
-}
-
-.front-banner-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-image: url('../media/mcg_background_pic.jpg'); /* Change to your image */
-    background-color: #000;
-    background-size: cover;
-    background-position: center;
-    filter: blur(10px);
-    z-index: 0;
-}
-
-.banner-title {
-    position: relative;
     font-family: "MontserratMedium", Helvetica, sans-serif;
-    z-index: 1;
-    font-size: 2.5rem;
-    text-align: center;
-    padding: 1rem;
+    background: #fff;
+    color: #000;
+    line-height: 1.6;
+}
+  
+  /* ─────────── Navbar ─────────── */
+.navbar{
+    background:#000;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:2rem;
+    padding:.5rem 1rem;
 }
 
-/* Article Visibility */
-.page-content {
-    display: none;
-    padding: 2rem;
-    font-family: "MontserratMedium", Helvetica, sans-serif;
-    background-color: #000;
-    color: #f5f5f5;
+.nav-logo{
+    height:64px;aspect-ratio:500/281
 }
 
-.page-content.active {
-    display: block;
+.nav-btn{
+    position:relative;
+    background:none;
+    border:none;
+    color:#fff;
+    font-size:1.1rem;
+    cursor:pointer;
+    padding:.4rem .2rem;
 }
 
-/* Main Style */
-main {
-    background-color: #000;
-    height: 90vh;
+.nav-btn::after{
+    content:"";
+    position:absolute;left:0;bottom:0;
+    width:100%;height:2px;
+    background:#fff;
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
 }
 
-/* Footer */
+.nav-btn:hover::after{
+    transform:scaleX(1)
+}
+  
+/* ─────────── Hero banner ─────────── */
+.front-banner{
+    position:relative;
+    padding-top: 0%;
+    height:340px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+.front-banner-bg{
+    position:absolute;inset:0;
+    background:url('../media/mcg_background_pic.jpg') center/cover no-repeat;
+    filter:blur(10px) brightness(.6);
+    transform:scale(1.1);
+}
+.banner-title{
+    position:relative;z-index:1;
+    font-size:clamp(1.8rem,4vw,2.75rem);
+    text-align:center;
+    color:#fff;
+    padding:0 1rem;
+}
+
+/* ─────────── Page cards ─────────── */
+main{padding:0rem 0;}
+  
+.page-content{
+    position:relative;
+    display:none;        /* JS toggles .active */
+    background:#fff;
+    max-width:1100px;
+    margin:0 auto 2rem;
+    padding:0 1.5rem 2rem; /* top handled by ribbon */
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
+    border-radius:8px;
+}
+
+.page-content.active{
+    display:block;
+}
+
+.page-content h2, .page-content p{
+    margin:0;
+}
+
+/* ─── Intro ribbon ─── */
+.intro-box{
+    background:#000;
+    color:#fff;
+    margin:2rem -1.5rem 2rem; /* negative pulls up, leaves 20 px gap */
+    padding:1rem 1.5rem;
+    border-radius:8px 8px 0 0;
+    text-align:center;
+    box-shadow:
+    inset 2px 2px 4px rgba(255,255,255,.15),
+    inset -2px -2px 4px rgba(0,0,0,.7);
+}
+.intro-box h2{
+    font-size:1.75rem;
+    margin-bottom:.5rem;
+}
+
+.intro-box p {
+    font-size:1rem;
+    color:#ddd;
+}
+
+/* ─────────── Stats form / table ─────────── */
+.stats-form{
+    margin-top:1rem;
+}
+
+.stat-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:2rem;
+}
+
+.stat-table caption{
+    background:#000;
+    color:#fff;
+    font-weight:600;
+    padding:.75rem 1rem;
+    border-radius:6px 6px 0 0;
+    text-align:left;
+}
+
+.stat-table td{
+    padding:.65rem .75rem;
+    border:1px solid #e5e5e5;
+}
+
+.stat-table td:first-child{
+    width:55%;
+}
+
+.stat-table input{
+    width:100%;
+    padding:.45rem .5rem;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+/* ─────────── 3-D flip button ─────────── */
+.submit-btn{
+    display:block;
+    margin:0 auto .75rem;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    perspective:800px;
+}
+
+/* card container */
+.flip-box{
+    position:relative;
+    display:inline-block;         /* auto width from front face   */
+    transform-style:preserve-3d;
+}
+
+/* Keep-Spinning-In-Same-Direction animation */
+.submit-btn:hover .flip-box{
+    animation:flip-fwd .6s forwards;
+}
+.submit-btn:not(:hover) .flip-box{
+    animation:flip-bwd .6s forwards;
+}
+
+/* Only way to keep directional continuity, not possible with plain CSS rules. Therefore use keyframes to force it. */
+@keyframes flip-fwd{
+    from{transform:rotateY(0deg);}
+    to  {transform:rotateY(180deg);}
+}
+@keyframes flip-bwd{
+    from{transform:rotateY(180deg);}
+    to  {transform:rotateY(360deg);} /* visually same as 0deg */
+}
+
+/* Submit button faces */
+.flip-face {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:.75rem 2rem;
+    font:inherit;
+    border-radius:6px;
+    backface-visibility:hidden;
+}
+
+.flip-face-front{
+    background:#000;
+    color:#fff;
+}
+
+.flip-face-back {
+    position:absolute;inset:0;
+    background:#fff;color:#000;
+    transform:rotateY(180deg);
+}
+  
+/* ─────────── Footer ─────────── */
 footer {
-    background-color: #000;
-    color: #fff;
-    text-align: center;
-    padding: 1rem 0;
-    font-family: "MontserratMedium", Helvetica, sans-serif;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    min-height:60px;
+    background:#000;
+    color:#fff;
+    text-align:center;
+    padding:1rem 0;
+    font-size:.9rem;
 }
