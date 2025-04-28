@@ -9,53 +9,120 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
   />
+  <style>
+    body { background-color: #f8f9fa; }
+  </style>
 </head>
-<body class="bg-light text-dark">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- 1) Turn body into a full-height column-flex -->
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Top navbar -->
+  <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">NBA Players</a>
+      <button class="btn btn-outline-light me-2"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasSidebar"
+              aria-controls="offcanvasSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">NBA Stats</a>
     </div>
   </nav>
 
-  <div class="container mt-4">
-
-    <!-- Team Selector -->
-    <div class="mb-3">
-      <label for="teamSelect" class="form-label">Select a team:</label>
-      <select id="teamSelect" class="form-select">
-        <option value="">— Choose a team —</option>
-        <option value="BOS">Boston Celtics</option>
-        <option value="LAL">Los Angeles Lakers</option>
-        <option value="GS">Golden State Warriors</option>
-        <option value="MIA">Miami Heat</option>
-        <!-- …add the rest of your teams here… -->
-      </select>
+  <!-- Offcanvas sidebar -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Dashboard</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
-
-    <!-- Players Table -->
-    <div class="table-responsive">
-      <table id="playersTable" class="table table-hover align-middle">
-        <thead class="table-dark">
-          <tr>
-            <th>Jersey</th>
-            <th>Player</th>
-            <th>Pos</th>
-            <th>Birth Date</th>
-            <th>Ht (in)</th>
-            <th>Wt (lbs)</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="offcanvas-body p-0">
+      <ul class="nav nav-pills flex-column mb-0">
+        <li class="nav-item"><a href="/"          class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="teams.html" class="nav-link active">Teams</a></li>
+        <li class="nav-item"><a href="data.html"  class="nav-link">Your Team</a></li>
+        <li class="nav-item"><a href="#"          class="nav-link">Reports</a></li>
+      </ul>
     </div>
-
   </div>
 
-  <!-- Bootstrap JS (for responsive navbar, etc.) -->
+  <!-- 2) Main grows to fill the space -->
+  <main class="flex-fill">
+    <div class="container my-4">
+
+      <!-- Team selector card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex align-items-center">
+          <img id="teamLogo"
+               src=""
+               alt=""
+               class="me-2"
+               style="height:40px; display:none;">
+          <h5 id="teamHeader" class="mb-0">Select a Team</h5>
+        </div>
+        <div class="card-body">
+          <select id="teamSelect" class="form-select">
+            <option value="">— Choose a team —</option>
+            <option value="BOS">Boston Celtics</option>
+            <option value="LAL">Los Angeles Lakers</option>
+            <option value="GS">Golden State Warriors</option>
+            <option value="MIA">Miami Heat</option>
+            <!-- … -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Players table card -->
+      <div class="card shadow-sm">
+        <div class="card-body table-responsive p-0">
+          <table id="playersTable" class="table table-striped table-hover mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th>Jersey</th>
+                <th>Player</th>
+                <th>Pos</th>
+                <th>Birth Date</th>
+                <th>Ht (in)</th>
+                <th>Wt (lbs)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 3) Footer is pushed to bottom by mt-auto -->
+  <footer class="mt-auto bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 mb-3">
+          <h6>Contact Us</h6>
+          <ul class="list-unstyled">
+            <li><a href="mailto:info@nbastats.com" class="text-white">Email</a></li>
+            <li><a href="/contact" class="text-white">Contact Form</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-6 mb-3">
+          <h6>FAQ</h6>
+          <ul class="list-unstyled">
+            <li><a href="/faq" class="text-white">General FAQ</a></li>
+            <li><a href="/support" class="text-white">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="text-center">
+        &copy; 2025 NBA Stats. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Your script -->
+  <!-- Your script.js -->
   <script src="script.js"></script>
 </body>
 </html>
