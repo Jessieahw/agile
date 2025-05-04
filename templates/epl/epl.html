@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Which EPL Team and Player Are You?</title>
-    <link rel="stylesheet" href="epl.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/epl.css') }}">
     
 </head>
 <body>
     <header class="header-bar">
-        <img src="./Premier_League_Logo.svg" alt="Premier League Logo" class="logo">
+        <img src="{{ url_for('static', filename='assets/Premier_League_Logo.svg') }}" alt="Premier League Logo" class="logo">
         <h1>Which EPL Team and Player Are You?</h1>
     </header>
 
@@ -81,7 +81,7 @@
         
 
         function fetchCSV() {
-            Papa.parse('epl data/team_comparison_stats.csv', {
+            Papa.parse("{{ url_for('static', filename='epl_data/team_comparison_stats.csv') }}", {
                 download: true,
                 header: true,
                 dynamicTyping: true, // Automatically convert numbers
@@ -224,6 +224,60 @@
         });
     }
 </script>
+
+<!-- Part 4: Share Data -->
+<div class="white-box">
+    <h3>Share Your Stats</h3>
+    <p>Search for a user to share your stats with:</p>
+    <input type="text" id="userSearch" placeholder="Enter username">
+    <ul id="userList"></ul>
+    <button type="button" onclick="shareStats()">Share Stats</button>
+</div>
+
+<script>
+
+    document.getElementById("userSearch").addEventListener("input", function () {
+        const query = this.value;
+
+        if (query.length < 2) {
+            document.getElementById("userList").innerHTML = ""; // Clear the list if query is too short
+            return;
+        }
+
+        fetch(`/search_users?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const userList = document.getElementById("userList");
+                userList.innerHTML = ""; // Clear previous results
+
+                data.users.forEach(user => {
+                    const li = document.createElement("li");
+                    li.textContent = user.username;
+                    li.addEventListener("click", function () {
+                        // Highlight the selected user
+                        document.querySelectorAll("#userList li").forEach(li => li.classList.remove("selected"));
+                        this.classList.add("selected");
+                    });
+                    userList.appendChild(li);
+                });
+            })
+            .catch(error => console.error("Error fetching users:", error));
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Part 2: Player Comparison -->
 <div class="white-box">

@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Comparison Forum</title>
-    <link rel="stylesheet" href="forum_style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum_style.css') }}">
 </head>
 <body>
     <nav class="forum-nav">
-        <a href="index.html" class="nav-link">Home</a>
+        <a href="{{ url_for('landing_page') }}" class="nav-link">Home</a>
         <div class="league-tabs">
             <button class="tab-button active" data-league="epl">English Premier League</button>
             <button class="tab-button" data-league="bbl">Big Bash League</button>
             <button class="tab-button" data-league="afl">Australian Football League</button>
         </div>
     </nav>
+
+    <!-- Add Search Section -->
+    <div class="search-container">
+        <h3>Search for a User</h3>
+        <input type="text" id="userSearch" placeholder="Enter username">
+        <button id="searchButton">Search</button>
+        <ul id="userList"></ul>
+    </div>
+
 
     <div class="forum-container">
         <!-- EPL Forum Section -->
@@ -56,5 +65,6 @@
             </div>
         </div>
     </div>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 </body>
 </html> 

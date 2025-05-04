@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>AFL Player Comparison</title>
-    <link rel="stylesheet" href="afl_style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/afl_style.css') }}">
   </head>
   <body>
     <div class="header-background">
@@ -22,14 +22,14 @@
         <table>
           <thead>
             <tr>
-              <th><img src="assets/AFL_icons_transparent/Kicks.png" alt="Kicks" class="stat-icon"><span>Kicks</span></th>
-              <th><img src="assets/AFL_icons_transparent/Handballs.png" alt="Handballs" class="stat-icon"><span>Handballs</span></th>
-              <th><img src="assets/AFL_icons_transparent/Marks.png" alt="Marks" class="stat-icon"><span>Marks</span></th>
-              <th><img src="assets/AFL_icons_transparent/Goals.png" alt="Goals" class="stat-icon"><span>Goals</span></th>
-              <th><img src="assets/AFL_icons_transparent/Behinds.png" alt="Behinds" class="stat-icon"><span>Behinds</span></th>
-              <th><img src="assets/AFL_icons_transparent/Tackles.png" alt="Tackles" class="stat-icon"><span>Tackles</span></th>
-              <th><img src="assets/AFL_icons_transparent/Hitouts.png" alt="Hitouts" class="stat-icon"><span>Hitouts</span></th>
-              <th><img src="assets/AFL_icons_transparent/Clearances.png" alt="Clearances" class="stat-icon"><span>Clearances</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Kicks.png') }}" alt="Kicks" class="stat-icon"><span>Kicks</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Handballs.png') }}" alt="Handballs" class="stat-icon"><span>Handballs</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Marks.png') }}" alt="Marks" class="stat-icon"><span>Marks</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Goals.png') }}" alt="Goals" class="stat-icon"><span>Goals</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Behinds.png') }}" alt="Behinds" class="stat-icon"><span>Behinds</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Tackles.png') }}" alt="Tackles" class="stat-icon"><span>Tackles</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Hitouts.png') }}" alt="Hitouts" class="stat-icon"><span>Hitouts</span></th>
+              <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Clearances.png') }}" alt="Clearances" class="stat-icon"><span>Clearances</span></th>
             </tr>
           </thead>
           <tbody>
@@ -58,14 +58,14 @@
           <table id="similarPlayerStats">
             <thead>
               <tr>
-                <th><img src="assets/AFL_icons_transparent/Kicks.png" alt="Kicks" class="stat-icon"><span>Kicks</span></th>
-                <th><img src="assets/AFL_icons_transparent/Handballs.png" alt="Handballs" class="stat-icon"><span>Handballs</span></th>
-                <th><img src="assets/AFL_icons_transparent/Marks.png" alt="Marks" class="stat-icon"><span>Marks</span></th>
-                <th><img src="assets/AFL_icons_transparent/Goals.png" alt="Goals" class="stat-icon"><span>Goals</span></th>
-                <th><img src="assets/AFL_icons_transparent/Behinds.png" alt="Behinds" class="stat-icon"><span>Behinds</span></th>
-                <th><img src="assets/AFL_icons_transparent/Tackles.png" alt="Tackles" class="stat-icon"><span>Tackles</span></th>
-                <th><img src="assets/AFL_icons_transparent/Hitouts.png" alt="Hitouts" class="stat-icon"><span>Hitouts</span></th>
-                <th><img src="assets/AFL_icons_transparent/Clearances.png" alt="Clearances" class="stat-icon"><span>Clearances</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Kicks.png') }}" alt="Kicks" class="stat-icon"><span>Kicks</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Handballs.png') }}" alt="Handballs" class="stat-icon"><span>Handballs</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Marks.png') }}" alt="Marks" class="stat-icon"><span>Marks</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Goals.png') }}" alt="Goals" class="stat-icon"><span>Goals</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Behinds.png') }}" alt="Behinds" class="stat-icon"><span>Behinds</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Tackles.png') }}" alt="Tackles" class="stat-icon"><span>Tackles</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Hitouts.png') }}" alt="Hitouts" class="stat-icon"><span>Hitouts</span></th>
+                <th><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Clearances.png') }}" alt="Clearances" class="stat-icon"><span>Clearances</span></th>
               </tr>
             </thead>
             <tbody id="similarPlayerStatsBody">
@@ -85,35 +85,37 @@
           </thead>
           <tbody>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Kicks.png" alt="Kicks" class="stat-icon"><span>Kicks</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Kicks.png') }}" alt="Kicks" class="stat-icon"><span>Kicks</span></td>
               <td>Number of times the ball is kicked</td>
             </tr>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Handballs.png" alt="Handballs" class="stat-icon"><span>Handballs</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Handballs.png') }}" alt="Handballs" class="stat-icon"><span>Handballs</span></td>
               <td>Number of times the ball is handballed</td>
             </tr>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Marks.png" alt="Marks" class="stat-icon"><span>Marks</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Marks.png') }}" alt="Marks" class="stat-icon"><span>Marks</span></td>
               <td>Number of successful catches of the ball</td>
             </tr>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Goals.png" alt="Goals" class="stat-icon"><span>Goals</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Goals.png') }}" alt="Goals" class="stat-icon"><span>Goals</span></td>
               <td>Number of goals scored</td>
             </tr>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Behinds.png" alt="Behinds" class="stat-icon"><span>Behinds</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Behinds.png') }}" alt="Behinds" class="stat-icon"><span>Behinds</span></td>
               <td>Number of behinds scored</td>
             </tr>
+      
+          
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Tackles.png" alt="Tackles" class="stat-icon"><span>Tackles</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Tackles.png') }}" alt="Tackles" class="stat-icon"><span>Tackles</span></td>
               <td>Number of successful tackles</td>
             </tr>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Hitouts.png" alt="Hitouts" class="stat-icon"><span>Hitouts</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Hitouts.png') }}" alt="Hitouts" class="stat-icon"><span>Hitouts</span></td>
               <td>Number of hitouts in ruck contests</td>
             </tr>
             <tr>
-              <td><img src="assets/AFL_icons_transparent/Clearances.png" alt="Clearances" class="stat-icon"><span>Clearances</span></td>
+              <td><img src="{{ url_for('static', filename='assets/AFL_icons_transparent/Clearances.png') }}" alt="Clearances" class="stat-icon"><span>Clearances</span></td>
               <td>Number of times the ball is cleared from stoppages</td>
             </tr>
           </tbody>
@@ -192,6 +194,6 @@
         }
       ];
     </script>
-    <script src="index.js"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
   </body>
 </html>

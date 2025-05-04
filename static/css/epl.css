@@ -3,7 +3,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: url('./2009-3-14_ManUtd_vs_LFC_Ronaldo_Freekick_Back.JPG') no-repeat center center fixed;
+            background: url('../assets/2009-3-14_ManUtd_vs_LFC_Ronaldo_Freekick_Back.JPG') no-repeat center center fixed;
             background-size: cover;
             background-color: rgba(0, 0, 0, 0.5); /* Fallback for transparency */
             background-blend-mode: overlay; /* Makes the image slightly transparent */

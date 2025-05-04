@@ -9,9 +9,9 @@
   <meta name="author"      content="praj107">
 
   <!-- styles & scripts -->
-  <link rel="stylesheet" href="css/bbl_main.css">
-  <script src="js/navbarscript.js" defer></script>
-  <link rel="icon" href="media/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_main.css') }}">
+  <script src="{{ url_for('static', filename='js/navbarscript.js') }}" defer></script>
+  <link rel="icon" href="{{ url_for('static', filename='assets/favicon.png') }}" type="image/x-icon">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
       <button class="nav-btn" data-target="home">Home</button>
       <button class="nav-btn" data-target="stats">Stats & You</button>
 
-      <img src="media/bbl_nav_logo.png" alt="Big Bash League Logo" class="nav-logo">
+      <img src="{{ url_for('static', filename='assets/bbl_nav_logo.png') }}" alt="Big Bash League Logo" class="nav-logo">
 
       <button class="nav-btn" data-target="players">Players</button>
       <button class="nav-btn" data-target="teams">Teams</button>
