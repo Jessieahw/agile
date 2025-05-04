@@ -5,7 +5,10 @@
   <title>NBA 2025 Standings Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap CSS (v5) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
   <style>
     body {
       background-color: #f8f9fa;
@@ -14,19 +17,15 @@
     .container {
       max-width: 960px;
     }
-    /* Offcanvas sidebar adjustments */
     .offcanvas {
       width: 250px;
     }
-    /* Container for the stats table (main content) */
     #team-stats-container {
       padding: 20px;
       border-radius: 8px;
-      /* No background here; the image will be applied to the table below */
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
       margin-top: 20px;
     }
-    /* Stats table: background image is applied inline */
     .stats-table {
       background-color: transparent !important;
       border: none;
@@ -34,7 +33,6 @@
       min-height: 500px;
       background-position: center center;
       background-repeat: no-repeat;
-      /* Here we set a fixed size for the image; adjust as needed */
       background-size: 200px auto;
     }
     .stats-table th,
@@ -46,134 +44,91 @@
   </style>
 </head>
 <body>
-  <!-- Navigation Bar with Offcanvas Toggle Button -->
+  <!-- Navigation Bar -->
   <nav class="navbar navbar-light bg-light fixed-top">
     <div class="container-fluid">
-      <!-- Button that toggles the sidebar -->
-      <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
-        Dashboard Menu
+      <button
+        class="btn btn-outline-secondary me-2"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#sidebar"
+        aria-controls="sidebar">
+        Menu
       </button>
-      <span class="navbar-brand mb-0 h1">NBA 2025 Standings</span>
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        NBA 2025 Standings
+      </a>
     </div>
   </nav>
 
-  <!-- Offcanvas Sidebar (Retractable Dashboard) -->
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+  <!-- Offcanvas Sidebar -->
+  <div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="sidebar"
+    aria-labelledby="sidebarLabel">
     <div class="offcanvas-header">
       <h5 class="offcanvas-title" id="sidebarLabel">Dashboard</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
-      <!-- Navigation (Adjust links as needed) -->
       <ul class="nav nav-pills flex-column">
         <li class="nav-item">
-          <a class="nav-link active" href="#">Home</a>
+          <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="teams.html">Teams</a>
+          <a class="nav-link" href="{{ url_for('teams') }}">Teams</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Players</a>
+          <a class="nav-link" href="{{ url_for('data') }}">Your Team</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Reports</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
       </ul>
     </div>
   </div>
 
   <!-- Main Content -->
   <div class="container mt-4">
-    <!-- Dropdown for Team Selection -->
+    <h1 class="mb-4">2025 NBA Standings</h1>
+
+    <!-- Team selector -->
     <div class="mb-3">
       <label for="team-selector" class="form-label">Choose a Team:</label>
       <select id="team-selector" class="form-select">
         <option value="" disabled selected>Select a team</option>
       </select>
     </div>
-    <!-- Stats Container: Table will be injected here -->
+
+    <!-- Stats will be injected here -->
     <div id="team-stats-container">
       <p>Select a team to see their stats.</p>
     </div>
   </div>
 
-  <!-- Bootstrap JS Bundle (includes Popper) -->
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Your script.js -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <!-- Kick off the fetch/populate logic -->
   <script>
-    // Global variable for storing fetched NBA standings data
-    let nbaData = [];
-
-    async function fetchNBAStats() {
+    document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const response = await fetch('/nba-stats');
-        if (!response.ok) {
-          throw new Error('Network response was not ok: ' + response.statusText);
-        }
-        nbaData = await response.json();
-        populateTeamSelector();
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('team-stats-container').innerHTML = '<p>Error loading data.</p>';
+        // 1) Load all standings and populate the dropdown
+        const standings = await fetchStandings();
+        populateTeamSelector(standings);
+
+        // 2) When a team is selected, show its stats
+        document
+          .getElementById('team-selector')
+          .addEventListener('change', e => {
+            displayTeamStats(e.target.value);
+          });
+      } catch (err) {
+        console.error('Error initializing page:', err);
+        document.getElementById('team-stats-container').innerHTML =
+          '<p class="text-danger">Failed to load data.</p>';
       }
-    }
-
-    // Populate the team selector dropdown with options
-    function populateTeamSelector() {
-      const selector = document.getElementById('team-selector');
-      nbaData.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.TeamID;
-        option.textContent = `${item.City} ${item.Name} (${item.Key})`;
-        selector.appendChild(option);
-      });
-    }
-
-    // Display the selected team's stats in a table with a background image set on the table
-    function displayTeamStats(teamId) {
-      const team = nbaData.find(item => item.TeamID == teamId);
-      const container = document.getElementById('team-stats-container');
-      if (!team) {
-        container.innerHTML = '<p>No data found for this team.</p>';
-        return;
-      }
-      // Create the logo path. For example, "/logos/BOS.png" for team key "BOS".
-      const logoPath = `/logos/${team.Key}.png`;
-      console.log("Using logo at:", logoPath);
-      // Build the table HTML, applying the background image directly to the table via inline style.
-      const html = `
-        <table class="table table-bordered stats-table" 
-               style="background: url('${logoPath}') no-repeat center center; background-size: 200px auto;">
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Season</td><td>${team.Season}</td></tr>
-            <tr><td>Team</td><td>${team.City} ${team.Name} (${team.Key})</td></tr>
-            <tr><td>Conference</td><td>${team.Conference}</td></tr>
-            <tr><td>Division</td><td>${team.Division}</td></tr>
-            <tr><td>Wins</td><td>${team.Wins}</td></tr>
-            <tr><td>Losses</td><td>${team.Losses}</td></tr>
-            <tr><td>Win Percentage</td><td>${(team.Percentage * 100).toFixed(1)}%</td></tr>
-            <tr><td>Points Per Game For</td><td>${team.PointsPerGameFor}</td></tr>
-            <tr><td>Points Per Game Against</td><td>${team.PointsPerGameAgainst}</td></tr>
-            <tr><td>Streak</td><td>${team.StreakDescription}</td></tr>
-            <tr><td>Games Back</td><td>${team.GamesBack}</td></tr>
-          </tbody>
-        </table>
-      `;
-      container.innerHTML = html;
-    }
-
-    // Listen for dropdown changes
-    document.getElementById('team-selector').addEventListener('change', function () {
-      displayTeamStats(this.value);
     });
-
-    // Fetch NBA stats data when the page loads
-    document.addEventListener('DOMContentLoaded', fetchNBAStats);
   </script>
 </body>
 </html>
