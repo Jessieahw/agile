@@ -133,6 +133,7 @@
 
             let closestTeam = null;
             let smallestDistance = Infinity;
+            let matchedTeamStats = {};
 
             eplTeams.forEach(team => {
                 console.log('Comparing with team:', team); 
@@ -147,15 +148,82 @@
                 if (distance < smallestDistance) {
                     smallestDistance = distance;
                     closestTeam = team['Team'];
+                    matchedTeamStats = {
+                    avgShots: team['Average Shots per Match'],
+                    avgGoals: team['Average Goals per Match'],
+                    avgFouls: team['Average Fouls per Match'],
+                    avgCards: team['Average Cards per Match'],
+                    shotAccuracy: team['Shot Accuracy'],
+                };
                 }
             });
+            const userStats = {
+                avgShots: avgShots,
+                avgGoals: avgGoals,
+                avgFouls: avgFouls,
+                avgCards: avgCards,
+                shotAccuracy: shotAccuracy,
+            };
 
             console.log('Closest Team:', closestTeam);
             openModal(`You are most like: ${closestTeam}`);
+
+            console.log('User Stats:', userStats);
+            console.log('Matched Team Stats:', matchedTeamStats);
+
+            visualizeData(userStats, matchedTeamStats);
         }
     </script>
 
+<!-- Part 3: Visualize Data -->
+<div class="white-box">
+    <h3>Visualize Your Stats and Matched Team</h3>
+    <canvas id="statsChart"></canvas>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function visualizeData(userStats, matchedTeamStats) {
+        const ctx = document.getElementById('statsChart').getContext('2d');
+
+        // Destroy the previous chart instance if it exists
+        if (window.statsChart instanceof Chart) {
+            window.statsChart.destroy();
+        }
+
+        // Create a new chart
+        window.statsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(userStats), // Labels for the stats (e.g., Goals, Assists)
+                datasets: [
+                    {
+                        label: 'Your Stats',
+                        data: Object.values(userStats), // User's input stats
+                        backgroundColor: 'rgba(75, 192, 192,)',
+                        borderColor: 'rgba(75, 192, 192)',
+                        borderWidth: 1,
+                    },
+                    {
+                        label: 'Matched Team Stats',
+                        data: Object.values(matchedTeamStats), // Matched team's stats
+                        backgroundColor: 'rgba(255, 99, 132)',
+                        borderColor: 'rgba(255, 99, 132)',
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
+    }
+</script>
 
 <!-- Part 2: Player Comparison -->
 <div class="white-box">
