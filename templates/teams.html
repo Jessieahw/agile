@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NBA Players</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-cards.css') }}"/>
+  <style>
+    body { background-color: #f8f9fa; }
+
+    /* New: court-floor background behind only the cards */
+    #cardsWrapper {
+      background: url('images/aesthetic-nba-ba4w0pe75y02ux5q.jpg') center/cover no-repeat;
+      padding: 2rem;
+      border-radius: 0.5rem;
+    }
+  </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Top navbar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <button class="btn btn-outline-light me-2"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasSidebar"
+              aria-controls="offcanvasSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="#">NBA Stats</a>
+    </div>
+  </nav>
+
+  <!-- Offcanvas sidebar -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Dashboard</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <ul class="nav nav-pills flex-column mb-0">
+        <li class="nav-item"><a href="/"          class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="teams.html" class="nav-link active">Teams</a></li>
+        <li class="nav-item"><a href="data.html"  class="nav-link">Your Team</a></li>
+        <li class="nav-item"><a href="#"          class="nav-link">Reports</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <main class="flex-fill">
+    <!-- Logo container: always white behind it -->
+    <div class="container my-4 text-center">
+      <img
+        id="teamLogo"
+        src=""
+        class="img-fluid mx-auto d-block"
+        style="max-height:150px; display:none;"
+      />
+    </div>
+
+    <!-- cardsWrapper gets the court background -->
+    <div class="container my-4" id="cardsWrapper">
+      <!-- Team selector card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex align-items-center">
+          <img
+            id="teamLogoSmall"
+            src=""
+            alt=""
+            class="me-2"
+            style="height:40px; display:none;"
+          >
+          <h5 id="teamHeader" class="mb-0">Select a Team</h5>
+        </div>
+        <div class="card-body">
+          <select id="teamSelect" class="form-select">
+            <option value="">— Choose a team —</option>
+            <option value="BOS">Boston Celtics</option>
+            <option value="LAL">Los Angeles Lakers</option>
+            <option value="GS">Golden State Warriors</option>
+            <option value="MIA">Miami Heat</option>
+            <!-- … -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Player Cards Container -->
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div id="playerCards" class="row gx-4 gy-4"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6 mb-3">
+          <h6>Contact Us</h6>
+          <ul class="list-unstyled">
+            <li><a href="mailto:info@nbastats.com" class="text-white">Email</a></li>
+            <li><a href="/contact"               class="text-white">Contact Form</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-6 mb-3">
+          <h6>FAQ</h6>
+          <ul class="list-unstyled">
+            <li><a href="/faq"                 class="text-white">General FAQ</a></li>
+            <li><a href="/support"             class="text-white">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="text-center">&copy; 2025 NBA Stats. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Your unified script.js -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <!-- Auto‑select team from query string -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const team   = params.get('team');
+      if (team) {
+        const select = document.getElementById('teamSelect');
+        select.value = team;
+        select.dispatchEvent(new Event('change'));
+      }
+    });
+  </script>
+</body>
+</html>
