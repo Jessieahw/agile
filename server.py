@@ -29,15 +29,21 @@
 # if __name__ == '__main__':
 #     run() 
 
-
-from flask import Flask, request, jsonify, send_from_directory, render_template
+from flask import Flask, request, jsonify, send_from_directory, render_template, url_for
 from threading import Thread
 import os
+import requests
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder='static',
+    template_folder='templates'
+)
 
-# Example user data (replace this with the database query later)
+API_KEY = os.getenv('SPORTSDATAIO_KEY', 'your_key_here')
+
+# Example user data (replace with your DB later)
 users = [
     {"username": "john_doe"},
     {"username": "jane_smith"},
@@ -49,19 +55,26 @@ users = [
 # Route to handle user search
 @app.route('/search_users', methods=['GET'])
 def search_users():
-    query = request.args.get('query', '').lower()  # Get the query parameter from the request
+    query = request.args.get('query', '').lower()
     if not query:
-        return jsonify({"users": []})  # Return an empty list if no query is provided
+        return jsonify({"users": []})
+    matching = [u for u in users if query in u["username"].lower()]
+    return jsonify({"users": matching})
 
-    # Filter users whose username contains the query (case-insensitive)
-    matching_users = [user for user in users if query in user["username"].lower()]
-    return jsonify({"users": matching_users})  # Return the matching users as JSON
-
-# Route to serve the landing page (e.g., index.html)
+# Home page: fetch standings and pass into template
 @app.route('/')
-def landing_page():
-    return render_template('index.html',username="Jessie")
+def home():
+    standings = []
+    try:
+        url = f'https://api.sportsdata.io/v3/nba/scores/json/Standings/2025?key={API_KEY}'
+        resp = requests.get(url)
+        resp.raise_for_status()
+        standings = resp.json()
+    except requests.RequestException as e:
+        app.logger.error(f'Error fetching standings: {e}')
+    return render_template('index.html', username="Jessie", standings=standings)
 
+# Static content pages
 @app.route('/forum')
 def forum_page():
     return render_template('forum.html')
@@ -69,9 +82,6 @@ def forum_page():
 @app.route('/epl')
 def epl_page():
     return render_template('epl/epl.html')
-
-
-
 
 @app.route('/afl')
 def afl_page():
@@ -85,19 +95,56 @@ def nba_page():
 def bbl_page():
     return render_template('bbl.html')
 
+# Teams page (supports /teams, /teams.html, /teams/<team_key>)
+@app.route('/teams')
+@app.route('/teams.html')
+@app.route('/teams/<team_key>')
+def teams(team_key=None):
+    team_map = {
+        'BOS': 'Boston Celtics',
+        'LAL': 'Los Angeles Lakers',
+        'GS':  'Golden State Warriors',
+        'MIA': 'Miami Heat',
+        # … add more …
+    }
+    logos = {
+        k: url_for('static', filename=f'logos/{k}.png')
+        for k in team_map
+    }
+    return render_template(
+        'teams.html',
+        teams=team_map,
+        logos=logos,
+        selected_team=team_key
+    )
 
+# Data page (“Find Your Match”)
+@app.route('/data')
+@app.route('/data.html')
+def data():
+    return render_template('data.html')
 
+# NBA standings JSON endpoint
+@app.route('/nba-stats')
+def nba_stats():
+    url = f'https://api.sportsdata.io/v3/nba/scores/json/Standings/2025?key={API_KEY}'
+    try:
+        resp = requests.get(url)
+        resp.raise_for_status()
+        return jsonify(resp.json())
+    except requests.RequestException as e:
+        app.logger.error(f'Error fetching standings: {e}')
+        return jsonify({'error': 'Failed to fetch data'}), 500
 
-# Route to serve static files (e.g., HTML, CSS, JS)
+# Route to serve static files (if needed alongside Flask’s /static/)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
 
-# Start Flask server in a separate thread
 def start_flask():
-    app.run(port=5000, debug=True, use_reloader=False)
-    
-# Start the static file server
+    # run Flask on port 3000 (same as your existing script)
+    app.run(port=3000, debug=True, use_reloader=False)
+
 def start_static_server():
     from http.server import HTTPServer, SimpleHTTPRequestHandler
 
@@ -115,6 +162,5 @@ def start_static_server():
     httpd.serve_forever()
 
 if __name__ == '__main__':
-    # Run Flask and static server in parallel
     Thread(target=start_flask).start()
     start_static_server()
