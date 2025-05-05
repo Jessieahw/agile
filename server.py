@@ -28,7 +28,7 @@ class User(db.Model):
 # Define Comparison model
 class Comparison(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Foreign key to User table
     avg_shots = db.Column(db.Float, nullable=False)
     avg_goals = db.Column(db.Float, nullable=False)
     avg_fouls = db.Column(db.Float, nullable=False)
@@ -36,9 +36,14 @@ class Comparison(db.Model):
     shot_accuracy = db.Column(db.Float, nullable=False)
     matched_team = db.Column(db.String(80), nullable=False)
 
+    # Relationship to access the associated user
+    user = db.relationship('User', backref='comparisons')
+
 # Create the database tables
 with app.app_context():
+    print("Creating tables...")
     db.create_all()
+    print("Tables created successfully.")
 
 
 
@@ -76,14 +81,6 @@ def register():
 
 
 
-# Example user data (replace this with the database query later)
-# users = [
-#     {"username": "john_doe"},
-#     {"username": "jane_smith"},
-#     {"username": "jackson"},
-#     {"username": "jill_brown"},
-#     {"username": "james_bond"}
-# ]
 
 # Route for user login
 @app.route('/login', methods=['GET', 'POST'])
@@ -208,7 +205,18 @@ def bbl_page():
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
 
-<<<<<<< HEAD
+        # 3. Batting: fetch averages, compute distances, get top 10
+        if all(bat_data.values()):
+            matches_bat = get_top_batters(conn, bat_data)
+
+        # 4. Bowling: fetch averages, compute distances, get top 10
+        if all(bowl_data.values()):
+            matches_bowl = get_top_bowlers(conn, bowl_data)
+
+        conn.close()
+    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
+
+
 @app.route('/teams')
 def teams():
     return render_template('teams.html')
@@ -220,24 +228,66 @@ def data():
 
 
 
+@app.route('/get_comparison', methods=['GET'])
+@login_required
+def get_comparison():
+    username = request.args.get('username')
+    selected_user = User.query.filter_by(username=username).first()
 
+    if not selected_user:
+        return jsonify({'message': 'User not found'}), 404
+
+    # Fetch comparison data for the current user and the selected user
+    current_user_data = Comparison.query.filter_by(user_id=session['user_id']).order_by(Comparison.id.desc()).first()
+    selected_user_data = Comparison.query.filter_by(user_id=selected_user.id).first()
+
+    return jsonify({
+        'currentUser': {
+            'avg_shots': current_user_data.avg_shots,
+            'avg_goals': current_user_data.avg_goals,
+            'avg_fouls': current_user_data.avg_fouls,
+            'avg_cards': current_user_data.avg_cards,
+            'shot_accuracy': current_user_data.shot_accuracy,
+            'matched_team': current_user_data.matched_team
+        },
+        'selectedUser': {
+            'username': selected_user.username,
+            'avg_shots': selected_user_data.avg_shots,
+            'avg_goals': selected_user_data.avg_goals,
+            'avg_fouls': selected_user_data.avg_fouls,
+            'avg_cards': selected_user_data.avg_cards,
+            'shot_accuracy': selected_user_data.shot_accuracy,
+            'matched_team': selected_user_data.matched_team
+        }
+    })
 
 @app.route('/save_comparison', methods=['POST'])
 @login_required
 def save_comparison():
-    data = request.json
-    comparison = Comparison(
-        user_id=session['user_id'],
-        avg_shots=data['avg_shots'],
-        avg_goals=data['avg_goals'],
-        avg_fouls=data['avg_fouls'],
-        avg_cards=data['avg_cards'],
-        shot_accuracy=data['shot_accuracy'],
-        matched_team=data['matched_team']
-    )
-    db.session.add(comparison)
-    db.session.commit()
-    return jsonify({'message': 'Comparison saved successfully!'})
+    try:
+        # Get the JSON data sent from the frontend
+        data = request.json
+        print("Received data:", data)  # Debugging
+
+        # Create a new Comparison object
+        comparison = Comparison(
+            user_id=session['user_id'],  # Associate with the logged-in user
+            avg_shots=data['avg_shots'],
+            avg_goals=data['avg_goals'],
+            avg_fouls=data['avg_fouls'],
+            avg_cards=data['avg_cards'],
+            shot_accuracy=data['shot_accuracy'],
+            matched_team=data['matched_team']
+        )
+
+        # Save the comparison to the database
+        db.session.add(comparison)
+        db.session.commit()
+
+        return jsonify({'message': 'Comparison saved successfully!'})
+    except Exception as e:
+        print("Error saving comparison:", e)
+        return jsonify({'message': 'Failed to save comparison'}), 500
 
 
 
@@ -249,25 +299,12 @@ def search_users():
     query = request.args.get('query', '').lower()  # Get the query parameter from the request
     if not query:
         return jsonify({"users": []})  # Return an empty list if no query is provided
+# Query the database for matching usernames
+    matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
+    return jsonify({"users": [user.username for user in matching_users]})
 
-    # Filter users whose username contains the query (case-insensitive)
-    matching_users = [user for user in users if query in user["username"].lower()]
-    return jsonify({"users": matching_users})  # Return the matching users as JSON
 
-
-=======
-        # 3. Batting: fetch averages, compute distances, get top 10
-        if all(bat_data.values()):
-            matches_bat = get_top_batters(conn, bat_data)
->>>>>>> 11a2d3309f8072e96895651bb56d0a6832019ae4
-
-        # 4. Bowling: fetch averages, compute distances, get top 10
-        if all(bowl_data.values()):
-            matches_bowl = get_top_bowlers(conn, bowl_data)
-
-        conn.close()
-    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
-
+        
 # Route to serve static files (e.g., HTML, CSS, JS)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -278,16 +315,6 @@ def serve_static(filename):
 #     app.run(port=5000, debug=True, use_reloader=False)
 
 
-<<<<<<< HEAD
-=======
-@app.route('/teams')
-def teams():
-    return render_template('teams.html')
-
-@app.route('/data')
-def data():
-    return render_template('data.html')
->>>>>>> 11a2d3309f8072e96895651bb56d0a6832019ae4
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
