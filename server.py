@@ -45,8 +45,6 @@ with app.app_context():
     db.create_all()
     print("Tables created successfully.")
 
-
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -54,10 +52,6 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-
-
-
-
 
 
 # Route for user registration
@@ -106,9 +100,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-
-
-
 @app.route('/')
 def landing_page():
     if 'user_id' not in session:  # Check if the user is logged in
@@ -152,15 +143,16 @@ def get_top_batters(conn, user_stats):
     players = cur.fetchall()
     results = []
     for row in players:
-        # Use only available stats for distance
         dist = (
             (user_stats['bat_runs'] - row['avg_runs']) ** 2 +
             (user_stats['bat_high'] - row['high_score']) ** 2 +
             (user_stats['bat_sr'] - row['avg_strike_rate']) ** 2 +
             (user_stats['bat_avg'] - row['avg_bat_avg']) ** 2
         ) ** 0.5
-        results.append({'name': row['player_name'], 'distance': dist})
-    results.sort(key=lambda x: x['distance'])
+        similarity = 1000 - dist
+        results.append({'name': row['player_name'], 'similarity': similarity})
+    results.sort(key=lambda x: -x['similarity'])
+    print("Top batters:", results[:10])
     return results[:10]
 
 def get_top_bowlers(conn, user_stats):
@@ -185,8 +177,9 @@ def get_top_bowlers(conn, user_stats):
             (user_stats['bowl_runs'] - row['avg_runs']) ** 2 +
             (user_stats['bowl_eco'] - row['avg_eco']) ** 2
         ) ** 0.5
-        results.append({'name': row['player_name'], 'distance': dist})
-    results.sort(key=lambda x: x['distance'])
+        similarity = 1000 - dist
+        results.append({'name': row['player_name'], 'similarity': similarity})
+    results.sort(key=lambda x: -x['similarity'])
     return results[:10]
 
 @app.route('/bbl', methods=['GET', 'POST'])
@@ -216,6 +209,18 @@ def bbl_page():
         conn.close()
     return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
 
+<<<<<<< HEAD
+=======
+# Route to serve static files (e.g., HTML, CSS, JS)
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
+# # Start Flask server in a separate thread
+# def start_flask():
+#     app.run(port=5000, debug=True, use_reloader=False)
+
+>>>>>>> f4e3dfb3ecb48e40e2d715e3e5586056e661c007
 
 @app.route('/teams')
 def teams():
@@ -303,6 +308,7 @@ def search_users():
     matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
     return jsonify({"users": [user.username for user in matching_users]})
 
+<<<<<<< HEAD
 
         
 # Route to serve static files (e.g., HTML, CSS, JS)
@@ -316,6 +322,8 @@ def serve_static(filename):
 
 
 
+=======
+>>>>>>> f4e3dfb3ecb48e40e2d715e3e5586056e661c007
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
 
