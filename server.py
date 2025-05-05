@@ -30,6 +30,7 @@ def search_users():
 # Route to serve the landing page (e.g., index.html)
 @app.route('/')
 def landing_page():
+    print("Landing page served")
     return render_template('index.html',username="Jessie")
 
 @app.route('/forum')
@@ -47,7 +48,7 @@ def afl_page():
 
 @app.route('/nba')
 def nba_page():
-    return render_template('nba/nba.html')
+    return render_template('nba.html')
 
 @app.route('/bbl')
 def bbl_page():

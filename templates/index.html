@@ -1,137 +1,124 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Player Comparison</title>
+    <link rel="stylesheet" href="landing_style.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <a href="forum.html" class="nav-link">Forum</a>
+    </nav>
+
+    <div class="header-background">
+        <h1>Pro Player Comparison</h1>
+        <p class="subtitle">Enter your semi-pro stats to discover which professional athlete you match with</p>
+    </div>
+
+    <div class="content">
+        <div class="league-container">
+            <div class="league-card">
+                <img src="assets/epl_logo.png" alt="English Premier League Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>English Premier League</h2>
+                    <p>Compare your football stats with Premier League professionals. Enter your goals, assists, and other key metrics to find your closest match.</p>
+                    <a href="epl/epl.html" class="league-button">Compare Now</a>
+                </div>
+            </div>
+
+            <div class="league-card">
+                <img src="assets/bbl_logo.png" alt="Big Bash League Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>Big Bash League</h2>
+                    <p>See how your cricket stats stack up against BBL stars. Enter your batting average, strike rate, and bowling figures to find your cricket twin.</p>
+                    <a href="bbl/bbl.html" class="league-button">Compare Now</a>
+                </div>
+            </div>
+
+            <div class="league-card">
+                <img src="assets/afl_logo.png" alt="AFL Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>Australian Football League</h2>
+                    <p>Match your AFL stats with professional players. Enter your disposals, marks, and other key metrics to find your AFL counterpart.</p>
+                    <a href="afl.html" class="league-button">Compare Now</a>
+                </div>
+            </div>
+
+            <div class="league-card">
+                <img src="assets/nba_logo.png" alt="NBA Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>National Basketball Association</h2>
+                    <p>Compare your basketball stats with NBA professionals. Enter your points, rebounds, assists, and other key metrics to find your NBA counterpart.</p>
+                    <a href="public/index.html" class="league-button">Compare Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>  -->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NBA 2025 Standings Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CSS (v5) -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
-  <style>
-    body {
-      background-color: #f8f9fa;
-      padding-top: 56px; /* Leave space for navbar */
-    }
-    .container {
-      max-width: 960px;
-    }
-    .offcanvas {
-      width: 250px;
-    }
-    #team-stats-container {
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      margin-top: 20px;
-    }
-    .stats-table {
-      background-color: transparent !important;
-      border: none;
-      width: 100%;
-      min-height: 500px;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: 200px auto;
-    }
-    .stats-table th,
-    .stats-table td {
-      background: transparent !important;
-      color: #000;
-      text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Player Comparison</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_style.css') }}">
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-light bg-light fixed-top">
-    <div class="container-fluid">
-      <button
-        class="btn btn-outline-secondary me-2"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#sidebar"
-        aria-controls="sidebar">
-        Menu
-      </button>
-      <a class="navbar-brand" href="{{ url_for('landing_page') }}">
-        NBA 2025 Standings
-      </a>
-    </div>
-  </nav>
+    <nav class="main-nav">
+        <a href="{{ url_for('forum_page') }}" class="nav-link">Forum</a>
+    </nav>
 
-  <!-- Offcanvas Sidebar -->
-  <div
-    class="offcanvas offcanvas-start"
-    tabindex="-1"
-    id="sidebar"
-    aria-labelledby="sidebarLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="sidebarLabel">Dashboard</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body">
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for('landing_page') }}">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('teams') }}">Teams</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('data') }}">Your Team</a>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="container mt-4">
-    <h1 class="mb-4">2025 NBA Standings</h1>
-
-    <!-- Team selector -->
-    <div class="mb-3">
-      <label for="team-selector" class="form-label">Choose a Team:</label>
-      <select id="team-selector" class="form-select">
-        <option value="" disabled selected>Select a team</option>
-      </select>
+    <div class="header-background">
+        <h1>Pro Player Comparison</h1>
+        <p class="subtitle">Enter your semi-pro stats to discover which professional athlete you match with</p>
     </div>
 
-    <!-- Stats will be injected here -->
-    <div id="team-stats-container">
-      <p>Select a team to see their stats.</p>
+    <div class="content">
+        <div class="league-container">
+            <div class="league-card">
+                <img src="{{ url_for('static', filename='assets/epl_logo.png') }}" alt="English Premier League Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>English Premier League</h2>
+                    <p>Compare your football stats with Premier League professionals. Enter your goals, assists, and other key metrics to find your closest match.</p>
+                    <a href="{{ url_for('epl_page') }}" class="league-button">Compare Now</a>
+                </div>
+            </div>
+
+            <div class="league-card">
+                <img src="{{ url_for('static', filename='assets/afl_logo.png') }}" alt="AFL Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>Australian Football League</h2>
+                    <p>Match your AFL stats with professional players. Enter your disposals, marks, and other key metrics to find your AFL counterpart.</p>
+                    <a href="{{ url_for('afl_page') }}" class="league-button">Compare Now</a>
+                </div>
+            </div>
+            
+            <div class="league-card">
+                <img src="{{ url_for('static', filename='assets/nba_logo.png') }}" alt="NBA Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>National Basketball Association</h2>
+                    <p>Compare your basketball stats with NBA professionals. Enter your points, rebounds, assists, and other key metrics to find your NBA counterpart.</p>
+                    <a href="{{ url_for('nba_page') }}" class="league-button">Compare Now</a>
+                </div>
+            </div>
+            
+            <div class="league-card">
+                <img src="{{ url_for('static', filename='assets/bbl_logo.png') }}" alt="Big Bash League Logo" class="league-logo">
+                <div class="league-info">
+                    <h2>Big Bash League</h2>
+                    <p>See how your cricket stats stack up against BBL stars. Enter your batting average, strike rate, and bowling figures to find your cricket twin.</p>
+                    <a href="{{ url_for('bbl_page') }}" class="league-button">Compare Now</a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Your script.js -->
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  <!-- Kick off the fetch/populate logic -->
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        // 1) Load all standings and populate the dropdown
-        const standings = await fetchStandings();
-        populateTeamSelector(standings);
 
-        // 2) When a team is selected, show its stats
-        document
-          .getElementById('team-selector')
-          .addEventListener('change', e => {
-            displayTeamStats(e.target.value);
-          });
-      } catch (err) {
-        console.error('Error initializing page:', err);
-        document.getElementById('team-stats-container').innerHTML =
-          '<p class="text-danger">Failed to load data.</p>';
-      }
-    });
-  </script>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 </body>
 </html>
-
-
-

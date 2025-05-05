@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // auto‐select from URL
     const params = new URLSearchParams(window.location.search);
     const preset = params.get('team');
-    if (preset) {
+    if (preset ) {
       teamSelect.value = preset;
       teamSelect.dispatchEvent(new Event('change'));
     }
