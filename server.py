@@ -1,64 +1,3 @@
-# from http.server import HTTPServer, SimpleHTTPRequestHandler
-# import os
-
-# class CORSRequestHandler(SimpleHTTPRequestHandler):
-#     def end_headers(self):
-#         self.send_header('Access-Control-Allow-Origin', '*')
-#         self.send_header('Access-Control-Allow-Methods', 'GET')
-#         self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
-#         return super().end_headers()
-
-#     def do_GET(self):
-#         # Set content type for CSV files
-#         if self.path.endswith('.csv'):
-#             self.send_response(200)
-#             self.send_header('Content-type', 'text/csv')
-#             self.end_headers()
-#             with open(os.path.join(os.getcwd(), self.path[1:]), 'rb') as file:
-#                 self.wfile.write(file.read())
-#         else:
-#             super().do_GET()
-
-# def run(server_class=HTTPServer, handler_class=CORSRequestHandler, port=8000):
-#     server_address = ('', port)
-#     httpd = server_class(server_address, handler_class)
-#     print(f"Starting server on port {port}")
-#     print(f"Open http://localhost:{port}/afl.html in your browser")
-#     httpd.serve_forever()
-
-# if __name__ == '__main__':
-#     run() 
-
-# from http.server import HTTPServer, SimpleHTTPRequestHandler
-# import os
-
-# class CORSRequestHandler(SimpleHTTPRequestHandler):
-#     def end_headers(self):
-#         self.send_header('Access-Control-Allow-Origin', '*')
-#         self.send_header('Access-Control-Allow-Methods', 'GET')
-#         self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
-#         return super().end_headers()
-
-#     def do_GET(self):
-#         # Set content type for CSV files
-#         if self.path.endswith('.csv'):
-#             self.send_response(200)
-#             self.send_header('Content-type', 'text/csv')
-#             self.end_headers()
-#             with open(os.path.join(os.getcwd(), self.path[1:]), 'rb') as file:
-#                 self.wfile.write(file.read())
-#         else:
-#             super().do_GET()
-
-# def run(server_class=HTTPServer, handler_class=CORSRequestHandler, port=8000):
-#     server_address = ('', port)
-#     httpd = server_class(server_address, handler_class)
-#     print(f"Starting server on port {port}")
-#     print(f"Open http://localhost:{port}/afl.html in your browser")
-#     httpd.serve_forever()
-
-# if __name__ == '__main__':
-#     run() 
 
 
 from flask import Flask, request, jsonify, send_from_directory, render_template
@@ -102,8 +41,6 @@ def epl_page():
     return render_template('epl/epl.html')
 
 
-
-
 @app.route('/afl')
 def afl_page():
     return render_template('afl.html')
@@ -128,24 +65,36 @@ def serve_static(filename):
 def start_flask():
     app.run(port=5000, debug=True, use_reloader=False)
     
-# Start the static file server
-def start_static_server():
-    from http.server import HTTPServer, SimpleHTTPRequestHandler
+# # Start the static file server
+# def start_static_server():
+#     from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-    class CORSRequestHandler(SimpleHTTPRequestHandler):
-        def end_headers(self):
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.send_header('Access-Control-Allow-Methods', 'GET')
-            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
-            return super().end_headers()
+#     class CORSRequestHandler(SimpleHTTPRequestHandler):
+#         def end_headers(self):
+#             self.send_header('Access-Control-Allow-Origin', '*')
+#             self.send_header('Access-Control-Allow-Methods', 'GET')
+#             self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+#             return super().end_headers()
 
-    server_address = ('', 8000)
-    httpd = HTTPServer(server_address, CORSRequestHandler)
-    print("Starting static file server on port 8000")
-    print("Open http://localhost:8000/index.html in your browser")
-    httpd.serve_forever()
+#     server_address = ('', 8000)
+#     httpd = HTTPServer(server_address, CORSRequestHandler)
+#     print("Starting static file server on port 8000")
+#     print("Open http://localhost:8000/index.html in your browser")
+#     httpd.serve_forever()
+
+
+@app.route('/teams')
+def teams():
+    return render_template('teams.html')
+
+
+
+
+@app.route('/data')
+def data():
+    return render_template('data.html')
 
 if __name__ == '__main__':
-    # Run Flask and static server in parallel
-    Thread(target=start_flask).start()
-    start_static_server()
+    app.run(port=5000, debug=True, use_reloader=False)
+
+
