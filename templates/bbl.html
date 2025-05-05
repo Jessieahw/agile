@@ -10,6 +10,7 @@
 
   <!-- styles & scripts -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_results.css') }}">
   <script src="{{ url_for('static', filename='js/navbarscript.js') }}" defer></script>
   <link rel="icon" href="{{ url_for('static', filename='assets/favicon.png') }}" type="image/x-icon">
 </head>
@@ -108,22 +109,35 @@
           </span>
         </button>
       </form>
-      {% if matches_bat %}
-        <h3>Top 10 Similar Batters</h3>
-        <ol>
-          {% for player in matches_bat %}
-            <li>{{ player.name }} (distance: {{ "%.2f"|format(player.distance) }})</li>
-          {% endfor %}
-        </ol>
-      {% endif %}
-
-      {% if matches_bowl %}
-        <h3>Top 10 Similar Bowlers</h3>
-        <ol>
-          {% for player in matches_bowl %}
-            <li>{{ player.name }} (distance: {{ "%.2f"|format(player.distance) }})</li>
-          {% endfor %}
-        </ol>
+      {% if matches_bat or matches_bowl %}
+        <div class="similar-results-flex">
+          {% if matches_bat %}
+            <div class="similar-results">
+              <h3>Top 10 Similar Batters</h3>
+              <ol class="similar-list">
+                {% for player in matches_bat %}
+                  <li>
+                    <span class="similar-player-name">{{ player.name }}</span>
+                    <span class="similar-player-percentage">Similarity: {{'%.2f' % player.similarity}}</span>
+                  </li>
+                {% endfor %}
+              </ol>
+            </div>
+          {% endif %}
+          {% if matches_bowl %}
+            <div class="similar-results">
+              <h3>Top 10 Similar Bowlers</h3>
+              <ol class="similar-list">
+                {% for player in matches_bowl %}
+                  <li>
+                    <span class="similar-player-name">{{ player.name }}</span>
+                    <span class="similar-player-similarity">Similarity: {{'%.2f' % player.similarity}}</span>
+                  </li>
+                {% endfor %}
+              </ol>
+            </div>
+          {% endif %}
+        </div>
       {% endif %}
     </article>
 

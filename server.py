@@ -40,8 +40,6 @@ class Comparison(db.Model):
 with app.app_context():
     db.create_all()
 
-
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -49,10 +47,6 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-
-
-
-
 
 
 # Route for user registration
@@ -109,9 +103,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-
-
-
 @app.route('/')
 def landing_page():
     if 'user_id' not in session:  # Check if the user is logged in
@@ -155,15 +146,16 @@ def get_top_batters(conn, user_stats):
     players = cur.fetchall()
     results = []
     for row in players:
-        # Use only available stats for distance
         dist = (
             (user_stats['bat_runs'] - row['avg_runs']) ** 2 +
             (user_stats['bat_high'] - row['high_score']) ** 2 +
             (user_stats['bat_sr'] - row['avg_strike_rate']) ** 2 +
             (user_stats['bat_avg'] - row['avg_bat_avg']) ** 2
         ) ** 0.5
-        results.append({'name': row['player_name'], 'distance': dist})
-    results.sort(key=lambda x: x['distance'])
+        similarity = 1000 - dist
+        results.append({'name': row['player_name'], 'similarity': similarity})
+    results.sort(key=lambda x: -x['similarity'])
+    print("Top batters:", results[:10])
     return results[:10]
 
 def get_top_bowlers(conn, user_stats):
@@ -188,8 +180,9 @@ def get_top_bowlers(conn, user_stats):
             (user_stats['bowl_runs'] - row['avg_runs']) ** 2 +
             (user_stats['bowl_eco'] - row['avg_eco']) ** 2
         ) ** 0.5
-        results.append({'name': row['player_name'], 'distance': dist})
-    results.sort(key=lambda x: x['distance'])
+        similarity = 1000 - dist
+        results.append({'name': row['player_name'], 'similarity': similarity})
+    results.sort(key=lambda x: -x['similarity'])
     return results[:10]
 
 @app.route('/bbl', methods=['GET', 'POST'])
@@ -208,7 +201,27 @@ def bbl_page():
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
 
-<<<<<<< HEAD
+        # 3. Batting: fetch averages, compute distances, get top 10
+        if all(bat_data.values()):
+            matches_bat = get_top_batters(conn, bat_data)
+
+        # 4. Bowling: fetch averages, compute distances, get top 10
+        if all(bowl_data.values()):
+            matches_bowl = get_top_bowlers(conn, bowl_data)
+
+        conn.close()
+    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
+
+# Route to serve static files (e.g., HTML, CSS, JS)
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
+# # Start Flask server in a separate thread
+# def start_flask():
+#     app.run(port=5000, debug=True, use_reloader=False)
+
+
 @app.route('/teams')
 def teams():
     return render_template('teams.html')
@@ -253,41 +266,6 @@ def search_users():
     # Filter users whose username contains the query (case-insensitive)
     matching_users = [user for user in users if query in user["username"].lower()]
     return jsonify({"users": matching_users})  # Return the matching users as JSON
-
-
-=======
-        # 3. Batting: fetch averages, compute distances, get top 10
-        if all(bat_data.values()):
-            matches_bat = get_top_batters(conn, bat_data)
->>>>>>> 11a2d3309f8072e96895651bb56d0a6832019ae4
-
-        # 4. Bowling: fetch averages, compute distances, get top 10
-        if all(bowl_data.values()):
-            matches_bowl = get_top_bowlers(conn, bowl_data)
-
-        conn.close()
-    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
-
-# Route to serve static files (e.g., HTML, CSS, JS)
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
-
-# # Start Flask server in a separate thread
-# def start_flask():
-#     app.run(port=5000, debug=True, use_reloader=False)
-
-
-<<<<<<< HEAD
-=======
-@app.route('/teams')
-def teams():
-    return render_template('teams.html')
-
-@app.route('/data')
-def data():
-    return render_template('data.html')
->>>>>>> 11a2d3309f8072e96895651bb56d0a6832019ae4
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
