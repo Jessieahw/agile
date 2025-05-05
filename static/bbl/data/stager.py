@@ -2,155 +2,199 @@
 
 import sqlite3, pandas as pd, hashlib, re, math
 from typing import Optional
-# Setup global file paths for ease of use.
+
+# --- Paths to the Data ---
 BATTING_FILE = 'BBL_Batting_Stats_All_Years.xlsx'
 BOWLING_FILE = 'BBL_Bowling_Stats_All_Years.xlsx'
 MATCH_FILE   = 'BBL_Match_Stats_All_Years.xlsx'
 DB_FILE      = 'data.db'
 
-# Utility functions
+# --- Utility functions ---
 def clean(val):
-    if (val is None or (isinstance(val, float) and math.isnan(val))):
+    if val is None or (isinstance(val, float) and math.isnan(val)):
         return None
-    else:
-        return val
+    return val
 
-# UUID Function for each Match
+def normalize_player_name(name: Optional[str]) -> Optional[str]:
+    """
+    Strip out any parenthesized content and trim whitespace.
+    E.g. "John Smith (c & wk)" → "John Smith"
+    """
+    if not name:
+        return None
+    # remove any " ( ... )" fragments
+    cleaned = re.sub(r'\s*\([^)]*\)', '', name).strip()
+    return cleaned or None
+
 def make_match_uuid_via_hash(season: str, match_details: str) -> str:
     base = f"{season}|{match_details}"
     return hashlib.sha1(base.encode('utf-8')).hexdigest()[:16]
 
-# Function to parse team names, from blanks to two teams, using regex recognition of 'vs' (case insensitive) split just once if it is matched.
-# Returns (team1, team2) where either or both could be None.
 def parse_teams(match_details: str) -> tuple[Optional[str], Optional[str]]:
-    if match_details is None:
+    if not match_details:
         return (None, None)
-    parts = re.split(r' vs | Vs | VS ', str(match_details), maxsplit=1, flags=re.IGNORECASE)
-    if len(parts) >= 2:
-        team1 = parts[0].strip()
-        team2 = parts[1].split(',')[0].strip()
+    parts = re.split(r'\bvs\b', str(match_details), maxsplit=1, flags=re.IGNORECASE)
+    if len(parts) == 2:
+        team1 = parts[0].strip() or None
+        team2 = parts[1].split(',')[0].strip() or None
         return (team1, team2)
     return (None, None)
 
-# SQLite Connection + Cahce
+# --- Connect to DB ---
 conn = sqlite3.connect(DB_FILE)
 cur  = conn.cursor()
 
-# Cache for faster lookups.
+# --- Player cache and lookup ---
 player_cache: dict[str, int] = {}
 
-# Certain search function that converts names to the specific id.
 def get_player_id(name: str) -> int:
-    # First check the cache and short circuit the rest to return it fast if found. Otherwise continue.
-    if name in player_cache:
-        return player_cache[name]
-    # Get the first matching name.
-    cur.execute('SELECT player_id FROM BBL_Players WHERE player_name = ?', (name,))
-    res = cur.fetchone()
-    if res:
-        # Get player id if it exists.
-        pid = res[0]
-    else:
-        # If no player id is found, create one and use that one instead.
-        cur.execute('INSERT INTO BBL_Players (player_name) VALUES (?)', (name,))
-        pid = cur.lastrowid
+    """
+    Return the player_id for 'name'.  Matching happens in this order:
+     1) exact (case-insensitive)
+     2) substring match (new name in existing name, or vice-versa)
+     3) insert new player
+    """
+    key = name.lower()
+    if key in player_cache:
+        return player_cache[key]
 
-    # Add it to the cache, then return it
-    player_cache[name] = pid
+    # 1) exact match
+    cur.execute(
+        "SELECT player_id FROM BBL_Players WHERE lower(player_name)=?",
+        (key,)
+    )
+    row = cur.fetchone()
+    if row:
+        pid = row[0]
+    else:
+        # 2) substring match
+        cur.execute("SELECT player_id, player_name FROM BBL_Players")
+        pid = None
+        for existing_id, existing_name in cur.fetchall():
+            en = existing_name.lower()
+            if key in en or en in key:
+                pid = existing_id
+                break
+
+        # 3) insert new
+        if pid is None:
+            cur.execute(
+                "INSERT INTO BBL_Players (player_name) VALUES (?)",
+                (name,)
+            )
+            pid = cur.lastrowid
+
+    player_cache[key] = pid
     return pid
 
-# FIRST: We will load matches.
+# --- STEP 1: Load matches ---
 print('Loading match list …')
 match_df = pd.read_excel(MATCH_FILE)
-# Clean column names of trailing or preceding blanks.
 match_df.columns = match_df.columns.str.strip()
 
-# Iterate through each row via Panda's iterrows() function:
 for _, row in match_df.iterrows():
-    # Extract and clean the season, match details, generate the uuid hash, and get the team names (if any).
     season        = clean(row.get('Season'))
     match_details = clean(row.get('Teams'))
     mhash         = make_match_uuid_via_hash(season, match_details)
     team1, team2  = parse_teams(match_details)
 
-    # Insert to the DB.
-    cur.execute('''INSERT OR IGNORE INTO BBL_Matches (
-            match_hash, season, date, time, team1, team2, winner, link)
-            VALUES (?,?,?,?,?,?,?,?)''', (
-        mhash, season, clean(row.get('Date')), clean(row.get('Time')),
-        team1, team2, clean(row.get('Winners')), clean(row.get('Links'))
+    cur.execute('''
+        INSERT OR IGNORE INTO BBL_Matches (
+            match_hash, season, date, time, team1, team2, winner, link
+        ) VALUES (?,?,?,?,?,?,?,?)
+    ''', (
+        mhash,
+        season,
+        clean(row.get('Date')),
+        clean(row.get('Time')),
+        team1,
+        team2,
+        clean(row.get('Winners')),
+        clean(row.get('Links'))
     ))
-# Commit all changes:
 conn.commit()
 print('Matches loaded.')
 
-# SECOND: We will load the batting innings next.
+# --- STEP 2: Load batting innings ---
 print('Loading batting innings …')
 bat_df = pd.read_excel(BATTING_FILE)
 bat_df.columns = bat_df.columns.str.strip()
 
-# Iterate through each row via Pandas function as done before:
 for _, row in bat_df.iterrows():
-    # Get Player name if it exists. In any case, continue.
-    player = clean(row.get('Batsman Names'))
+    raw_name = clean(row.get('Batsman Names'))
+    player   = normalize_player_name(raw_name)
     if not player:
         continue
 
-    # Get the clean season [name], uuid hash, and the player id.
     season = clean(row.get('Season'))
     mhash  = make_match_uuid_via_hash(season, clean(row.get('Match Details')))
     pid    = get_player_id(player)
 
-    # Insert to the database.
-    cur.execute('''INSERT INTO BBL_BattingInnings (
+    cur.execute('''
+        INSERT INTO BBL_BattingInnings (
             player_id, match_hash, season, date, stadium, city, team_playing,
             total_runs_innings, total_wickets_innings, runs, balls, fours,
-            sixes, strike_rate, dismissal)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (
-        pid, mhash, season, clean(row.get('Date')), clean(row.get('Stadium')),
-        clean(row.get('City')), clean(row.get('Team Playing')),
-        clean(row.get('Total Runs')), clean(row.get('Total Wickets')),
-        clean(row.get('Runs Scored')), clean(row.get('Balls Played')),
-        clean(row.get('Fours')), clean(row.get('Sixes')),
-        clean(row.get('Strike Rate')), clean(row.get('Out/Not Out'))
+            sixes, strike_rate, dismissal
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    ''', (
+        pid,
+        mhash,
+        season,
+        clean(row.get('Date')),
+        clean(row.get('Stadium')),
+        clean(row.get('City')),
+        clean(row.get('Team Playing')),
+        clean(row.get('Total Runs')),
+        clean(row.get('Total Wickets')),
+        clean(row.get('Runs Scored')),
+        clean(row.get('Balls Played')),
+        clean(row.get('Fours')),
+        clean(row.get('Sixes')),
+        clean(row.get('Strike Rate')),
+        clean(row.get('Out/Not Out'))
     ))
-# Commit all changes.
 conn.commit()
 print('Batting innings loaded.')
 
-# THIRD (and final step): We will load the bowling innings data.
+# --- STEP 3: Load bowling innings ---
 print('Loading bowling innings …')
 bowl_df = pd.read_excel(BOWLING_FILE)
-# As before, clean up the column names.
 bowl_df.columns = bowl_df.columns.str.strip()
 
-# Iterate through the rows of the data:
 for _, row in bowl_df.iterrows():
-    # Get the bowler name if it exists.
-    player = clean(row.get('Bowler Name'))
+    raw_name = clean(row.get('Bowler Name'))
+    player   = normalize_player_name(raw_name)
     if not player:
         continue
 
-    # Get the clean season name, uuid hash of the match, and the player id.
     season = clean(row.get('Season'))
     mhash  = make_match_uuid_via_hash(season, clean(row.get('Match Details')))
     pid    = get_player_id(player)
 
-    # Insert the row to the database
-    cur.execute('''INSERT INTO BBL_BowlingInnings (
+    cur.execute('''
+        INSERT INTO BBL_BowlingInnings (
             player_id, match_hash, season, date, stadium, city, team_bowling,
             overs, maidens, runs, wickets, economy, no_balls, wides,
-            total_runs_innings, total_wickets_innings)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (
-        pid, mhash, season, clean(row.get('Date')), clean(row.get('Stadium')),
-        # Clean the city, overs, wickets, no balls, and total runs conceded columns before executed the parameterized query.
-        clean(row.get('City')), clean(row.get('Team Bowling')),
-        clean(row.get('Overs')), clean(row.get('Maidens')), clean(row.get('Runs')),
-        clean(row.get('Wickets')), clean(row.get('Economies')),
-        clean(row.get('No Balls')), clean(row.get('Wides')),
-        clean(row.get('Total Runs Conceeded')), clean(row.get('Total Wickets Taken'))
+            total_runs_innings, total_wickets_innings
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    ''', (
+        pid,
+        mhash,
+        season,
+        clean(row.get('Date')),
+        clean(row.get('Stadium')),
+        clean(row.get('City')),
+        clean(row.get('Team Bowling')),
+        clean(row.get('Overs')),
+        clean(row.get('Maidens')),
+        clean(row.get('Runs')),
+        clean(row.get('Wickets')),
+        clean(row.get('Economies')),
+        clean(row.get('No Balls')),
+        clean(row.get('Wides')),
+        clean(row.get('Total Runs Conceeded')),
+        clean(row.get('Total Wickets Taken'))
     ))
-# Commit all changes, close the connection, and done.
 conn.commit()
 print('Bowling innings loaded.')
 
