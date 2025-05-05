@@ -119,7 +119,6 @@
             const avgCards = parseFloat(document.getElementById("avgCards").value);
             const shotAccuracy = parseFloat(document.getElementById("shotAccuracy").value);
             
-            console.log('User Input:', { avgShots, avgGoals, avgFouls, avgCards, shotAccuracy }); // Debugging: Check user input
 
             if (!avgShots || !avgGoals || !avgFouls || !avgCards || !shotAccuracy) {
                 openModal("Please enter valid stats.");
@@ -136,7 +135,6 @@
             let matchedTeamStats = {};
 
             eplTeams.forEach(team => {
-                console.log('Comparing with team:', team); 
                 const distance = Math.sqrt(
                     Math.pow(avgShots - team['Average Shots per Match'], 2) +
                     Math.pow(avgGoals - team['Average Goals per Match'], 2) +
@@ -165,13 +163,32 @@
                 shotAccuracy: shotAccuracy,
             };
 
-            console.log('Closest Team:', closestTeam);
             openModal(`You are most like: ${closestTeam}`);
 
-            console.log('User Stats:', userStats);
-            console.log('Matched Team Stats:', matchedTeamStats);
-
             visualizeData(userStats, matchedTeamStats);
+
+
+            fetch('/save_comparison', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    avg_shots: avgShots,
+                    avg_goals: avgGoals,
+                    avg_fouls: avgFouls,
+                    avg_cards: avgCards,
+                    shot_accuracy: shotAccuracy,
+                    matched_team: closestTeam,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch(error => {
+                console.error('Error saving comparison:', error);
+            });
         }
     </script>
 
@@ -280,12 +297,12 @@
 
 
 <!-- Part 2: Player Comparison -->
-<div class="white-box">
+<!-- <div class="white-box">
     <h3>Compare Your Stats to EPL Players</h3>
     <p>Enter your stats to see how you compare to professional EPL players:</p>
 
     <!-- Dropdown to select position -->
-    <label for="position">Select Your Position:</label>
+    <!-- <label for="position">Select Your Position:</label>
     <select id="position" name="position" onchange="updateForm()">
         <option value="">--Select Position--</option>
         <option value="Forward">Forward</option>
@@ -295,15 +312,15 @@
     </select>
 
     <!-- Dynamic form fields -->
-    <form id="playerForm">
+    <!-- <form id="playerForm">
         <div id="formFields"></div>
         <button type="button" onclick="comparePlayer()">Compare Your Stats</button>
     </form>
 
     <div id="playerResult"></div>
-</div>
+</div> --> 
 
-<script>
+<!-- <script>
     // Define the fields for each position
     const positionFields = {
         Forward: [
@@ -394,7 +411,7 @@
 
         document.getElementById("playerResult").textContent = result;
     }
-</script>
+</script> -->
 
 
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_style.css') }}">
+</head>
+<body>
+    <div class="header-background">
+        <h1>Login</h1>
+        <p class="subtitle">Access your account to continue</p>
+    </div>
+
+    <div class="content">
+        <div class="form-container">
+            <form method="POST" action="/login" class="form-box">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                <button type="submit" class="form-button">Login</button>
+            </form>
+            <p class="form-footer">Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+    </div>
+</body>
+</html>
