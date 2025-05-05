@@ -46,7 +46,7 @@
       </div>
 
       <!-- ===== USER INPUT TABLES ===== -->
-      <form id="user-stats-form" class="stats-form" action="#" method="post">
+      <form id="user-stats-form" class="stats-form" action="" method="post">
         <!-- Batting -->
         <table class="stat-table">
           <caption>Batting&nbsp;Stats</caption>
@@ -101,13 +101,30 @@
           </tbody>
         </table>
 
-        <button class="submit-btn">
+        <button class="submit-btn" type="submit">
           <span class="flip-box">
             <span class="flip-face flip-face-front">Compare my stats</span>
-            <span class="flip-face flip-face-back">Compare my stats</span>
+            <span class="flip-face flip-face-back">Submit</span>
           </span>
         </button>
       </form>
+      {% if matches_bat %}
+        <h3>Top 10 Similar Batters</h3>
+        <ol>
+          {% for player in matches_bat %}
+            <li>{{ player.name }} (distance: {{ "%.2f"|format(player.distance) }})</li>
+          {% endfor %}
+        </ol>
+      {% endif %}
+
+      {% if matches_bowl %}
+        <h3>Top 10 Similar Bowlers</h3>
+        <ol>
+          {% for player in matches_bowl %}
+            <li>{{ player.name }} (distance: {{ "%.2f"|format(player.distance) }})</li>
+          {% endfor %}
+        </ol>
+      {% endif %}
     </article>
 
     <!-- other articles unchanged -->
