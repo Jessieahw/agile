@@ -17,13 +17,16 @@ def clean(val):
 
 def normalize_player_name(name: Optional[str]) -> Optional[str]:
     """
-    Strip out any parenthesized content and trim whitespace.
-    E.g. "John Smith (c & wk)" → "John Smith"
+    Strip out any parenthesized content, remove periods, trim whitespace.
+    E.g. "J. Ball (c & wk)" → "J Ball"
     """
     if not name:
         return None
-    # remove any " ( ... )" fragments
-    cleaned = re.sub(r'\s*\([^)]*\)', '', name).strip()
+    # remove parenthesis and contents
+    no_paren = re.sub(r'\s*\([^)]*\)', '', name)
+    # remove periods
+    no_dot = no_paren.replace('.', '')
+    cleaned = no_dot.strip()
     return cleaned or None
 
 def make_match_uuid_via_hash(season: str, match_details: str) -> str:
@@ -49,10 +52,11 @@ player_cache: dict[str, int] = {}
 
 def get_player_id(name: str) -> int:
     """
-    Return the player_id for 'name'.  Matching happens in this order:
-     1) exact (case-insensitive)
-     2) substring match (new name in existing name, or vice-versa)
-     3) insert new player
+    Return the player_id for 'name', matching in this order:
+      1) exact (case-insensitive)
+      2) substring match (one name contained in the other)
+      3) same last-name + first-initial vs full-name
+      4) insert new player
     """
     key = name.lower()
     if key in player_cache:
@@ -71,12 +75,24 @@ def get_player_id(name: str) -> int:
         cur.execute("SELECT player_id, player_name FROM BBL_Players")
         pid = None
         for existing_id, existing_name in cur.fetchall():
-            en = existing_name.lower()
-            if key in en or en in key:
+            en_lower = existing_name.lower()
+            # substring check
+            if key in en_lower or en_lower in key:
                 pid = existing_id
                 break
 
-        # 3) insert new
+            # 3) first-initial vs full-name on same last-name
+            kp = key.split()
+            ep = en_lower.split()
+            if len(kp) >= 2 and len(ep) >= 2:
+                if kp[-1] == ep[-1]:
+                    f_k, f_e = kp[0], ep[0]
+                    # e.g. f_k = 'j', f_e = 'jake', or vice-versa
+                    if (len(f_k) == 1 and f_k == f_e[0]) or (len(f_e) == 1 and f_e == f_k[0]):
+                        pid = existing_id
+                        break
+
+        # 4) insert new
         if pid is None:
             cur.execute(
                 "INSERT INTO BBL_Players (player_name) VALUES (?)",
