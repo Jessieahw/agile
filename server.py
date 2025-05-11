@@ -8,6 +8,7 @@ import os
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from bbl import BBLBestMatchFunctions as BBL_BMF
 from functools import wraps
 
 # Initialize Flask app
@@ -126,62 +127,6 @@ def afl_page():
 def nba_page():
     return render_template('nba.html')
 
-# BBL PAGE SECTION:
-def get_top_batters(conn, user_stats):
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT p.player_name,
-               AVG(b.runs) AS avg_runs,
-               MAX(b.runs) AS high_score,
-               AVG(b.runs * 1.0 / NULLIF(b.balls,0)) AS avg_strike_rate,
-               AVG(b.runs) * 1.0 / COUNT(*) AS avg_bat_avg
-        FROM BBL_Players p
-        JOIN BBL_BattingInnings b ON p.player_id = b.player_id
-        GROUP BY p.player_id
-        HAVING COUNT(*) > 5
-    """)
-    players = cur.fetchall()
-    results = []
-    for row in players:
-        dist = (
-            (user_stats['bat_runs'] - row['avg_runs']) ** 2 +
-            (user_stats['bat_high'] - row['high_score']) ** 2 +
-            (user_stats['bat_sr'] - row['avg_strike_rate']) ** 2 +
-            (user_stats['bat_avg'] - row['avg_bat_avg']) ** 2
-        ) ** 0.5
-        similarity = 1000 - dist
-        results.append({'name': row['player_name'], 'similarity': similarity})
-    results.sort(key=lambda x: -x['similarity'])
-    print("Top batters:", results[:10])
-    return results[:10]
-
-def get_top_bowlers(conn, user_stats):
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT p.player_name,
-               AVG(bi.overs) AS avg_overs,
-               AVG(bi.wickets) AS avg_wkts,
-               AVG(bi.runs) AS avg_runs,
-               AVG(bi.economy) AS avg_eco
-        FROM BBL_Players p
-        JOIN BBL_BowlingInnings bi ON p.player_id = bi.player_id
-        GROUP BY p.player_id
-        HAVING COUNT(*) > 5
-    """)
-    players = cur.fetchall()
-    results = []
-    for row in players:
-        dist = (
-            (user_stats['bowl_overs'] - row['avg_overs']) ** 2 +
-            (user_stats['bowl_wkts'] - row['avg_wkts']) ** 2 +
-            (user_stats['bowl_runs'] - row['avg_runs']) ** 2 +
-            (user_stats['bowl_eco'] - row['avg_eco']) ** 2
-        ) ** 0.5
-        similarity = 1000 - dist
-        results.append({'name': row['player_name'], 'similarity': similarity})
-    results.sort(key=lambda x: -x['similarity'])
-    return results[:10]
-
 @app.route('/bbl', methods=['GET', 'POST'])
 def bbl_page():
     matches_bat = []
@@ -200,17 +145,15 @@ def bbl_page():
 
         # 3. Batting: fetch averages, compute distances, get top 10
         if all(bat_data.values()):
-            matches_bat = get_top_batters(conn, bat_data)
+            matches_bat = BBL_BMF.get_top_batters(conn, bat_data)
 
         # 4. Bowling: fetch averages, compute distances, get top 10
         if all(bowl_data.values()):
-            matches_bowl = get_top_bowlers(conn, bowl_data)
+            matches_bowl = BBL_BMF.get_top_bowlers(conn, bowl_data)
 
         conn.close()
     return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
 
-<<<<<<< HEAD
-=======
 # Route to serve static files (e.g., HTML, CSS, JS)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -220,7 +163,6 @@ def serve_static(filename):
 # def start_flask():
 #     app.run(port=5000, debug=True, use_reloader=False)
 
->>>>>>> f4e3dfb3ecb48e40e2d715e3e5586056e661c007
 
 @app.route('/teams')
 def teams():
@@ -308,22 +250,6 @@ def search_users():
     matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
     return jsonify({"users": [user.username for user in matching_users]})
 
-<<<<<<< HEAD
-
-        
-# Route to serve static files (e.g., HTML, CSS, JS)
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
-
-# # Start Flask server in a separate thread
-# def start_flask():
-#     app.run(port=5000, debug=True, use_reloader=False)
-
-
-
-=======
->>>>>>> f4e3dfb3ecb48e40e2d715e3e5586056e661c007
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
 
