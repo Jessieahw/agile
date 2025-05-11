@@ -84,6 +84,7 @@ def teams(team_key=None):
 
 
 @nba_bp.route('/data', methods=['GET', 'POST'])
+@nba_bp.route('/data.html', methods=['GET', 'POST'])
 def data():
     if request.method == 'POST':
         wpct   = float(request.form.get('wpct', 0))
