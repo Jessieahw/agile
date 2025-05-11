@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,7 +48,7 @@
     <div class="offcanvas-body p-0">
       <ul class="nav nav-pills flex-column mb-0">
         <li class="nav-item"><a href="/"          class="nav-link">Home</a></li>
-        <li class="nav-item"><a href="teams.html" class="nav-link active">Teams</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.teams') }}" class="nav-link active">Teams</a></li>
         <li class="nav-item"><a href="data.html"  class="nav-link">Your Team</a></li>
         <li class="nav-item"><a href="#"          class="nav-link">Reports</a></li>
       </ul>
@@ -55,15 +56,48 @@
   </div>
 
   <main class="flex-fill">
-    <!-- Logo container: always white behind it -->
-    <div class="container my-4 text-center">
-      <img
-        id="teamLogo"
-        src=""
-        class="img-fluid mx-auto d-block"
-        style="max-height:150px; display:none;"
-      />
+    <!-- 1) Carousel of all team logos -->
+    <div class="container my-4">
+      <div id="logoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000"  ">
+        <div class="carousel-inner">
+          {% for key, logo in logos.items() %}
+          <div
+          class="carousel-item{% if key==selected_team %} active{% elif not selected_team and loop.first %} active{% endif %}"
+          data-team="{{ key }}"
+        >
+              <img
+                src="{{ logo }}"
+                class="d-block mx-auto"
+                style="height: 250px; object-fit: contain;"
+                alt="{{ teams[key] }} Logo"
+                
+              >
+            </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#logoCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#logoCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
     </div>
+    
+      <button class="carousel-control-prev" type="button"
+              data-bs-target="#logoCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button"
+              data-bs-target="#logoCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
 
     <!-- templates/teams.html -->
 <div class="container my-4" id="cardsWrapper">
@@ -163,6 +197,19 @@
     </div>
   </div>
 </div>
+
+<script>
+  // 1. Get a real static path from Flask
+  const logoBase = "{{ url_for('static', filename='nba_logos/') }}";
+
+  // 2. Build teamLogos on window so script.js can see it
+  window.teamLogos = {};
+  document.querySelectorAll('#teamSelect option').forEach(opt => {
+    if (!opt.value) return;
+    window.teamLogos[opt.value] = `${logoBase}${opt.value}.png`;
+  });
+</script>
+
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
