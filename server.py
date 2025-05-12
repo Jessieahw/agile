@@ -128,8 +128,25 @@ import csv
 
 @app.route('/epl')
 def epl_page():
+    # Query all teams from the database
     team_data = Team.query.all()
-    return render_template('epl/epl.html', team_data=team_data)
+
+    # Serialize the team data into a list of dictionaries
+    serialized_team_data = [
+        {
+            'name': team.name,
+            'avg_shots': team.avg_shots,
+            'avg_goals': team.avg_goals,
+            'avg_fouls': team.avg_fouls,
+            'avg_cards': team.avg_cards,
+            'shot_accuracy': team.shot_accuracy
+        }
+        for team in team_data
+    ]
+
+    # Pass the serialized data to the template
+    return render_template('epl/epl.html', team_data=serialized_team_data)
+
 
 
 @app.route('/afl')
@@ -273,22 +290,23 @@ def save_comparison():
 @app.route('/get_user_results', methods=['GET'])
 @login_required
 def get_user_results():
-    user_results = UserResult.query.filter_by(user_id=session['user_id']).order_by(UserResult.timestamp.desc()).all()
+    # Fetch the latest result for the current user
+    latest_result = UserResult.query.filter_by(user_id=session['user_id']).order_by(UserResult.timestamp.desc()).first()
 
-    results = [
-        {
-            'avg_shots': result.avg_shots,
-            'avg_goals': result.avg_goals,
-            'avg_fouls': result.avg_fouls,
-            'avg_cards': result.avg_cards,
-            'shot_accuracy': result.shot_accuracy,
-            'matched_team': result.matched_team,
-            'timestamp': result.timestamp.strftime('%Y-%m-%d %H:%M:%S')
-        }
-        for result in user_results
-    ]
+    if not latest_result:
+        return jsonify({'message': 'No results found for the current user'}), 404
 
-    return jsonify(results)
+    result = {
+        'avg_shots': latest_result.avg_shots,
+        'avg_goals': latest_result.avg_goals,
+        'avg_fouls': latest_result.avg_fouls,
+        'avg_cards': latest_result.avg_cards,
+        'shot_accuracy': latest_result.shot_accuracy,
+        'matched_team': latest_result.matched_team,
+        'timestamp': latest_result.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    }
+
+    return jsonify(result)
 
 
 # Route to handle user search
