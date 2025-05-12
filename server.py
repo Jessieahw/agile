@@ -115,22 +115,21 @@ def landing_page():
 def forum_page():
     return render_template('forum.html')
 
-
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    avg_shots = db.Column(db.Float, nullable=False)
+    avg_goals = db.Column(db.Float, nullable=False)
+    avg_fouls = db.Column(db.Float, nullable=False)
+    avg_cards = db.Column(db.Float, nullable=False)
+    shot_accuracy = db.Column(db.Float, nullable=False)
 
 import csv
 
 @app.route('/epl')
 def epl_page():
-    # Load team data from the CSV file
-    team_data = []
-    with open('static/epl_data/team_comparison_stats.csv', 'r') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            team_data.append(row)
-
-    # Pass the team data to the template
+    team_data = Team.query.all()
     return render_template('epl/epl.html', team_data=team_data)
-
 
 
 @app.route('/afl')
@@ -177,6 +176,17 @@ def serve_static(filename):
 # def start_flask():
 #     app.run(port=5000, debug=True, use_reloader=False)
 
+@app.route('/get_team_data', methods=['GET'])
+def get_team_data():
+    team_data = Team.query.all()
+    return jsonify([{
+        'name': team.name,
+        'avg_shots': team.avg_shots,
+        'avg_goals': team.avg_goals,
+        'avg_fouls': team.avg_fouls,
+        'avg_cards': team.avg_cards,
+        'shot_accuracy': team.shot_accuracy
+    } for team in team_data])
 
 @app.route('/teams')
 def teams():
