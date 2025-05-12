@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/afl_style.css') }}">
   </head>
   <body>
+    <nav class="navbar">
+        <a href="{{ url_for('landing_page') }}">Home</a>
+        <a href="{{ url_for('forum_page') }}">Forum</a>
+        <a href="{{ url_for('all_posts') }}">Posts</a>
+    </nav>
+
     <div class="header-background">
       <h1>AFL Player Comparison</h1>
     </div>
@@ -50,6 +56,8 @@
       <button class="center-button" onclick="submitStats()">
         <i class="fas fa-chart-line"></i> Compare Stats
       </button>
+
+      <button id="shareButton" class="share-button">Share to Forum</button>
 
       <div class="similar-player-container" id="similarPlayerContainer" style="display: none;">
         <h2>Most Similar AFL Player</h2>

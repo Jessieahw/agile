@@ -1,5 +1,3 @@
-
-
 from flask import Flask, request, jsonify, send_from_directory, render_template
 from threading import Thread
 import sqlite3
@@ -10,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from bbl import BBLBestMatchFunctions as BBL_BMF
 from functools import wraps
+from datetime import datetime
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -97,8 +96,9 @@ def login():
 # Route for user logout
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    return redirect(url_for('login'))
+    # Clear the session to log out the user
+    session.clear()
+    return redirect(url_for('register'))
 
 
 @app.route('/')
@@ -249,6 +249,28 @@ def search_users():
 # Query the database for matching usernames
     matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
     return jsonify({"users": [user.username for user in matching_users]})
+
+# Define a global list to store posts
+posts = []
+
+@app.route('/submit_post', methods=['POST'])
+def submit_post():
+    global posts  # Ensure the global posts list is used
+    post_text = request.form.get('postText')
+    if post_text:
+        # Add the post with username and timestamp
+        posts.append({
+            'username': session.get('user_id', 'Anonymous'),  # Use the logged-in user's ID or 'Anonymous'
+            'text': post_text,
+            'timestamp': datetime.now()
+        })
+    # Sort posts in reverse chronological order (most recent first)
+    posts.sort(key=lambda x: x['timestamp'], reverse=True)
+    return redirect(url_for('all_posts'))
+
+@app.route('/all_posts')
+def all_posts():
+    return render_template('all_posts.html', posts=posts)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
