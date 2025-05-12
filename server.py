@@ -209,8 +209,6 @@ def bbl_page():
         conn.close()
     return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
 
-<<<<<<< HEAD
-=======
 # Route to serve static files (e.g., HTML, CSS, JS)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
@@ -220,7 +218,6 @@ def serve_static(filename):
 # def start_flask():
 #     app.run(port=5000, debug=True, use_reloader=False)
 
->>>>>>> f4e3dfb3ecb48e40e2d715e3e5586056e661c007
 
 @app.route('/teams')
 def teams():
@@ -308,13 +305,12 @@ def search_users():
     matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
     return jsonify({"users": [user.username for user in matching_users]})
 
-<<<<<<< HEAD
 
         
-# Route to serve static files (e.g., HTML, CSS, JS)
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
+# # Route to serve static files (e.g., HTML, CSS, JS)
+# @app.route('/static/<path:filename>')
+# def serve_static(filename):
+#     return send_from_directory('static', filename)
 
 # # Start Flask server in a separate thread
 # def start_flask():
@@ -322,8 +318,6 @@ def serve_static(filename):
 
 
 
-=======
->>>>>>> f4e3dfb3ecb48e40e2d715e3e5586056e661c007
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
 
