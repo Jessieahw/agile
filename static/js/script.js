@@ -212,12 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const teamLogo      = document.getElementById('teamLogo');
   const teamLogoSmall = document.getElementById('teamLogoSmall');
   const teamHeader    = document.getElementById('teamHeader');
-  const teamLogos     = {
-    BOS: 'https://upload.wikimedia.org/wikipedia/en/8/8f/Boston_Celtics.svg',
-    LAL: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Los_Angeles_Lakers_logo.svg',
-    GS:  'https://upload.wikimedia.org/wikipedia/en/0/01/Golden_State_Warriors_logo.svg',
-    MIA: 'https://upload.wikimedia.org/wikipedia/en/f/fb/Miami_Heat_logo.svg'
-  };
+  
+  const teamLogos = window.teamLogos || {};
+
+
+  
 
   if (teamSelect && cardContainer) {
     teamSelect.addEventListener('change', async () => {
@@ -225,9 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // update logos & header
       if (key && teamLogos[key]) {
         const name = teamSelect.options[teamSelect.selectedIndex].text;
-        teamLogo.src        = teamLogos[key];
-        teamLogo.alt        = `${name} Logo`;
-        teamLogo.style.display      = '';
         teamLogoSmall.src   = teamLogos[key];
         teamLogoSmall.alt   = `${name} Logo`;
         teamLogoSmall.style.display = '';
@@ -240,14 +236,18 @@ document.addEventListener('DOMContentLoaded', () => {
       // clear old cards
       cardContainer.innerHTML = '';
       if (key) await fetchAndRenderCards(key);
+      
+      slideToTeam(key);
     });
-
+    
     // auto‐select from URL
     const params = new URLSearchParams(window.location.search);
     const preset = params.get('team');
     if (preset ) {
       teamSelect.value = preset;
       teamSelect.dispatchEvent(new Event('change'));
+
+      slideToTeam(preset);
     }
   }
 
@@ -296,4 +296,62 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+// Grab the carousel element and Bootstrap instance
+const carouselEl = document.getElementById('logoCarousel');
+const carousel   = bootstrap.Carousel.getOrCreateInstance(carouselEl, {
+  interval: 5000,  // or whatever auto‐rotate interval you want
+  wrap:     true   // allow wrap once auto‐rotation restarts
+});
+
+// Lock state and idle timer handle
+let locked    = false;
+let idleTimer = null;
+
+/**
+ * Prevent manual or auto slides while locked
+ */
+carouselEl.addEventListener('slide.bs.carousel', e => {
+  if (locked) {
+    e.preventDefault();
+  }
+});
+
+/**
+ * Jump to the slide for `key`, lock the carousel,
+ * and after 5 minutes, resume auto-rotation from that slide.
+ *
+ * @param {string} key  – the team code, e.g. "LAL"
+ */
+function slideToTeam(key) {
+  if (!carouselEl) return;
+
+  // Find the index of the slide with data-team===key
+  const items = Array.from(carouselEl.querySelectorAll('.carousel-item'));
+  const idx   = items.findIndex(item => item.dataset.team === key);
+  if (idx < 0) return;
+
+  // Temporarily unlock so .to() can run
+  const wasLocked = locked;
+  locked = false;
+
+  // Jump to desired slide
+  carousel.to(idx);
+
+  // Re-lock and pause auto‐rotation
+  locked = true;
+  carousel.pause();
+
+  // Clear any existing idle timer
+  clearTimeout(idleTimer);
+
+  // After 5 minutes (300 000 ms), unlock and restart auto‐rotation
+  idleTimer = setTimeout(() => {
+    locked = false;
+    // ensure we're still on the chosen slide before cycling
+    carousel.to(idx);
+    carousel.cycle();
+  }, 10000);
+}
 
