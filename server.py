@@ -215,49 +215,45 @@ def data():
     return render_template('data.html')
 
 
-
-@app.route('/get_comparison', methods=['GET'])
+@app.route('/get_comparison')
 @login_required
 def get_comparison():
     username = request.args.get('username')
-    selected_user = User.query.filter_by(username=username).first()
+    if not username:
+        return jsonify({'message': 'No username provided'}), 400
 
+    # Get selected user
+    selected_user = User.query.filter_by(username=username).first()
     if not selected_user:
         return jsonify({'message': 'User not found'}), 404
 
-    # Fetch comparison data for the current user and the selected user
-    current_user_data = Comparison.query.filter_by(user_id=session['user_id']).order_by(Comparison.id.desc()).first()
-    selected_user_data = Comparison.query.filter_by(user_id=selected_user.id).first()
+  
+    selected_result = Comparison.query.filter_by(user_id=selected_user.id).order_by(Comparison.id.desc()).first()
+    if not selected_result:
+        return jsonify({'message': 'No results for selected user'}), 404
+
+    current_result = Comparison.query.filter_by(user_id=session['user_id']).order_by(Comparison.id.desc()).first()
+    if not current_result:
+        return jsonify({'message': 'No results for current user'}), 404
 
     return jsonify({
         'currentUser': {
-            'avg_shots': current_user_data.avg_shots,
-            'avg_goals': current_user_data.avg_goals,
-            'avg_fouls': current_user_data.avg_fouls,
-            'avg_cards': current_user_data.avg_cards,
-            'shot_accuracy': current_user_data.shot_accuracy,
-            'matched_team': current_user_data.matched_team
+            'avg_shots': current_result.avg_shots,
+            'avg_goals': current_result.avg_goals,
+            'avg_fouls': current_result.avg_fouls,
+            'avg_cards': current_result.avg_cards,
+            'shot_accuracy': current_result.shot_accuracy,
         },
         'selectedUser': {
             'username': selected_user.username,
-            'avg_shots': selected_user_data.avg_shots,
-            'avg_goals': selected_user_data.avg_goals,
-            'avg_fouls': selected_user_data.avg_fouls,
-            'avg_cards': selected_user_data.avg_cards,
-            'shot_accuracy': selected_user_data.shot_accuracy,
-            'matched_team': selected_user_data.matched_team
+            'avg_shots': selected_result.avg_shots,
+            'avg_goals': selected_result.avg_goals,
+            'avg_fouls': selected_result.avg_fouls,
+            'avg_cards': selected_result.avg_cards,
+            'shot_accuracy': selected_result.shot_accuracy,
         }
     })
-class UserResult(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    avg_shots = db.Column(db.Float, nullable=False)
-    avg_goals = db.Column(db.Float, nullable=False)
-    avg_fouls = db.Column(db.Float, nullable=False)
-    avg_cards = db.Column(db.Float, nullable=False)
-    shot_accuracy = db.Column(db.Float, nullable=False)
-    matched_team = db.Column(db.String(80), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 
 
 
@@ -269,7 +265,7 @@ def save_comparison():
         data = request.json
 
         # Create a new UserResult entry
-        user_result = UserResult(
+        comparison = Comparison(
             user_id=session['user_id'],
             avg_shots=data['avg_shots'],
             avg_goals=data['avg_goals'],
@@ -280,7 +276,7 @@ def save_comparison():
         )
 
         # Save to the database
-        db.session.add(user_result)
+        db.session.add(comparison)
         db.session.commit()
 
         return jsonify({'message': 'Comparison saved successfully!'})
@@ -291,7 +287,7 @@ def save_comparison():
 @login_required
 def get_user_results():
     # Fetch the latest result for the current user
-    latest_result = UserResult.query.filter_by(user_id=session['user_id']).order_by(UserResult.timestamp.desc()).first()
+    latest_result = Comparison.query.filter_by(user_id=session['user_id']).order_by(Comparison.id.desc()).first()
 
     if not latest_result:
         return jsonify({'message': 'No results found for the current user'}), 404
