@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Which EPL Team and Player Are You?</title>
@@ -80,34 +80,12 @@
             document.getElementById("resultModal").style.display = "none";
         }
         
-        let eplTeamss = [];
+        
 
         
 
-        function fetchCSV() {
-            Papa.parse("{{ url_for('static', filename='epl_data/team_comparison_stats.csv') }}", {
-                download: true,
-                header: true,
-                dynamicTyping: true, // Automatically convert numbers
-                complete: function(results) {
-                    eplTeamss = results.data;
-                    console.log('Teams loaded:', eplTeamss);
 
-                    // Enable the button once data is loaded
-                    document.querySelector('button[onclick="recommendTeam()"]').disabled = false;
-                },
-                error: function(error) {
-                    console.error('Error parsing CSV:', error);
-                }
-            });
-        }
-
-        // Disable the button initially
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('button[onclick="recommendTeam()"]').disabled = true;
-            fetchCSV();
-        });
-
+       
 
 
         function recommendTeam() {
@@ -320,126 +298,6 @@
 
 
 
-
-
-
-
-<!-- Part 2: Player Comparison -->
-<!-- <div class="white-box">
-    <h3>Compare Your Stats to EPL Players</h3>
-    <p>Enter your stats to see how you compare to professional EPL players:</p>
-
-    <!-- Dropdown to select position -->
-    <!-- <label for="position">Select Your Position:</label>
-    <select id="position" name="position" onchange="updateForm()">
-        <option value="">--Select Position--</option>
-        <option value="Forward">Forward</option>
-        <option value="Midfielder">Midfielder</option>
-        <option value="Defender">Defender</option>
-        <option value="Goalkeeper">Goalkeeper</option>
-    </select>
-
-    <!-- Dynamic form fields -->
-    <!-- <form id="playerForm">
-        <div id="formFields"></div>
-        <button type="button" onclick="comparePlayer()">Compare Your Stats</button>
-    </form>
-
-    <div id="playerResult"></div>
-</div> --> 
-
-<!-- <script>
-    // Define the fields for each position
-    const positionFields = {
-        Forward: [
-            { label: "Goals", id: "goals" },
-            { label: "Assists", id: "assists" },
-            { label: "Shots", id: "shots" },
-            { label: "Shots on Target", id: "shotsOnTarget" },
-            { label: "Shooting Accuracy (%)", id: "shootingAccuracy" }
-        ],
-        Midfielder: [
-            { label: "Goals", id: "goals" },
-            { label: "Assists", id: "assists" },
-            { label: "Passes", id: "passes" },
-            { label: "Tackles", id: "tackles" },
-            { label: "Interceptions", id: "interceptions" }
-        ],
-        Defender: [
-            { label: "Tackles", id: "tackles" },
-            { label: "Interceptions", id: "interceptions" },
-            { label: "Clearances", id: "clearances" },
-            { label: "Blocked Shots", id: "blockedShots" },
-            { label: "Duels Won", id: "duelsWon" }
-        ],
-        Goalkeeper: [
-            { label: "Clean Sheets", id: "cleanSheets" },
-            { label: "Goals Conceded", id: "goalsConceded" },
-            { label: "Saves", id: "saves" },
-            { label: "Penalties Saved", id: "penaltiesSaved" },
-            { label: "High Claims", id: "highClaims" }
-        ]
-    };
-
-    // Function to update the form based on the selected position
-    function updateForm() {
-        const position = document.getElementById("position").value;
-        const formFields = document.getElementById("formFields");
-
-        // Clear existing fields
-        formFields.innerHTML = "";
-
-        // Add fields for the selected position
-        if (positionFields[position]) {
-            positionFields[position].forEach(field => {
-                const label = document.createElement("label");
-                label.setAttribute("for", field.id);
-                label.textContent = field.label;
-
-                const input = document.createElement("input");
-                input.setAttribute("type", "number");
-                input.setAttribute("id", field.id);
-                input.setAttribute("name", field.id);
-                input.setAttribute("required", true);
-
-                formFields.appendChild(label);
-                formFields.appendChild(input);
-            });
-        }
-    }
-
-    // Function to compare player stats (example logic)
-    function comparePlayer() {
-        const position = document.getElementById("position").value;
-        if (!position) {
-            alert("Please select a position.");
-            return;
-        }
-
-        const userStats = {};
-        positionFields[position].forEach(field => {
-            userStats[field.id] = parseFloat(document.getElementById(field.id).value) || 0;
-        });
-
-        console.log("User Stats:", userStats);
-
-        // Example comparison logic 
-        // const examplePlayer = {
-        //     Forward: { goals: 20, assists: 10, shots: 50, shotsOnTarget: 30, shootingAccuracy: 60 },
-        //     Midfielder: { goals: 10, assists: 15, passes: 2000, tackles: 50, interceptions: 30 },
-        //     Defender: { tackles: 100, interceptions: 80, clearances: 150, blockedShots: 20, duelsWon: 120 },
-        //     Goalkeeper: { cleanSheets: 15, goalsConceded: 30, saves: 100, penaltiesSaved: 5, highClaims: 50 }
-        // };
-
-        const comparison = examplePlayer[position];
-        let result = `Comparison for ${position}: `;
-        for (const stat in userStats) {
-            result += `${stat}: You (${userStats[stat]}) vs Pro (${comparison[stat]}) | `;
-        }
-
-        document.getElementById("playerResult").textContent = result;
-    }
-</script> -->
 
 
 
