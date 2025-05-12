@@ -11,6 +11,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from bbl import BBLBestMatchFunctions as BBL_BMF
 from functools import wraps
 
+from datetime import datetime
+
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Required for session management
@@ -115,9 +117,21 @@ def forum_page():
 
 
 
+import csv
+
 @app.route('/epl')
 def epl_page():
-    return render_template('epl/epl.html')
+    # Load team data from the CSV file
+    team_data = []
+    with open('static/epl_data/team_comparison_stats.csv', 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            team_data.append(row)
+
+    # Pass the team data to the template
+    return render_template('epl/epl.html', team_data=team_data)
+
+
 
 @app.route('/afl')
 def afl_page():
@@ -207,6 +221,18 @@ def get_comparison():
             'matched_team': selected_user_data.matched_team
         }
     })
+class UserResult(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    avg_shots = db.Column(db.Float, nullable=False)
+    avg_goals = db.Column(db.Float, nullable=False)
+    avg_fouls = db.Column(db.Float, nullable=False)
+    avg_cards = db.Column(db.Float, nullable=False)
+    shot_accuracy = db.Column(db.Float, nullable=False)
+    matched_team = db.Column(db.String(80), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 
 @app.route('/save_comparison', methods=['POST'])
 @login_required
@@ -214,11 +240,10 @@ def save_comparison():
     try:
         # Get the JSON data sent from the frontend
         data = request.json
-        print("Received data:", data)  # Debugging
 
-        # Create a new Comparison object
-        comparison = Comparison(
-            user_id=session['user_id'],  # Associate with the logged-in user
+        # Create a new UserResult entry
+        user_result = UserResult(
+            user_id=session['user_id'],
             avg_shots=data['avg_shots'],
             avg_goals=data['avg_goals'],
             avg_fouls=data['avg_fouls'],
@@ -227,17 +252,33 @@ def save_comparison():
             matched_team=data['matched_team']
         )
 
-        # Save the comparison to the database
-        db.session.add(comparison)
+        # Save to the database
+        db.session.add(user_result)
         db.session.commit()
 
         return jsonify({'message': 'Comparison saved successfully!'})
     except Exception as e:
-        print("Error saving comparison:", e)
-        return jsonify({'message': 'Failed to save comparison'}), 500
+        return jsonify({'message': f'Error saving comparison: {str(e)}'}), 500
 
+@app.route('/get_user_results', methods=['GET'])
+@login_required
+def get_user_results():
+    user_results = UserResult.query.filter_by(user_id=session['user_id']).order_by(UserResult.timestamp.desc()).all()
 
+    results = [
+        {
+            'avg_shots': result.avg_shots,
+            'avg_goals': result.avg_goals,
+            'avg_fouls': result.avg_fouls,
+            'avg_cards': result.avg_cards,
+            'shot_accuracy': result.shot_accuracy,
+            'matched_team': result.matched_team,
+            'timestamp': result.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for result in user_results
+    ]
 
+    return jsonify(results)
 
 
 # Route to handle user search
