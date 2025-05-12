@@ -9,10 +9,15 @@
     
 </head>
 <body>
+    
     <header class="header-bar">
         <img src="{{ url_for('static', filename='assets/Premier_League_Logo.svg') }}" alt="Premier League Logo" class="logo">
         <h1>Which EPL Team and Player Are You?</h1>
     </header>
+    <script>
+        // Preload team data from the server
+        const eplTeams = JSON.parse('{{ team_data|tojson|escapejs }}');
+    </script>
 
     <!-- Part 1: Team Recommendation -->
      <div class="content">
@@ -53,7 +58,6 @@
         </div>
     </div>
 
-        
     <script>
         function openModal(resultText) {
     console.log('Opening modal with text:', resultText); // Debugging: Check the text being passed
@@ -76,7 +80,7 @@
             document.getElementById("resultModal").style.display = "none";
         }
         
-        let eplTeams = [];
+        let eplTeamss = [];
 
         
 
@@ -86,8 +90,8 @@
                 header: true,
                 dynamicTyping: true, // Automatically convert numbers
                 complete: function(results) {
-                    eplTeams = results.data;
-                    console.log('Teams loaded:', eplTeams);
+                    eplTeamss = results.data;
+                    console.log('Teams loaded:', eplTeamss);
 
                     // Enable the button once data is loaded
                     document.querySelector('button[onclick="recommendTeam()"]').disabled = false;
