@@ -2,6 +2,7 @@ import os
 from math import sqrt
 from sqlalchemy import (create_engine, Column, Integer, String, Float, ForeignKey, func, null)
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy import or_, case
 
 #  ORM setup 
 Base = declarative_base()
@@ -30,6 +31,17 @@ class BBLBowlingInnings(Base):
     economy   = Column(Float)
 
     player = relationship('BBLPlayer', backref='bowling_innings')
+
+class BBLMatch(Base):
+    __tablename__ = 'BBL_Matches'
+    match_hash = Column(String, primary_key=True)
+    season     = Column(String)
+    date       = Column(String)
+    time       = Column(String)
+    team1      = Column(String)
+    team2      = Column(String)
+    winner     = Column(String)      # <-- assumed present in DB build‑script
+    link       = Column(String)      # <-- assumed present in DB build‑script
 
 # Single engine / session factory for the module
 DB_PATH = os.path.join(os.path.dirname(__file__),
@@ -149,3 +161,126 @@ class BBLBestMatchFunctions:
         session.close()
         scored.sort(key=lambda r: -r['similarity'])
         return scored[:10]
+    
+    @classmethod
+    def search_players(cls, query: str, limit: int = 20):
+        """Return players whose name contains *query* with summary batting & bowling stats."""
+        session = SessionLocal()
+        if not query:
+            return []
+        name_filter = BBLPlayer.player_name.ilike(f"%{query}%")
+
+        # Batting sub‑query
+        batting = (
+            session.query(
+                BBLPlayer.player_name.label('name'),
+                func.count().label('innings'),
+                func.sum(BBLBattingInnings.runs).label('runs'),
+                func.max(BBLBattingInnings.runs).label('high_score'),
+                (func.sum(BBLBattingInnings.runs).cast(Float) / func.nullif(func.count(), 0)).label('bat_avg'),
+                func.avg(BBLBattingInnings.runs * 100.0 / func.nullif(BBLBattingInnings.balls, 0)).label('bat_sr')
+            )
+            .join(BBLBattingInnings, BBLPlayer.player_id == BBLBattingInnings.player_id)
+            .filter(name_filter)
+            .group_by(BBLPlayer.player_id)
+            .subquery()
+        )
+
+        # Bowling sub‑query
+        bowling = (
+            session.query(
+                BBLPlayer.player_name.label('name'),
+                func.sum(BBLBowlingInnings.wickets).label('wickets'),
+                (func.sum(BBLBowlingInnings.runs).cast(Float) / func.nullif(func.sum(BBLBowlingInnings.wickets), 0)).label('bowl_avg'),
+                (func.sum(BBLBowlingInnings.runs).cast(Float) / func.nullif(func.sum(BBLBowlingInnings.overs), 0)).label('eco')
+            )
+            .join(BBLBowlingInnings, BBLPlayer.player_id == BBLBowlingInnings.player_id)
+            .filter(name_filter)
+            .group_by(BBLPlayer.player_id)
+            .subquery()
+        )
+
+        joined = (
+            session.query(
+                batting.c.name,
+                batting.c.innings,
+                batting.c.runs,
+                batting.c.high_score,
+                batting.c.bat_avg,
+                batting.c.bat_sr,
+                bowling.c.wickets,
+                bowling.c.bowl_avg,
+                bowling.c.eco
+            )
+            .outerjoin(bowling, batting.c.name == bowling.c.name)
+            .order_by(batting.c.runs.desc())
+            .limit(limit)
+            .all()
+        )
+
+        players = [dict(r._asdict()) for r in joined]
+        session.close()
+        return players
+
+    # ---------------------------
+    #  TEAM LIST (distinct names)
+    # ---------------------------
+    @classmethod
+    def list_teams(cls):
+        with SessionLocal() as s:
+            rows = (
+                s.query(BBLMatch.team1).filter(BBLMatch.team1.isnot(None)).distinct().all() +
+                s.query(BBLMatch.team2).filter(BBLMatch.team2.isnot(None)).distinct().all()
+            )
+            names = {r[0] for r in rows if r[0]}     # safeguard
+            return sorted(names)
+
+    # --------------------------------------
+    #  Aggregate stats for a single franchise
+    # --------------------------------------
+    @classmethod
+    def get_team_stats(cls, team):
+        team = team.upper()
+        with SessionLocal() as s:
+            q = s.query(BBLMatch).filter(or_(BBLMatch.team1 == team,
+                                             BBLMatch.team2 == team))
+            matches = q.all()
+
+            if not matches:
+                return {}
+
+            wins  = 0
+            opp_wins  = {}
+            opp_losses = {}
+            seasons_won = set()
+
+            for m in matches:
+                opponent = m.team2 if m.team1 == team else m.team1
+                is_win = m.winner and m.winner.upper().startswith(team)
+                if is_win:
+                    wins += 1
+                    opp_wins[opponent] = opp_wins.get(opponent, 0) + 1
+                    if 'FINAL' in (m.link or '').upper():
+                        seasons_won.add(m.season)
+                else:
+                    opp_losses[opponent] = opp_losses.get(opponent, 0) + 1
+
+            total   = len(matches)
+            losses  = total - wins
+            win_pct = round(100 * wins / total, 2)
+
+            best_vs  = max(opp_wins.items(),   key=lambda x: x[1])[0] if opp_wins   else None
+            worst_vs = max(opp_losses.items(), key=lambda x: x[1])[0] if opp_losses else None
+
+            return {
+                'team': team,
+                'matches': total,
+                'wins': wins,
+                'losses': losses,
+                'win_pct': win_pct,
+                'best_vs': best_vs,
+                'best_vs_wins': opp_wins.get(best_vs, 0) if best_vs else 0,
+                'worst_vs': worst_vs,
+                'worst_vs_losses': opp_losses.get(worst_vs, 0) if worst_vs else 0,
+                'seasons_won': sorted(seasons_won),
+            }

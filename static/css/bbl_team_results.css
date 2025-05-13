@@ -1,0 +1,23 @@
+.team‑select{
+  font: 600 1rem Montserrat, sans-serif;
+  padding: .4rem .6rem;
+  border: 2px solid #222;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.team‑table{
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Montserrat, sans-serif;
+}
+.team‑table th{
+  background:#111; color:#fff; 
+  padding:.5rem 0;
+  font-size:1.1rem;
+}
+.team‑table td{
+  padding:.4rem .6rem;
+  border-bottom:1px solid #ddd;
+}
+.section‐panel{margin-top:3rem;}

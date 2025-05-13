@@ -183,6 +183,27 @@ def bbl_page():
 
         conn.close()
     return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
+# New Functionality to handle player and team search
+@app.route('/bbl/player_search')
+def bbl_player_search():
+    q = request.args.get('q', '').strip()
+    return jsonify(BBL_BMF.search_players(q)) if q else jsonify([])
+
+@app.route('/bbl/team_search')
+def bbl_team_search():
+    q = request.args.get('q', '').strip()
+    return jsonify(BBL_BMF.search_teams(q)) if q else jsonify([])
+
+# ─────────── TEAM DROPDOWN OPTIONS ───────────
+@app.route('/bbl/team_list')
+def bbl_team_list():
+    return jsonify(BBL_BMF.list_teams())
+
+# ─────────── TEAM STATS ───────────
+@app.route('/bbl/team_stats')
+def bbl_team_stats():
+    team = request.args.get('team', '')
+    return jsonify(BBL_BMF.get_team_stats(team)) if team else jsonify({})
 
 # Route to serve static files (e.g., HTML, CSS, JS)
 @app.route('/static/<path:filename>')

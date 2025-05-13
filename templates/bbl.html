@@ -11,6 +11,8 @@
   <!-- styles & scripts -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_main.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_results.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_team_results.css') }}">
+  <script src="{{ url_for('static', filename='js/bbl.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/navbarscript.js') }}" defer></script>
   <link rel="icon" href="{{ url_for('static', filename='assets/favicon.png') }}" type="image/x-icon">
 </head>
@@ -193,6 +195,11 @@
         <h2>Players</h2>
         <p>Search the stats of every BBL player.</p>
       </div>
+      <section class="search-section">
+        <input type="text" id="player-search-input" placeholder="Enter player name…">
+        <button id="player-search-btn">Search</button>
+      </section>
+      <div id="player-results"></div>
     </article>
 
     <article id="teams" class="page-content">
@@ -200,7 +207,14 @@
         <h2>Teams</h2>
         <p>Explore team-level performance across all seasons.</p>
       </div>
-    </article>
+      <article id="team‑search" class="section‐panel">
+        <h2>Team head‑to‑head & trophies</h2>
+        <select id="team‑select" class="team‑select">
+          <option value="">Select a team…</option>
+        </select>
+        <div id="team‑results" class="team‑results"></div>
+      </article>
+      
   </main>
 
   <!-- ===== FOOTER ===== -->
