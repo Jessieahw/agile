@@ -1,3 +1,4 @@
+from config import Config
 
 from functools import wraps
 import sqlite3
@@ -22,11 +23,12 @@ from bbl import BBLBestMatchFunctions as BBL_BMF
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
+app.config.from_object(Config)
+# app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
 
-# Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# # Configure SQLite database
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 
