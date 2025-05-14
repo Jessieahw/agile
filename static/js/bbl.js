@@ -10,18 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const q = $('#player-search-input').value.trim(); if(!q) return;
     fetch(`/bbl/player_search?q=${encodeURIComponent(q)}`).then(r=>r.json()).then(d=>{
       if(!d.length){ $('#player-results').innerHTML='<p>No players found.</p>'; return; }
-      $('#player-results').innerHTML = `<div class=\"similar-results\"><h3>Players</h3><table class=\"similar-table\"><thead><tr><th class=rank>#</th><th>Name</th><th>Inn</th><th>Runs</th><th>HS</th><th>Avg</th><th>SR</th><th>Wkts</th><th>BAvg</th><th>Eco</th></tr></thead><tbody>${buildPlayerRows(d)}</tbody></table></div>`;
+      $('#player-results').innerHTML = `<div class=\"similar-results\"><table class=\"similar-table\"><thead><tr><th class=rank>#</th><th>Name</th><th>Inn</th><th>Runs</th><th>HS</th><th>Avg</th><th>SR</th><th>Wkts</th><th>BAvg</th><th>Eco</th></tr></thead><tbody>${buildPlayerRows(d)}</tbody></table></div>`;
     });
   });
 
-  // Team search
-  $('#team-search-btn').addEventListener('click', () => {
-    const q = $('#team-search-input').value.trim(); if(!q) return;
-    fetch(`/bbl/team_search?q=${encodeURIComponent(q)}`).then(r=>r.json()).then(d=>{
-      if(!d.length){ $('#team-results').innerHTML='<p>No teams found.</p>'; return; }
-      $('#team-results').innerHTML = `<div class=\"similar-results\"><h3>Teams</h3><table class=\"similar-table\"><thead><tr><th class=rank>#</th><th>Team</th><th>Played</th><th>Wins</th><th>Win %</th></tr></thead><tbody>${buildTeamRows(d)}</tbody></table></div>`;
-    });
-  });
 });
 
 // Team Search

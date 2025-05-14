@@ -189,11 +189,6 @@ def bbl_player_search():
     q = request.args.get('q', '').strip()
     return jsonify(BBL_BMF.search_players(q)) if q else jsonify([])
 
-@app.route('/bbl/team_search')
-def bbl_team_search():
-    q = request.args.get('q', '').strip()
-    return jsonify(BBL_BMF.search_teams(q)) if q else jsonify([])
-
 # ─────────── TEAM DROPDOWN OPTIONS ───────────
 @app.route('/bbl/team_list')
 def bbl_team_list():

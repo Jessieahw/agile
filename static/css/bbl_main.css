@@ -220,7 +220,7 @@ main{padding:0rem 0;}
     transform:rotateY(180deg);
 }
   
-/* ─────────── Footer ─────────── */
+/*  Footer  */
 footer {
     background:#000;
     color:#fff;
@@ -229,6 +229,21 @@ footer {
     font-size:.9rem;
 }
 
-.search-section{display:flex;gap:.5rem;margin:1rem 0}
-.search-section input{flex:1;padding:.5rem .75rem;border:1px solid #ccc;border-radius:4px}
-.search-section button{background:#000;color:#fff;border:none;padding:.55rem 1rem;border-radius:4px;cursor:pointer}
+.search-section{
+    display:flex;
+    gap:.5rem;
+    margin:1rem 0
+}
+.search-section input{
+    flex:1;
+    padding:.5rem .75rem;
+    border:1px solid #ccc;
+    border-radius:4px
+}
+.search-section button{background:#000;
+    color:#fff;
+    border:none;
+    padding:.55rem 1rem;
+    border-radius:4px;
+    cursor:pointer
+}

@@ -1,6 +1,7 @@
 .team‑select{
   font: 600 1rem Montserrat, sans-serif;
-  padding: .4rem .6rem;
+  padding: .4rem;
+  width:100%;
   border: 2px solid #222;
   border-radius: 6px;
   margin-bottom: 1rem;
