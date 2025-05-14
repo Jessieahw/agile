@@ -15,6 +15,7 @@
     <div class="content">
         <div class="form-container">
             <form method="POST" action="/register" class="form-box">
+                {{ form.hidden_tag() }}
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
 

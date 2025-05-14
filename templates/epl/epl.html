@@ -31,6 +31,7 @@
                 <li><strong>Shot Accuracy:</strong> The percentage of shots on target, represented as a decimal (e.g., 0.5 for 50%).</li>
             </ul>
             <form id="teamForm">
+                {{ form.hidden_tag() }}
                 <label for="avgShots">Average Shots per Match:</label>
                 <input type="number" id="avgShots" name="avgShots" step="0.01" min="0" required>
         

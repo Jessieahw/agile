@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_wtf import CSRFProtect
+from forms import BBLStatsForm, LoginForm, RegisterForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import sqlite3
@@ -10,6 +12,7 @@ from bbl import BBLBestMatchFunctions as BBL_BMF
 # Initialize Flask app
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
+csrf = CSRFProtect(app)       # enables CSRF checking on every POST/PUT/DELETE
 
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
@@ -59,7 +62,8 @@ def load_user(user_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
+    form = RegisterForm()
+    if form.validate_on_submit():
         username = request.form['username']
         password = request.form['password']
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
@@ -69,11 +73,12 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
-    return render_template('register.html')
+    return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
+    form = LoginForm()
+    if form.validate_on_submit():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
@@ -81,7 +86,7 @@ def login():
             login_user(user)
             return redirect(url_for('landing_page'))
         return jsonify({'message': 'Invalid username or password!'})
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 @login_required
@@ -126,9 +131,10 @@ def nba_page():
 @app.route('/bbl', methods=['GET', 'POST'])
 @login_required
 def bbl_page():
+    form = BBLStatsForm()
     matches_bat, matches_bowl = [], []
     bat_data, bowl_data = {}, {}
-    if request.method == 'POST':
+    if form.validate_on_submit(): 
         bat_fields = ['bat_innings', 'bat_runs', 'bat_high', 'bat_avg', 'bat_sr']
         bowl_fields = ['bowl_overs', 'bowl_wkts', 'bowl_runs', 'bowl_avg', 'bowl_eco']
         bat_data = {f: request.form.get(f, type=float) for f in bat_fields}
@@ -142,7 +148,7 @@ def bbl_page():
             matches_bowl = BBL_BMF.get_top_bowlers(conn, bowl_data)
         conn.close()
     user_stats = {**bat_data, **bowl_data} if request.method == 'POST' else {}
-    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl, user_stats=user_stats)
+    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl, user_stats=user_stats, form=form)
 
 @app.route('/bbl/player_search')
 @login_required
