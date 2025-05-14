@@ -3,10 +3,15 @@
 .hero-section {
     position: relative;
     overflow: hidden;      /* contain the pseudo-element */
-    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+  /* give it some vertical breathing room */
+    padding: 2rem 0;
+    margin-top: 200px;       /* push below fixed navbar */
+         /* solid black */
+  
+   
     
   }
   
@@ -80,6 +85,115 @@
       height: 1rem;
     }
   }
+
+  .trading-card {
+    width: 300px;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    /* use your team’s colours: fallback to primary dark */
+    background: linear-gradient(135deg, var(--team-light), var(--team-dark));
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .trading-card .card-header {
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+  }
+  
+  .trading-card .card-logo {
+    height: 60px;
+    object-fit: contain;
+  }
+  
+  .trading-card .team-name {
+    margin: 0;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  
+  .trading-card .stats-row {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .trading-card .stat {
+    text-align: center;
+  }
+  
+  .trading-card .stat-value {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  
+  .trading-card .stat-label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+  
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .players-grid .player {
+    text-align: center;
+  }
+  
+  .players-grid .player img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #fff;
+    margin-bottom: 0.25rem;
+  }
+
+  .hero-top {
+  margin-top: 0px;          /* height of navbar */
+  position: relative;
+  background: #000;          /* solid black bar */
+  padding: 0.75rem 0;        /* vertical breathing room */
+  text-align: center;        /* center the h2 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+/* Thin gold line at bottom */
+.hero-top::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%;
+  height: 4px;
+  background: #fcb216;
+}
+
+/* Style your heading */
+.hero-top h2 {
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.hero-section h2 {
+  font-family: 'Oswald', sans-serif;
+  /* you can also adjust the weight if you imported multiples: */
+  font-weight: 600;
+  /* other existing rules… */
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
   
 
 
