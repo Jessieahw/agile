@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <strong>${best.City} ${best.Name}</strong> (${best.Key}).
         </p>`;
       document.getElementById('viewTeamLink').href =
-        `teams.html?team=${best.Key}`;
+         `${window.teamsBase}/${best.Key}`;;
       new bootstrap.Modal(
         document.getElementById('resultModal')
       ).show();
