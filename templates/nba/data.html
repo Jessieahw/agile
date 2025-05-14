@@ -128,7 +128,7 @@
         <div class="modal-footer">
           <button type="button" id="shareResultBtn" class="btn btn-info">Share Result</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <a id="viewTeamLink" href="#" class="btn btn-primary" target="_blank">View Team Page</a>
+          <a id="viewTeamLink" href="{{ url_for('nba.teams') }}" class="btn btn-primary" target="_blank">View Team Page</a>
           <button type="button" id="saveMatchBtn" class="btn btn-success">Save Match</button>
         </div>
       </div>
@@ -182,10 +182,15 @@
   </footer>
 
   <!-- Scripts -->
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
+   <script>
+    // → this will be "/teams"
+    window.teamsBase = "{{ url_for('nba.teams') }}";
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -355,5 +360,4 @@
   </script>
 </body>
 </html>
-
 
