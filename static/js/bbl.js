@@ -48,3 +48,140 @@ document.getElementById('team‑select').addEventListener('change', e=>{
     .then(r=>r.json())
     .then(renderTeamStats);
 });
+/* Constants to cap the RADAR sheets */
+const CAPS = {
+  batting: {
+    innings: 150,
+    runs:    3000,
+    high:    200,
+    avg:     100,
+    sr:      220
+  },
+  bowling: {
+    overs:   400,
+    wkts:    150,
+    runsCon: 3000,
+    avg:     100,
+    eco:     15
+  }
+};
+
+/* Helper Functions for the RADAR Sheets*/
+/** Clamp a value to an upper bound (null/undefined → 0). */
+function clamp (v, max) {
+  return Math.min(v ?? 0, max);
+}
+
+/** Return up to first n items of arr or [] if arr false. */
+function firstN (arr, n = 5) {
+  return Array.isArray(arr) ? arr.slice(0, n) : [];
+}
+
+/** Initialise one radar chart. */
+function buildRadar ({ elId, caps, indicators, userValues, peerValues }) {
+  const el = document.getElementById(elId);
+  if (!el) return; // canvas/div not on page
+
+  const chart = echarts.init(el);
+
+  const seriesData = [
+    {
+      name: 'You',
+      value: userValues,
+      lineStyle: { width: 2, color: '#000' },
+      itemStyle:  { color:  '#000' }, 
+      symbol: 'none',
+      areaStyle: { opacity: 0.05 }
+    },
+    ...peerValues
+  ];
+
+  chart.setOption({
+    tooltip: {},
+    legend: { type: 'scroll' },
+    radar: {
+      indicator: indicators,
+      splitNumber: 5
+    },
+    series: [
+      {
+        type: 'radar',
+        data: seriesData
+      }
+    ]
+  });
+}
+
+/* Actual build method for the charts */
+function initRadarCharts () {
+  // Exit early if no user stats are available
+  if (!window.userStats) return;
+
+  const batPeers  = firstN(window.matchesBat);
+  const bowlPeers = firstN(window.matchesBowl);
+
+  /* Build the batting RADAR chart */
+  buildRadar({
+    elId: 'bat-radar',
+    caps: CAPS.batting,
+    indicators: [
+      { name: 'Innings', max: CAPS.batting.innings },
+      { name: 'Runs',    max: CAPS.batting.runs    },
+      { name: 'High',    max: CAPS.batting.high    },
+      { name: 'Average', max: CAPS.batting.avg     },
+      { name: 'SR',      max: CAPS.batting.sr      }
+    ],
+    userValues: [
+      clamp(window.userStats.bat_innings, CAPS.batting.innings),
+      clamp(window.userStats.bat_runs,    CAPS.batting.runs),
+      clamp(window.userStats.bat_high,    CAPS.batting.high),
+      clamp(window.userStats.bat_avg,     CAPS.batting.avg),
+      clamp(window.userStats.bat_sr,      CAPS.batting.sr)
+    ],
+    peerValues: batPeers.map(p => ({
+      name: p.name || 'Peer',
+      value: [
+        clamp(p.innings,    CAPS.batting.innings),
+        clamp(p.runs,       CAPS.batting.runs),
+        clamp(p.high_score, CAPS.batting.high),
+        clamp(p.bat_avg,    CAPS.batting.avg),
+        clamp(p.bat_sr,     CAPS.batting.sr)
+      ],
+      lineStyle: { type: 'dashed', width: 1 }
+    }))
+  });
+
+  /* Bowling Radar Chart */
+  buildRadar({
+    elId: 'bowl-radar',
+    caps: CAPS.bowling,
+    indicators: [
+      { name: 'Overs',     max: CAPS.bowling.overs   },
+      { name: 'Wkts',      max: CAPS.bowling.wkts    },
+      { name: 'Runs conc', max: CAPS.bowling.runsCon },
+      { name: 'Avg',       max: CAPS.bowling.avg     },
+      { name: 'Eco',       max: CAPS.bowling.eco     }
+    ],
+    userValues: [
+      clamp(window.userStats.bowl_overs, CAPS.bowling.overs),
+      clamp(window.userStats.bowl_wkts,  CAPS.bowling.wkts),
+      clamp(window.userStats.bowl_runs,  CAPS.bowling.runsCon),
+      clamp(window.userStats.bowl_avg,   CAPS.bowling.avg),
+      clamp(window.userStats.bowl_eco,   CAPS.bowling.eco)
+    ],
+    peerValues: bowlPeers.map(p => ({
+      name: p.name || 'Peer',
+      value: [
+        clamp(p.overs,  CAPS.bowling.overs),
+        clamp(p.wickets,CAPS.bowling.wkts),
+        clamp(p.runs,   CAPS.bowling.runsCon),
+        clamp(p.bowl_avg,CAPS.bowling.avg),
+        clamp(p.eco,    CAPS.bowling.eco)
+      ],
+      lineStyle: { type: 'dashed', width: 1 }
+    }))
+  });
+}
+
+/* Add the event to initialise when the content finishes loading */
+document.addEventListener('DOMContentLoaded', initRadarCharts);

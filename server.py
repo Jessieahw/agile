@@ -182,7 +182,8 @@ def bbl_page():
             matches_bowl = BBL_BMF.get_top_bowlers(conn, bowl_data)
 
         conn.close()
-    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl)
+    user_stats = {**bat_data, **bowl_data} if request.method == 'POST' else {}
+    return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl, user_stats=user_stats)
 # New Functionality to handle player and team search
 @app.route('/bbl/player_search')
 def bbl_player_search():

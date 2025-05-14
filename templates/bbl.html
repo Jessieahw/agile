@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_main.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_results.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_team_results.css') }}">
+  <!-- Add EChart.js to show graphs and other visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="{{ url_for('static', filename='js/bbl.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/navbarscript.js') }}" defer></script>
   <link rel="icon" href="{{ url_for('static', filename='assets/favicon.png') }}" type="image/x-icon">
@@ -185,10 +187,31 @@
     <!-- other articles unchanged -->
     <article id="stats" class="page-content">
       <div class="intro-box">
-        <h2>Your Stats &amp; Sharing</h2>
-        <p>See your stats &amp; share them.</p>
+        <h2>Your Stats &amp; You</h2>
+        <p>Visual comparison of your numbers vs the five most similar pros.</p>
       </div>
+
+      {% if user_stats %}
+      <div class="radar-container">
+        {% if user_stats.bat_innings %}
+          <h3>Batting Comparison</h3>
+          <div id="bat-radar"  style="width:550px;height:420px"></div>
+        {% endif %}
+        {% if user_stats.bowl_overs %}
+          <h3>Bowling Comparison</h3>
+          <div id="bowl-radar" style="width:550px;height:420px"></div>
+        {% endif %}
+      </div>
+      {% endif %}
     </article>
+    <!-- Dump the three data blobs so bbl.js can reuse them -->
+    {% if user_stats %}
+    <script>
+      window.userStats  = {{ user_stats  | tojson }};
+      window.matchesBat = {{ matches_bat | tojson }};
+      window.matchesBowl= {{ matches_bowl| tojson }};
+    </script>
+    {% endif %}
 
     <article id="players" class="page-content">
       <div class="intro-box">
