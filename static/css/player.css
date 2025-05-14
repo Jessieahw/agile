@@ -1,0 +1,47 @@
+.hero-section {
+  /* full-screen background */
+  background: url('../images/hero-bg.jpg') center/cover no-repeat;
+  padding: 80px 0;
+
+  /* flex centering */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+
+  /* text style */
+  color: #fff;
+  text-align: center;
+  border: 4px solid #000;        /* white 4px border */
+  border-radius: 8px;            /* soften the corners */
+  box-sizing: border-box; 
+  max-width: 900px;   /* whatever max width you like */
+  margin: 40px auto;
+}
+
+.hero-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-section .form-control {
+  max-width: 160px;
+  margin: 0 auto 1rem;
+}
+
+.hero-section .btn-primary {
+  padding: 0.5rem 1.5rem;
+}
+
+.hero-section .form-label {
+  display: block;
+  color: #000;         /* or #000 if you switch to a light bg */
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.hero-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color:#000
+}
