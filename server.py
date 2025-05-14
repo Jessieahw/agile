@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, send_from_directory, render_template,
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import CSRFProtect
-from forms import BBLStatsForm, LoginForm, RegisterForm
+from flask_wtf.csrf import generate_csrf
+from forms import BBLStatsForm, LoginForm, RegisterForm, TemplateDataNBA
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import sqlite3
@@ -116,7 +117,7 @@ def epl_page():
         'avg_cards': team.avg_cards,
         'shot_accuracy': team.shot_accuracy
     } for team in team_data]
-    return render_template('epl/epl.html', team_data=serialized)
+    return render_template('epl/epl.html', team_data=serialized, csrf_token=generate_csrf())
 
 @app.route('/afl')
 @login_required
@@ -181,7 +182,12 @@ def teams():
 @app.route('/data')
 @login_required
 def data():
-    return render_template('data.html')
+    form = TemplateDataNBA()
+    # If it is a POST request, process the form data
+    if form.validate_on_submit():
+        return render_template('data.html', form=form)
+    # If it is a GET request, just render the template
+    return render_template('data.html', form=form)
 
 @app.route('/get_comparison')
 @login_required

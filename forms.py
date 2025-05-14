@@ -28,3 +28,10 @@ class RegisterForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[InputRequired()])
     submit = SubmitField('Register')
+
+class TemplateDataNBA(FlaskForm):
+    wpct = DecimalField("Win %", validators=[InputRequired(), NumberRange(min=0)], places=1)
+    pf = DecimalField("Points per Game (for)", validators=[InputRequired(), NumberRange(min=0)], places=1)
+    pa = DecimalField("Points per Game (against)", validators=[InputRequired(), NumberRange(min=0)], places=1)
+    submit = SubmitField("Save Match")
+
