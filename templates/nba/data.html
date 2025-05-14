@@ -15,19 +15,36 @@
     rel="stylesheet"
     href="{{ url_for('static', filename='css/hero.css') }}"
   />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/teams.css') }}"/>
+  <link
+  href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;700&display=swap"
+  rel="stylesheet"
+>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
   <!-- Navbar -->
   <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
+    <div class="container-fluid d-flex justify-content-start align-items-center">
       <button class="btn btn-outline-light me-2" type="button"
               data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
               aria-controls="offcanvasSidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="#">NBA Stats</a>
+      <a class="navbar-brand d-flex align-items-center" href="#"> <img
+          src="{{ url_for('static', filename='nba_logos/nbalogo.png') }}"
+          alt="NBA Logo"
+          width="30"
+          height="30"
+          class="d-inline-block align-text-top me-2"
+        >NBA Stats</a>
     </div>
   </nav>
 
@@ -44,9 +61,17 @@
         <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
         <li class="nav-item"><a href="{{ url_for('nba.teams') }}" class="nav-link">Teams</a></li>
         <li class="nav-item"><a href="{{ url_for('nba.data') }}" class="nav-link active">Your Team</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.compare_player') }}" class="nav-link">Player</a></li>
       </ul>
     </div>
   </div>
+
+  <!-- Hero Banner under Navbar -->
+  <header class="hero-top ">
+    <div class="container py-3">
+      <h2 class="mb-0 text-center">Find Your NBA Team Match</h2>
+    </div>
+  </header>
 
   <!-- Flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -63,9 +88,8 @@
   {% endwith %}
 
   <!-- Hero Section with Form -->
-  <section class="hero-section">
+  <section class="hero-section mb-4">
     <div class="hero-content container">
-      <h2 class="mb-3">Find Your NBA Team Match</h2>
       <form id="userForm" class="row g-3" action="{{ url_for('nba.data') }}" method="POST">
         <input type="hidden" name="result" id="result" value="">
         <div class="col-md-4">
@@ -126,6 +150,9 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" id="copyShareBtn" class="btn btn-primary">Copy to Clipboard</button>
+          <button id="downloadCardBtn" class="btn btn-outline-primary">
+            Download as PNG
+          </button>
         </div>
       </div>
     </div>
@@ -158,6 +185,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dom-to-image@2.6.0/dist/dom-to-image.min.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById('userForm');
@@ -171,8 +200,7 @@
       const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
       const shareModalBody = document.getElementById('shareModalBody');
       const logoBase = "{{ url_for('static', filename='nba_logos/') }}";
-
-
+  
       // 1) Preview → populate & show
       compareBtn.addEventListener('click', () => {
         compare();
@@ -180,27 +208,29 @@
         if (m) resultInput.value = m[1];
         resultModal.show();
       });
-
+  
       // 2) Save from modal
       saveMatchBtn.addEventListener('click', () => {
         const m = viewTeamLink.href.match(/team=([^&]+)/);
         resultInput.value = m ? m[1] : '';
         form.submit();
       });
-
+  
       // 3) Form submit
       form.addEventListener('submit', () => {
         const m = viewTeamLink.href.match(/team=([^&]+)/);
         resultInput.value = m ? m[1] : '';
       });
-
-      // 4) Share trading-card build
+  
+      // 4) Share trading-card build with Wikipedia thumbnails
       shareResultBtn.addEventListener('click', async () => {
         const m = viewTeamLink.href.match(/team=([^&]+)/);
         const teamKey = m ? m[1] : null;
         if (!teamKey) return;
-
+  
+        // show loading state
         shareModalBody.innerHTML = '<p>Loading your shareable card…</p>';
+  
         try {
           const standings = await fetchStandings();
           const team = standings.find(t => t.Key === teamKey);
@@ -208,45 +238,87 @@
             `https://api.sportsdata.io/v3/nba/scores/json/PlayersBasic/${teamKey}?key=${apiKey}`
           );
           const players = res.ok ? await res.json() : [];
-
+  
           // set team colors
           document.documentElement.style.setProperty('--team-light', team.PrimaryColor);
           document.documentElement.style.setProperty('--team-dark', team.SecondaryColor);
-
-          // build card
+  
+          // build card HTML
           const stars = players.slice(0, 4);
           let card = `
             <div class="trading-card">
               <div class="card-header">
-                <img src="${logoBase}${teamKey}.png" alt="${team.Name} logo" class="card-logo" />
-
+                <img src="${logoBase}${teamKey}.png"
+                     alt="${team.Name} logo"
+                     class="card-logo" />
                 <h4 class="team-name">${team.City} ${team.Name}</h4>
               </div>
               <div class="stats-row">
-                <div class="stat"><span class="stat-value">${parseFloat(document.getElementById('wpct').value).toFixed(1)}%</span><small class="stat-label">Win%</small></div>
-                <div class="stat"><span class="stat-value">${parseFloat(document.getElementById('pf').value).toFixed(1)}</span><small class="stat-label">PPG</small></div>
-                <div class="stat"><span class="stat-value">${parseFloat(document.getElementById('pa').value).toFixed(1)}</span><small class="stat-label">OPA</small></div>
+                <div class="stat">
+                  <span class="stat-value">${parseFloat(document.getElementById('wpct').value).toFixed(1)}%</span>
+                  <small class="stat-label">Win%</small>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">${parseFloat(document.getElementById('pf').value).toFixed(1)}</span>
+                  <small class="stat-label">PPG</small>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">${parseFloat(document.getElementById('pa').value).toFixed(1)}</span>
+                  <small class="stat-label">OPA</small>
+                </div>
               </div>
-              <h6 class="px-3">Star Players</h6>
+              <h6 class="px-3">Players</h6>
               <div class="players-grid">
           `;
+  
+          // placeholder images with data-player-name
           stars.forEach(p => {
             card += `
               <div class="player">
-                <img src="https://api.sportsdata.io/v3/nba/scores/json/PlayerHeadshot/${p.PlayerID}?key=${apiKey}" alt="${p.FirstName} ${p.LastName}" />
+                <img
+                  data-player-name="${p.FirstName} ${p.LastName}"
+                  crossorigin="anonymous"
+                  src="https://via.placeholder.com/100"
+                  alt="${p.FirstName} ${p.LastName}"
+                />
                 <small>${p.FirstName} ${p.LastName}</small>
               </div>
             `;
           });
-          card += '</div></div>';
-
+  
+          card += `
+              </div>
+            </div>
+          `;
+  
+          // inject the card
           shareModalBody.innerHTML = card;
+  
+          // now swap in Wikipedia thumbnails
+          shareModalBody.querySelectorAll('.player img').forEach(imgElem => {
+            const name = imgElem.dataset.playerName;
+            fetch(
+              `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`
+            )
+            .then(res => res.ok ? res.json() : Promise.reject())
+            .then(data => {
+              if (data.thumbnail && data.thumbnail.source) {
+                imgElem.src = data.thumbnail.source;
+              }
+            })
+            .catch(() => {
+              // leave placeholder if no wiki image found
+            });
+          });
+  
+          // finally show the modal
           shareModal.show();
+  
         } catch (err) {
           shareModalBody.innerHTML = '<p class="text-danger">Failed to load shareable card.</p>';
         }
       });
-
+  
       // 5) Copy to clipboard
       copyShareBtn.addEventListener('click', () => {
         const cardElem = document.querySelector('.trading-card');
@@ -255,6 +327,33 @@
       });
     });
   </script>
+  <script>
+  // 6) Download the trading-card as a PNG
+  const downloadCardBtn = document.getElementById('downloadCardBtn');
+  const shareModalBody = document.getElementById('shareModalBody'); // Ensure shareModalBody is defined
+
+  downloadCardBtn.addEventListener('click', () => {
+  const cardEl = shareModalBody.querySelector('.trading-card');
+  if (!cardEl) return;
+
+  // `bgcolor` will fill transparent areas with white
+  domtoimage.toPng(cardEl, { bgcolor: '#fff' })
+    .then(dataUrl => {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'nba-team-card.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    })
+    .catch(err => {
+      console.error('dom-to-image failed:', err);
+      alert('Failed to generate image.');
+    });
+});
+
+  </script>
 </body>
 </html>
+
 
