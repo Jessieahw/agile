@@ -9,6 +9,10 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
   >
+  <link
+  href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;700&display=swap"
+  rel="stylesheet"
+>
   <style>
     body {
       background-color: #f8f9fa;
@@ -34,32 +38,196 @@
       background-position: center center;
       background-repeat: no-repeat;
       background-size: 200px auto;
+      border: none !important;
     }
     .stats-table th,
     .stats-table td {
       background: transparent !important;
       color: #000;
       text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+      border: none !important;
+      }
+    .navbar .container-fluid {
+      display: flex !important;
+      justify-content: flex-start !important;
+      align-items: center !important;
+
     }
+/* shrink the hero to 80px tall */
+.standings-header {
+  position: relative;
+  height: 50px;              /* ↓ smaller */
+  background:
+    /* basketball-net image if you still want it: */
+    /* url('/static/images/hoop-bg.jpg') center/cover no-repeat, */
+    #000;                     /* fallback black */
+}
+
+/* optional dark overlay if you kept the image */
+.standings-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 0;
+}
+
+/* gold underline */
+.standings-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #fcb216;
+  z-index: 0;
+}
+
+/* center the H1 vertically */
+.standings-header .container {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;       /* ← vertical centering */
+}
+
+/* title styling */
+.standings-header h1 {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 1.5rem;         /* you can tweak this too */
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  align-items: left;
+}
+
+/* ─── PANEL / CARD STYLES ─────────────────────────────────── */
+#team-stats-container,
+#team-leaders-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+/* Headings inside each panel */
+#team-stats-container h5,
+#team-leaders-container h5 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #343a40;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 0.5rem;
+}
+
+/* ─── TABLE BASE ─────────────────────────────────────────── */
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;  /* allow custom row spacing */
+  border-spacing: 0 ;   /* 0.5rem vertical gap between rows */
+}
+
+/* HEADER ROW */
+.stats-table thead th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* BODY CELLS */
+.stats-table tbody td {
+  padding: 0.5rem 0;
+  vertical-align: middle;
+  color: #212529;
+}
+
+/* STANDINGS: first column = label, last column = value */
+#team-stats-container .stats-table td:first-child {
+  font-weight: 500;
+}
+#team-stats-container .stats-table td:last-child {
+  font-weight: 700;
+  text-align: right;
+}
+
+/* LEADERS: center the stats */
+#team-leaders-container .stats-table th,
+#team-leaders-container .stats-table td {
+  text-align: center;
+}
+
+/* REMOVE any leftover borders */
+.stats-table th,
+.stats-table td {
+  border: none !important;
+}
+
+/* ─── RESPONSIVE FLEX LAYOUT ─────────────────────────────── */
+/* (if you’re using the flex wrapper from before) */
+.d-flex.align-start {
+  gap: 1.5rem;
+}
+#team-stats-container .stats-table thead {
+  display: none;
+}
+
+/* ─── ROW SEPARATORS ──────────────────────────────────────────────── */
+#team-stats-container .stats-table tbody tr {
+  border-bottom: 1px solid #000000; /* light gray */
+}
+#team-stats-container .stats-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+
+    
   </style>
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-light bg-light fixed-top">
-    <div class="container-fluid">
-      <button
-        class="btn btn-outline-secondary me-2"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#sidebar"
-        aria-controls="sidebar">
-        Menu
-      </button>
-      <a class="navbar-brand" href="{{ url_for('nba.home') }}">
-        NBA 2025 Standings
-      </a>
-    </div>
-  </nav>
+  <nav class="navbar navbar-dark bg-dark fixed-top justify-content-start">
+  <div class="container-fluid">
+    <!-- Off-canvas toggler (hamburger icon) -->
+    <button
+      class="navbar-toggler me-2"
+      type="button"
+      data-bs-toggle="offcanvas"
+      data-bs-target="#sidebar"
+      aria-controls="sidebar"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Brand + logo -->
+    <a class="navbar-brand d-flex align-items-center " href="{{ url_for('nba.home') }}">
+      <!-- NBA logo img -->
+      <img
+        src="{{ url_for('static', filename='nba_logos/nbalogo.png') }}"
+        alt="NBA Logo"
+        width="30"
+        height="30"
+        class="d-inline-block align-text-top me-2"
+      >
+      NBA 2025 Standings
+    </a>
+  </div>
+</nav>
+
+<!-- Hero header, sits directly below the fixed-top nav -->
+<header class="standings-header mb-4">
+  <div class="container d-flex align-items-end">
+    <h1 class="m-0">2025 NBA Standings</h1>
+  </div>
+</header>
+
 
   <!-- Offcanvas Sidebar -->
   <div
@@ -82,14 +250,14 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('nba.data') }}">Your Team</a>
         </li>
-        <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.compare_player') }}" class="nav-link">Player</a></li>
       </ul>
     </div>
   </div>
 
   <!-- Main Content -->
   <div class="container mt-4">
-    <h1 class="mb-4">2025 NBA Standings</h1>
+  
 
     <!-- Team selector -->
     <div class="mb-3">
@@ -100,10 +268,11 @@
     </div>
 
     <!-- Stats will be injected here -->
-    <div id="team-stats-container">
-      <p>Select a team to see their stats.</p>
-    </div>
-  </div>
+    <div class="d-flex align-start mt-4">
+  <div id="team-stats-container" class="flex-grow-1 me-4" style="overflow-x:auto;"></div>
+  <div id="team-leaders-container" class="flex-shrink-0" style="width:280px;"></div>
+</div>
+
 
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -121,7 +290,7 @@
         document
           .getElementById('team-selector')
           .addEventListener('change', e => {
-            displayTeamStats(e.target.value);
+            updateTeamStats(e.target.value);
           });
       } catch (err) {
         console.error('Error initializing page:', err);
