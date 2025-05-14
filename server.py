@@ -6,14 +6,16 @@ from datetime import datetime
 import sqlite3
 import os
 from bbl import BBLBestMatchFunctions as BBL_BMF
+from config import Config
+
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
-
-# Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
+app.config.from_object(Config)
+# # Configure SQLite database
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 db = SQLAlchemy(app)
