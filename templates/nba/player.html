@@ -1,0 +1,165 @@
+<!-- templates/player.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NBA Player Comparison</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/teams.css') }}">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid d-flex justify-content-start align-items-center">
+      <button class="btn btn-outline-light me-2" type="button"
+              data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
+              aria-controls="offcanvasSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="/">
+        <img
+          src="{{ url_for('static', filename='nba_logos/nbalogo.png') }}"
+          alt="NBA Logo" width="30" height="30"
+          class="d-inline-block align-text-top me-2">
+        NBA Stats
+      </a>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Dashboard</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <ul class="nav nav-pills flex-column mb-0">
+        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.teams') }}" class="nav-link">Teams</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.data') }}" class="nav-link">Your Team</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.compare_player') }}" class="nav-link active">Player</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+
+  <!-- Hero Section with Form -->
+  <section class="hero-section text-white d-flex align-items-center">
+    <div class="container text-center">
+      <h2 class="mb-4">Compare Your Stats to an NBA Player</h2>
+      <form method="POST" action="{{ url_for('nba.compare_player') }}" class="row g-3 justify-content-center">
+        <div class="col-md-2">
+          <label for="pts" class="form-label">Points</label>
+          <input type="number" step="1" class="form-control" id="pts" name="pts" required>
+        </div>
+        <div class="col-md-2">
+          <label for="ast" class="form-label">Assists</label>
+          <input type="number" step="1" class="form-control" id="ast" name="ast" required>
+        </div>
+        <div class="col-md-2">
+          <label for="stl" class="form-label">Steals</label>
+          <input type="number" step="1" class="form-control" id="stl" name="stl" required>
+        </div>
+        <div class="col-md-2">
+          <label for="blk" class="form-label">Blocks</label>
+          <input type="number" step="1" class="form-control" id="blk" name="blk" required>
+        </div>
+        <div class="col-md-2">
+          <label for="trb" class="form-label">Rebounds</label>
+          <input type="number" step="1" class="form-control" id="trb" name="trb" required>
+        </div>
+        <div class="col-12 text-center">
+          <button type="submit" class="btn btn-primary">Find Closest Match</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Result Modal -->
+  <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <!-- colored header -->
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="resultModalLabel">You vs. {{ match.Player }}</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <!-- comparison table -->
+        <div class="modal-body">
+          <table class="table table-striped table-hover text-center mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th>Stat</th>
+                <th>You</th>
+                <th>{{ match.Player }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Points</th>
+                <td>{{ request.form.pts }}</td>
+                <td>{{ match.PTS }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Assists</th>
+                <td>{{ request.form.ast }}</td>
+                <td>{{ match.AST }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Steals</th>
+                <td>{{ request.form.stl }}</td>
+                <td>{{ match.STL }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Blocks</th>
+                <td>{{ request.form.blk }}</td>
+                <td>{{ match.BLK }}</td>
+              </tr>
+              <tr>
+                <th scope="row">Rebounds</th>
+                <td>{{ request.form.trb }}</td>
+                <td>{{ match.TRB }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto bg-dark text-white py-3">
+    <div class="container text-center">&copy; 2025 NBA Stats</div>
+  </footer>
+
+  <!-- Bootstrap JS & trigger modal -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {% if match is not none %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        new bootstrap.Modal(document.getElementById('resultModal')).show();
+      });
+    </script>
+  {% endif %}
+</body>
+</html>

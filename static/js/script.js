@@ -95,6 +95,14 @@ async function fetchAndRenderCards(teamKey) {
  */
 async function getPlayerImage(name) {
   const placeholder = 'https://via.placeholder.com/250x300?text=No+Image';
+
+  const staticOverrides = {
+    'Scotty Pippen Jr.': '/static/nba_logos/scotty.jpg',
+    // add more: 'LeBron James': '/static/images/players/lebron_james.png'
+  };
+  if (staticOverrides[name]) {
+    return staticOverrides[name];
+  }
   let page = name.trim().replace(/ +/g, '_')
               .replace(/_(Jr\.?|Sr\.|I{2,3}|IV)$/i, '');
   // Try exact summary
@@ -188,6 +196,56 @@ function attachStatsHandlers(players) {
   });
 }
 
+async function displayTeamLeaders(teamKey) {
+  const leadersContainer = document.getElementById('team-leaders-container');
+  leadersContainer.innerHTML = ''; // clear old
+
+  try {
+    const res = await fetch(`/nba/team_players/${teamKey}`);
+    if (!res.ok) throw new Error(`Leader fetch failed: ${res.status}`);
+    const leaders = await res.json();
+
+    if (leaders.length === 0) {
+      leadersContainer.innerHTML =
+        '<p class="text-center text-muted">No player data available for this team.</p>';
+      return;
+    }
+
+    const rows = leaders.map(p => `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.pts}</td>
+        <td>${p.ast}</td>
+        <td>${p.stl}</td>
+        <td>${p.blk}</td>
+      </tr>
+    `).join('');
+
+    leadersContainer.innerHTML = `
+      <h5 class="text-center mb-3">Player Preview</h5>
+      <table class="table table-borderless stats-table">
+        <thead>
+          <tr>
+            <th>Player</th><th>PTS</th><th>AST</th><th>STL</th><th>BLK</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  } catch (err) {
+    console.error('Error loading team leaders:', err);
+    leadersContainer.innerHTML =
+      '<p class="text-danger text-center">Couldn’t load team leaders.</p>';
+  }
+}
+
+async function updateTeamStats(teamKey) {
+  await displayTeamStandings(teamKey);
+  await displayTeamLeaders(teamKey);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   //
   // INDEX PAGE → Populate dropdown & show stats
@@ -202,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statsContainer.innerHTML = '<p class="text-danger">Error loading data.</p>';
       });
     teamSelector.addEventListener('change', e => displayTeamStats(e.target.value));
+    teamSelector.addEventListener('change', e => displayTeamLeaders(e.target.value));
   }
 
   //

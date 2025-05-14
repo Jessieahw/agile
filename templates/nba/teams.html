@@ -12,6 +12,8 @@
     rel="stylesheet"
   />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-cards.css') }}"/>
+  
+/>
   <style>
     body { background-color: #f8f9fa; }
 
@@ -21,21 +23,66 @@
       padding: 2rem;
       border-radius: 0.5rem;
     }
+    /* HERO under navbar */
+    .teams-hero {
+      position: relative;
+      background: #000;
+      height: 80px;
+      display: flex;
+      align-items: center;
+    }
+    .teams-hero::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #fcb216; /* gold line */
+    }
+    .teams-hero h1 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 300;
+      font-size: 1.5rem;
+      color: #fff;
+      margin: 0 auto;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    /* Lower carousel slightly from hero */
+    #logoCarouselContainer {
+      margin-top: 3rem;
+    }
+    /* Card backgrounds behind player cards */
+    #cardsWrapper {
+      background: url('images/aesthetic-nba-ba4w0pe75y02ux5q.jpg') center/cover no-repeat;
+      padding: 2rem;
+      border-radius: 0.5rem;
+    }
+    .navbar {
+  justify-content: flex-start !important;
+   }
+
+/* 1b) Also push the hero itself down by the same amount */
+.teams-hero {
+  margin-top: 20px;   /* so it never sits under the navbar */
+}
+
   </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
   <!-- Top navbar -->
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-      <button class="btn btn-outline-light me-2"
+  <nav class="navbar navbar-dark bg-dark fixed-top">
+    <div class="container-fluid d-flex justify-content-start align-items-left">
+      <button class="navbar-toggler me-3"
               type="button"
               data-bs-toggle="offcanvas"
               data-bs-target="#offcanvasSidebar"
               aria-controls="offcanvasSidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="#">NBA Stats</a>
+      <a class="navbar-brand d-flex align-items-center " href="#"><img src="{{ url_for('static', filename='nba_logos/nbalogo.png') }}" alt="NBA Logo" width="30" height="30" class="d-inline-block align-text-top me-2">NBA Stats</a>
     </div>
   </nav>
 
@@ -50,10 +97,17 @@
         <li class="nav-item"><a href="/"          class="nav-link">Home</a></li>
         <li class="nav-item"><a href="{{ url_for('nba.teams') }}" class="nav-link active">Teams</a></li>
         <li class="nav-item"><a href="data.html"  class="nav-link">Your Team</a></li>
-        <li class="nav-item"><a href="#"          class="nav-link">Reports</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.compare_player') }}" class="nav-link">Player</a></li>
       </ul>
     </div>
   </div>
+
+   <!-- Hero banner below navbar -->
+  <header class="teams-hero">
+    <div class="container">
+      <h1>NBA Teams</h1>
+    </div>
+  </header>
 
   <main class="flex-fill">
     <!-- 1) Carousel of all team logos -->
@@ -86,6 +140,7 @@
       </div>
     </div>
     
+
       <button class="carousel-control-prev" type="button"
               data-bs-target="#logoCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -99,10 +154,11 @@
     </div>
   </div>
 
+
     <!-- templates/teams.html -->
 <div class="container my-4" id="cardsWrapper">
   <!-- Team selector card -->
-  <div class="card shadow-sm mb-4">
+  <div class="card  shadow-sm mb-4">
     <div class="card-header bg-white d-flex align-items-center">
       <img
         id="teamLogoSmall"
