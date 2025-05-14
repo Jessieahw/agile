@@ -4,7 +4,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Which EPL Team and Player Are You?</title>
+    <title>Which EPL Team Are You?</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/epl.css') }}">
     
 </head>
@@ -12,7 +12,7 @@
     
     <header class="header-bar">
         <img src="{{ url_for('static', filename='assets/Premier_League_Logo.svg') }}" alt="Premier League Logo" class="logo">
-        <h1>Which EPL Team and Player Are You?</h1>
+        <h1>Which EPL Team Are You?</h1>
     </header>
     <script>
         const eplTeams = JSON.parse('{{ team_data|tojson }}');
