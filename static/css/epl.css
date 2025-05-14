@@ -67,7 +67,6 @@
         height: auto;
         background-color: white; /* Added white background */
         padding: 10px; /* Added padding around the logo */
-        /* border-radius: 8px; Rounded corners for the background */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added shadow for better visibility */
     }
     .header-bar {

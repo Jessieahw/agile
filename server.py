@@ -25,11 +25,6 @@ from form import EPLTeamForm
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
-# app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
-
-# # Configure SQLite database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 
