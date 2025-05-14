@@ -1,5 +1,16 @@
-from dotenv import load_dotenv
-load_dotenv()
+
+from functools import wraps
+import sqlite3
+import os
+
+from extensions import db
+from nba import nba_bp
+import pandas as pd
+from sklearn.metrics.pairwise import euclidean_distances
+from models import User, PlayerComparison
+from models import Submission
+from flask_migrate import Migrate
+
 from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -8,28 +19,26 @@ from datetime import datetime
 import sqlite3
 import os
 from bbl import BBLBestMatchFunctions as BBL_BMF
-from config import Config
-
 
 # Initialize Flask app
 app = Flask(__name__)
-# app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
-app.config.from_object(Config)
-# # Configure SQLite database
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
+
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
-db = SQLAlchemy(app)
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# User model
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+ # your Blueprint instance
+app.register_blueprint(nba_bp, url_prefix='/nba')
 
+# User model
+db.init_app(app)
+migrate = Migrate(app, db)
 # Comparison model
 class Comparison(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -86,6 +95,8 @@ def login():
             return redirect(url_for('landing_page'))
         return jsonify({'message': 'Invalid username or password!'})
     return render_template('login.html')
+
+
 
 @app.route('/logout')
 @login_required
