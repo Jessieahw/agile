@@ -30,22 +30,23 @@
                 <li><strong>Cards per Match:</strong> The average number of yellow and red cards your team receives per match (e.g., 1.2).</li>
                 <li><strong>Shot Accuracy:</strong> The percentage of shots on target, represented as a decimal (e.g., 0.5 for 50%).</li>
             </ul>
-            <form id="teamForm">
+            <form id="teamForm" method="POST">
+                {{ form.hidden_tag() }}
                 <label for="avgShots">Average Shots per Match:</label>
-                <input type="number" id="avgShots" name="avgShots" step="0.01" min="0" required>
-        
+                {{ form.avgShots(step="0.01", min="0", required=True) }}
+            
                 <label for="avgGoals">Average Goals per Match:</label>
-                <input type="number" id="avgGoals" name="avgGoals" step="0.01" min="0" required>
-        
+                {{ form.avgGoals(step="0.01", min="0", required=True) }}
+            
                 <label for="avgFouls">Fouls per Match:</label>
-                <input type="number" id="avgFouls" name="avgFouls" step="0.01" min="0" required>
-        
+                {{ form.avgFouls(step="0.01", min="0", required=True) }}
+            
                 <label for="avgCards">Cards per Match:</label>
-                <input type="number" id="avgCards" name="avgCards" step="0.01" min="0" required>
-        
+                {{ form.avgCards(step="0.01", min="0", required=True) }}
+            
                 <label for="shotAccuracy">Shot Accuracy (e.g., 0.75 for 75%):</label>
-                <input type="number" id="shotAccuracy" name="shotAccuracy" step="0.01" min="0" max="1" required>
-        
+                {{ form.shotAccuracy(step="0.01", min="0", max="1", required=True) }}
+            
                 <button type="button" onclick="recommendTeam()">Find Your EPL Team</button>
             </form>
         </div>
@@ -140,11 +141,15 @@
 
             visualizeData(userStats, matchedTeamStats);
 
+            // Get CSRF token from the hidden input rendered by WTForms
+        const csrfToken = document.querySelector('#teamForm input[name="csrf_token"]').value;
+
 
             fetch('/save_comparison', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
                 },
                 body: JSON.stringify({
                     avg_shots: avgShots,

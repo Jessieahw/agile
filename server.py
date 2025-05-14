@@ -20,6 +20,7 @@ from datetime import datetime
 import sqlite3
 import os
 from bbl import BBLBestMatchFunctions as BBL_BMF
+from form import EPLTeamForm
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -116,9 +117,10 @@ def landing_page():
 def forum_page():
     return render_template('forum.html')
 
-@app.route('/epl')
+@app.route('/epl', methods=['GET', 'POST'])
 @login_required
 def epl_page():
+    form = EPLTeamForm()
     team_data = Team.query.all()
     serialized = [{
         'name': team.name,
@@ -128,7 +130,7 @@ def epl_page():
         'avg_cards': team.avg_cards,
         'shot_accuracy': team.shot_accuracy
     } for team in team_data]
-    return render_template('epl/epl.html', team_data=serialized)
+    return render_template('epl/epl.html', form=form, team_data=serialized)
 
 @app.route('/afl')
 @login_required
