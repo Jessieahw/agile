@@ -260,7 +260,7 @@ class BBLBestMatchFunctions:
                 if is_win:
                     wins += 1
                     opp_wins[opponent] = opp_wins.get(opponent, 0) + 1
-                    if 'FINAL' in (m.link or '').upper():
+                    if ('FINAL' in (m.link or '').upper() and 'SEMI' not in (m.link or '').upper()):
                         seasons_won.add(m.season)
                 else:
                     opp_losses[opponent] = opp_losses.get(opponent, 0) + 1
