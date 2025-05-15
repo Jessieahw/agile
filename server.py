@@ -1,5 +1,6 @@
 
 # Standard library imports
+from config import Config
 import os
 import csv
 import sqlite3
@@ -56,15 +57,15 @@ class Comparison(db.Model):
     matched_team = db.Column(db.String(80), nullable=False)
     user = db.relationship('User', backref='comparisons')
 
-# Team model
-class Team(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
-    avg_shots = db.Column(db.Float, nullable=False)
-    avg_goals = db.Column(db.Float, nullable=False)
-    avg_fouls = db.Column(db.Float, nullable=False)
-    avg_cards = db.Column(db.Float, nullable=False)
-    shot_accuracy = db.Column(db.Float, nullable=False)
+# # Team model
+# class Team(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(80), nullable=False)
+#     avg_shots = db.Column(db.Float, nullable=False)
+#     avg_goals = db.Column(db.Float, nullable=False)
+#     avg_fouls = db.Column(db.Float, nullable=False)
+#     avg_cards = db.Column(db.Float, nullable=False)
+#     shot_accuracy = db.Column(db.Float, nullable=False)
 
 def load_team_data_from_csv():
     csv_file_path = os.path.join(os.path.dirname(__file__), 'static', 'epl_data', 'team_comparison_stats.csv')
@@ -87,11 +88,12 @@ def create_app(test_config=None):
     
 
     app = Flask(__name__)
-    app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
+    # app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
 
-    # Default config
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # # Default config
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object(Config)
 
     # Override config if testing
     if test_config:
@@ -212,11 +214,11 @@ def create_app(test_config=None):
         team = request.args.get('team', '')
         return jsonify(BBL_BMF.get_team_stats(team)) if team else jsonify({})
 
-    @app.route('/get_team_data', methods=['GET'])
-    @login_required
-    def get_team_data():
-        team_data = Team.query.all()
-        return jsonify([{ 'name': team.name, 'avg_shots': team.avg_shots, 'avg_goals': team.avg_goals, 'avg_fouls': team.avg_fouls, 'avg_cards': team.avg_cards, 'shot_accuracy': team.shot_accuracy } for team in team_data])
+    # @app.route('/get_team_data', methods=['GET'])
+    # @login_required
+    # def get_team_data():
+    #     team_data = Team.query.all()
+    #     return jsonify([{ 'name': team.name, 'avg_shots': team.avg_shots, 'avg_goals': team.avg_goals, 'avg_fouls': team.avg_fouls, 'avg_cards': team.avg_cards, 'shot_accuracy': team.shot_accuracy } for team in team_data])
 
     @app.route('/teams')
     @login_required
