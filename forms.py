@@ -26,7 +26,6 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
-    confirm_password = PasswordField('Confirm Password', validators=[InputRequired()])
     submit = SubmitField('Register')
 
 class TemplateDataNBA(FlaskForm):
