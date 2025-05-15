@@ -347,8 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>Your closest match is:
           <strong>${best.City} ${best.Name}</strong> (${best.Key}).
         </p>`;
-      document.getElementById('viewTeamLink').href =
-         `${window.teamsBase}/${best.Key}`;;
+      const link = document.getElementById('viewTeamLink');
+      link.href = `${window.teamsBase}?team=${best.Key}`;
+      document.getElementById('result').value = best.Key;
       new bootstrap.Modal(
         document.getElementById('resultModal')
       ).show();
@@ -413,4 +414,3 @@ function slideToTeam(key) {
     carousel.cycle();
   }, 10000);
 }
-
