@@ -102,7 +102,7 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
-    session.pop('user_id', None)
+    logout_user()
     return redirect(url_for('login'))
 
 @app.route('/')
@@ -269,6 +269,14 @@ def search_users():
         return jsonify({"users": []})
     matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
     return jsonify({"users": [user.username for user in matching_users]})
+
+
+@app.route('/all_posts')
+@login_required
+def all_posts():
+    # You can render a template or return posts here
+    return render_template('all_posts.html')
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)
