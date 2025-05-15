@@ -173,7 +173,7 @@ def create_app(test_config=None):
     @app.route('/nba')
     @login_required
     def nba_page():
-        return render_template('nba.html')
+        return render_template('nba/nba.html')
 
     @app.route('/bbl', methods=['GET', 'POST'])
     @login_required
