@@ -1,33 +1,38 @@
 
-from config import Config
-
-from functools import wraps
-from flask import Flask, request, jsonify, send_from_directory, render_template
-from threading import Thread
-import sqlite3
+# Standard library imports
 import os
-from form import EPLTeamForm
-from extensions import db
-from nba import nba_bp
-import pandas as pd
-from sklearn.metrics.pairwise import euclidean_distances
-from models import User, PlayerComparison
-from models import Submission
-from flask_migrate import Migrate
+import csv
+import sqlite3
+from threading import Thread
+from datetime import datetime
+from functools import wraps
 
-from flask import Flask, request, jsonify, send_from_directory, render_template, redirect, url_for
+# Flask-related imports
+from flask import (
+    Flask, request, jsonify, send_from_directory, render_template,
+    redirect, url_for
+)
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_migrate import Migrate
+from flask_login import (
+    LoginManager, UserMixin, login_user, login_required,
+    logout_user, current_user
+)
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import generate_csrf
-from forms import BBLStatsForm, LoginForm, RegisterForm, TemplateDataNBA
+
+# Third-party imports
+import pandas as pd
+from sklearn.metrics.pairwise import euclidean_distances
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
-import sqlite3
-import os
+
+# Local application imports
+from config import Config
+from extensions import db
+from models import User, PlayerComparison, Submission
+from forms import BBLStatsForm, LoginForm, RegisterForm, TemplateDataNBA, EPLTeamForm
 from bbl import BBLBestMatchFunctions as BBL_BMF
-from functools import wraps
-import csv
+from nba import nba_bp
 
 # Setup the flask extensions
 db = SQLAlchemy()
