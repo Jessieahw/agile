@@ -1,0 +1,60 @@
+/* 1) Center everything in both modals */
+#resultModal .modal-body,
+#shareModal .modal-body {
+  text-align: center;
+}
+
+/* 2) Make the shareable card shrink-wrap its contents */
+.trading-card {
+  display: inline-block;
+  text-align: center;
+  background-color: #fff;      /* <-- ensures white canvas */
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin: auto;
+  border: 3px solid #000;
+  border-radius: .5rem;
+}
+
+.trading-card .card-header {
+    background-color: transparent !important;
+    border-bottom: none !important;
+  }
+
+/* 3) Center the logo/image inside the trading-card */
+.trading-card .card-logo {
+  display: block;
+  margin: 0 auto 1rem;     /* top/bottom spacing + horizontal centering */
+  max-width: 120px;         /* adjust as needed */
+  height: auto;
+}
+
+/* 4) Ensure the team name itself is centered */
+.trading-card .team-name {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* 1) Lay out the four players in a centered grid */
+.trading-card .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    justify-items: center;
+  }
+  
+  /* 2) Make each “player” stack its image over its name */
+  .trading-card .player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* 3) Give the name a little breathing room */
+  .trading-card .player small {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+  }
