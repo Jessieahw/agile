@@ -1,21 +1,46 @@
-import threading, pytest, time
+"""
+System-test fixtures
+– Spins up a live Flask server on port 5001
+– Provides a headless-Chrome WebDriver managed by Selenium 4
+   (no webdriver_manager needed)
+"""
+import threading, time, pytest, tempfile, os
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-import server                                # imports the same global app
+from selenium.webdriver.chrome.options import Options
+from server import create_app, db  # if you're using SQLAlchemy like db = SQLAlchemy(app)
 
 @pytest.fixture(scope="session")
 def live_server():
-    def run():
-        server.app.run(port=5001, use_reloader=False)
-    t = threading.Thread(target=run, daemon=True)
-    t.start()
-    time.sleep(1)            # give Flask a second to boot
+    db_fd, db_path = tempfile.mkstemp()
+    app = create_app({
+        "TESTING": True,
+        "SQLALCHEMY_DATABASE_URI": f"sqlite:///{db_path}",
+        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
+        "WTF_CSRF_ENABLED": True,
+    })
+
+    with app.app_context():
+        db.create_all()
+
+    threading.Thread(
+        target=lambda: app.run(port=5001, use_reloader=False, debug=True),
+        daemon=True
+    ).start()
+    time.sleep(1)
     yield "http://localhost:5001"
 
+    os.close(db_fd)
+    os.unlink(db_path)
+
+
+# ----------------------------------------------------------------------
+# Headless Chrome driver (Selenium Manager handles the driver binary)
+# ----------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def driver():
-    opts = webdriver.ChromeOptions()
-    opts.add_argument("--headless")
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=opts)
-    yield driver
-    driver.quit()
+    opts = Options()
+    # opts.add_argument("--headless=new")    # Chrome > 109 headless mode
+    drv = webdriver.Chrome(options=opts)   # Selenium downloads driver
+    drv.implicitly_wait(3)
+    yield drv
+    drv.quit()

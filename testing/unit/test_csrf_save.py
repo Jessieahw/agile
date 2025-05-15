@@ -81,3 +81,25 @@ def test_bbl_search_with_invalid_csrf(client, csrf_token):
                         "bowl_eco": 7},
                       headers={"X-CSRFToken": "invalid_token"})
     assert res.status_code == 400
+
+def test_registration_writes_user(client, csrf_token):
+    # register
+    client.post("/register", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+
+    # assert user exists in the test DB (not sports.db)
+    from server import User, db
+    assert User.query.filter_by(username="eve").count() == 1
+
+def test_login_on_prior_registered_user(client, csrf_token):
+    # register
+    res = client.post("/login", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+
+    assert res.status_code == 200
