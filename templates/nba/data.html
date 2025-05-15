@@ -93,8 +93,6 @@
   <section class="hero-section mb-4">
     <div class="hero-content container">
       <form id="userForm" class="row g-3" action="{{ url_for('nba.data') }}" method="POST">
-        <!-- CSRF Token -->
-        {{ form.hidden_tag() }}
         <input type="hidden" name="result" id="result" value="">
         <div class="col-md-4">
           <label for="wpct" class="form-label text-dark">Win %</label>
@@ -233,13 +231,14 @@
   
       // 4) Share trading-card build with Wikipedia thumbnails
       shareResultBtn.addEventListener('click', async () => {
-        const m = viewTeamLink.href.match(/team=([^&]+)/);
-        const teamKey = m ? m[1] : null;
-        if (!teamKey) return;
+        const teamKey = resultInput.value;
+           if (!teamKey) {
+              alert("No team selected to share!");
+            return;}
   
         // show loading state
         shareModalBody.innerHTML = '<p>Loading your shareable card…</p>';
-  
+        shareModal.show()
         try {
           const standings = await fetchStandings();
           const team = standings.find(t => t.Key === teamKey);
@@ -364,3 +363,5 @@
   </script>
 </body>
 </html>
+
+
