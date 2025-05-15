@@ -1,3 +1,4 @@
+from extensions import db
 
 # Standard library imports
 from config import Config
@@ -29,21 +30,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Local application imports
 from config import Config
-from extensions import db
-from models import User, PlayerComparison, Submission
+
 from forms import BBLStatsForm, LoginForm, RegisterForm, TemplateDataNBA, EPLTeamForm
 from bbl import BBLBestMatchFunctions as BBL_BMF
+
+from models import User, PlayerComparison, Submission
 from nba import nba_bp
 
 # Setup the flask extensions
-db = SQLAlchemy()
+
 login_manager = LoginManager()
 csrf = CSRFProtect()
+
+
 # Models
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+
 
 # Comparison model
 class Comparison(db.Model):
@@ -79,11 +80,6 @@ def create_app(test_config=None):
     
 
     app = Flask(__name__)
-    # app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
-
-    # # Default config
-    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports.db'
-    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config.from_object(Config)
 
     # Override config if testing
@@ -95,6 +91,8 @@ def create_app(test_config=None):
     login_manager.init_app(app)
     csrf.init_app(app)
     login_manager.login_view = 'login' 
+
+
     app.register_blueprint(nba_bp, url_prefix='/nba')
  
 

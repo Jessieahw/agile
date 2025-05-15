@@ -1,6 +1,6 @@
 import os, tempfile, pytest
 import server                               # ← imports the real app object
-from server import db
+from extensions import db
 import re
 
 @pytest.fixture()

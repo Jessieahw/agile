@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app ,Flask,jsonify
-from extensions import db            
+from extensions import db          
 import pandas as pd
 from sklearn.metrics.pairwise import euclidean_distances
 from models import Submission
