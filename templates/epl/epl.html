@@ -4,7 +4,8 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Which EPL Team Are You?</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Which EPL Team and Player Are You?</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/epl.css') }}">
     
 </head>
@@ -149,7 +150,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')    // Include CSRF token in the request headers
                 },
                 body: JSON.stringify({
                     avg_shots: avgShots,

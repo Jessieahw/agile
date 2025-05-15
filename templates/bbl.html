@@ -52,6 +52,8 @@
 
       <!-- ===== USER INPUT TABLES ===== -->
       <form id="user-stats-form" class="stats-form" action="" method="post">
+        <!-- CSRF Token -->
+        {{ form.hidden_tag() }}
         <!-- Batting -->
         <table class="stat-table">
           <caption>Batting&nbsp;Stats</caption>
