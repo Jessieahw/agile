@@ -45,3 +45,10 @@
   margin-bottom: 1.5rem;
   color:#000
 }
+
+#downloadComparisonBtn {
+  position: absolute;
+  bottom: 10px;          /* adjust to sit just below the footer */
+  right: 20px;           /* align it to the right */
+  z-index: 1050;         /* above the modal backdrop */
+}
