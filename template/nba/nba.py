@@ -4,6 +4,8 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from extensions import db            # import the SQLAlchemy() instance
          # to get at `app.logger` & `flash()`
 
+from forms import NBADataForm
+
 nba_bp = Blueprint(
     'nba', 
     __name__, 
@@ -26,6 +28,7 @@ class Submission(db.Model):
             f"<Submission {self.id}: wpct={self.wpct}, "
             f"pf={self.pf}, pa={self.pa}, result={self.result}>"
         )
+
 
 
 
@@ -85,24 +88,21 @@ def teams(team_key=None):
 @nba_bp.route('/data', methods=['GET', 'POST'])
 @nba_bp.route('/data.html', methods=['GET','POST'])
 def data():
-    if request.method == 'POST':
-        wpct   = float(request.form.get('wpct', 0))
-        pf     = float(request.form.get('pf',   0))
-        pa     = float(request.form.get('pa',   0))
-        result = request.form.get('result', 'Unknown')
-
+    form = NBADataForm()
+    if form.validate_on_submit():
+        wpct = form.wpct.data
+        pf = form.pf.data
+        pa = form.pa.data
+        result = form.result.data or 'Unknown'
         try:
             sub = Submission(wpct=wpct, pf=pf, pa=pa, result=result)
             db.session.add(sub)
             db.session.commit()
-            app.logger.info(f"Saved submission {sub.id}")
+            current_app.logger.info(f"Saved submission {sub.id}")
             flash('Your team match has been saved!', 'success')
         except Exception as e:
             db.session.rollback()
-            app.logger.error(f"Error saving submission: {e}")
+            current_app.logger.error(f"Error saving submission: {e}")
             flash('There was an error saving your submission.', 'danger')
-
         return redirect(url_for('nba.data'))
-
-
-    return render_template('data.html')
+    return render_template('data.html', form=form)

@@ -7,7 +7,7 @@ from models import PlayerComparison
 import os, csv
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-
+from forms import NBADataForm
 
 
 
@@ -83,14 +83,14 @@ def teams(team_key=None):
 @nba_bp.route('/data.html', methods=['GET','POST'])
 @login_required
 def data():
-    if request.method == 'POST':
-        wpct   = float(request.form.get('wpct', 0))
-        pf     = float(request.form.get('pf',   0))
-        pa     = float(request.form.get('pa',   0))
-        result = request.form.get('result', 'Unknown')
-
+    form = NBADataForm()
+    if form.validate_on_submit():
+        wpct = form.wpct.data
+        pf = form.pf.data
+        pa = form.pa.data
+        result = form.result.data or 'Unknown'
         try:
-            sub = Submission(user_id=current_user.id,wpct=wpct, pf=pf, pa=pa, result=result)
+            sub = Submission(wpct=wpct, pf=pf, pa=pa, result=result)
             db.session.add(sub)
             db.session.commit()
             current_app.logger.info(f"Saved submission {sub.id}")
@@ -99,11 +99,8 @@ def data():
             db.session.rollback()
             current_app.logger.error(f"Error saving submission: {e}")
             flash('There was an error saving your submission.', 'danger')
-
         return redirect(url_for('nba.data'))
-
-
-    return render_template('data.html')
+    return render_template('data.html', form=form)
 
 
 @nba_bp.route('/player', methods=['GET', 'POST'])

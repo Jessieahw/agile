@@ -42,3 +42,15 @@ class EPLTeamForm(FlaskForm):
     shotAccuracy = FloatField('Shot Accuracy', validators=[DataRequired(), NumberRange(min=0, max=1)])
     submit = SubmitField('Find Your EPL Team')
 
+
+
+from flask_wtf import FlaskForm
+from wtforms import FloatField, HiddenField, SubmitField
+from wtforms.validators import DataRequired
+
+class NBADataForm(FlaskForm):
+    wpct = FloatField('Win %', validators=[DataRequired()])
+    pf = FloatField('Pts/Game (for)', validators=[DataRequired()])
+    pa = FloatField('Pts/Game (against)', validators=[DataRequired()])
+    result = HiddenField('Result')
+    submit = SubmitField('Save Match')

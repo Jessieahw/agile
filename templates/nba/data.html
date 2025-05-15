@@ -92,27 +92,19 @@
   <!-- Hero Section with Form -->
   <section class="hero-section mb-4">
     <div class="hero-content container">
-      <form id="userForm" class="row g-3" action="{{ url_for('nba.data') }}" method="POST">
-        <input type="hidden" name="result" id="result" value="">
-        <div class="col-md-4">
-          <label for="wpct" class="form-label text-dark">Win %</label>
-          <input type="number" class="form-control" id="wpct" name="wpct"
-                 step="0.1" placeholder="e.g. 55" required />
+      <form id="userForm" method="POST" action="{{ url_for('nba.data') }}">
+        {{ form.hidden_tag() }}
+        <div>
+          {{ form.wpct.label }} {{ form.wpct(class="form-control") }}
         </div>
-        <div class="col-md-4">
-          <label for="pf" class="form-label text-dark">Pts/Game (for)</label>
-          <input type="number" class="form-control" id="pf" name="pf"
-                 step="0.1" placeholder="e.g. 110.5" required />
+        <div>
+          {{ form.pf.label }} {{ form.pf(class="form-control") }}
         </div>
-        <div class="col-md-4">
-          <label for="pa" class="form-label text-dark">Pts/Game (against)</label>
-          <input type="number" class="form-control" id="pa" name="pa"
-                 step="0.1" placeholder="e.g. 105.3" required />
+        <div>
+          {{ form.pa.label }} {{ form.pa(class="form-control") }}
         </div>
-        <div class="col-12 text-end">
-          <button type="button" id="compareBtn" class="btn btn-secondary">Preview Match</button>
-          <button type="submit" class="btn btn-primary">Save Match</button>
-        </div>
+        {{ form.result(id="result") }}
+        {{ form.submit(class="btn btn-primary") }}
       </form>
     </div>
   </section>

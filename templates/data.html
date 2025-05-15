@@ -46,8 +46,8 @@
     <div class="offcanvas-body p-0">
       <ul class="nav nav-pills flex-column mb-0">
         <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-        <li class="nav-item"><a href="{{ url_for('teams') }}" class="nav-link">Teams</a></li>
-        <li class="nav-item"><a href="{{ url_for('data') }}" class="nav-link active">Your Team</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.teams') }}" class="nav-link">Teams</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.data') }}" class="nav-link active">Your Team</a></li>
       </ul>
     </div>
   </div>
@@ -70,7 +70,7 @@
   <section class="hero-section">
     <div class="hero-content container">
       <h2 class="mb-3">Find Your NBA Team Match</h2>
-      <form id="userForm" class="row g-3" action="{{ url_for('data') }}" method="POST">
+      <form id="userForm" class="row g-3" action="{{ url_for('nba.data') }}" method="POST">
         {{ form.hidden_tag() }}
         <input type="hidden" name="result" id="result" value="">
         <div class="col-md-4">
