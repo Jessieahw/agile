@@ -1,5 +1,3 @@
-
-# nba.py
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app ,Flask,jsonify
 from extensions import db            
 import pandas as pd
@@ -9,8 +7,6 @@ from models import PlayerComparison
 import os, csv
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-
-
 nba_bp = Blueprint(
     'nba', 
     __name__, 
@@ -18,6 +14,7 @@ nba_bp = Blueprint(
     static_folder='static',
     url_prefix='/nba'
 )
+
 
 df = pd.read_csv('database_24_25.csv')[['Player', 'PTS', 'AST', 'STL', 'BLK', 'TRB']].dropna()
 
@@ -29,8 +26,10 @@ def home():
 
 
 @nba_bp.route('/teams')
+@nba_bp.route('/teams.html')
 @nba_bp.route('/teams/<team_key>')
 def teams(team_key=None):
+    team_key = request.args.get('team')
     teams = {
                 'ATL': 'Atlanta Hawks',
         'BOS': 'Boston Celtics',
@@ -100,6 +99,7 @@ def data():
 
 
     return render_template('data.html')
+
 
 @nba_bp.route('/player', methods=['GET', 'POST'])
 @nba_bp.route('/player.html', methods=['GET', 'POST'])
