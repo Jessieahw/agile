@@ -7,7 +7,7 @@ import csv
 from server import app, db, Team  # Import the app, db, and Team model from server.py
 def load_csv_to_database():
     # Path to your CSV file
-    csv_file_path = 'team_comparison_stats.csv'
+    csv_file_path = os.path.join(os.path.dirname(__file__), 'team_comparison_stats.csv')
 
     # Use the Flask app context to access the database
     with app.app_context():

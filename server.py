@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, send_from_directory, render_template
 from threading import Thread
 import sqlite3
 import os
-
+from form import EPLTeamForm
 from extensions import db
 from nba import nba_bp
 import pandas as pd
