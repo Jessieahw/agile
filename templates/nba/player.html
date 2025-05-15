@@ -44,10 +44,11 @@
     </div>
     <div class="offcanvas-body p-0">
       <ul class="nav nav-pills flex-column mb-0">
-        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/" class="nav-link">Back to Forum</a></li>
         <li class="nav-item"><a href="{{ url_for('nba.teams') }}" class="nav-link">Teams</a></li>
-        <li class="nav-item"><a href="{{ url_for('nba.data') }}" class="nav-link">Your Team</a></li>
-        <li class="nav-item"><a href="{{ url_for('nba.compare_player') }}" class="nav-link active">Player</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.data') }}" class="nav-link">Team Comparison</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.compare_player') }}" class="nav-link active">Player Comparison</a></li>
+        <li class="nav-item"><a href="{{ url_for('nba.home') }}" class="nav-link">Team 2025 Standings</a></li>
       </ul>
     </div>
   </div>
