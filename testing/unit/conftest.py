@@ -1,6 +1,7 @@
 import os, tempfile, pytest
 import server                               # ← imports the real app object
 from server import db
+import re
 
 @pytest.fixture()
 def app():
@@ -23,6 +24,9 @@ def client(app):
 
 @pytest.fixture()
 def csrf_token(client):
+    # hit any page with a form; /login is quick
     html = client.get("/login").data.decode()
-    start = html.find('name="csrf_token" value="') + 24
-    return html[start:html.find('"', start)]
+    # robust regex for value=""
+    m = re.search(r'name="csrf_token".*?value="([^"]+)"', html, re.S)
+    assert m, "CSRF token not found in HTML"
+    return m.group(1)
