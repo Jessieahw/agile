@@ -43,6 +43,8 @@ class Team(db.Model):
     shot_accuracy = db.Column(db.Float, nullable=False)
 
 def create_app(test_config=None):
+    
+
     app = Flask(__name__)
     app.secret_key = os.getenv('SECRET_KEY', 'default_dev_key')
 
@@ -57,12 +59,7 @@ def create_app(test_config=None):
     db.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
-    login_manager.login_view = 'login'
-
-    with app.app_context():
-        db.create_all()
-        # User model
-    
+    login_manager.login_view = 'login'    
 
     # Create tables
     with app.app_context():

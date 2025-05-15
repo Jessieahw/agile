@@ -61,36 +61,60 @@ def test_register_login_logout_flow(driver, live_server):
     assert "/login" in driver.current_url
 
 
-# def test_csrf_protected_save(driver, live_server):
-#     register(driver, live_server, "csuser", "pw")
-#     login(driver, live_server, "csuser", "pw")
+def test_bbl_submission_with_csrf(driver, live_server):
+    register(driver, live_server, "bbluser", "pw")
+    login(driver, live_server, "bbluser", "pw")
 
-#     driver.get(f"{live_server}/epl")
-#     token = get_csrf_from_meta(driver)
-#     assert token, "CSRF meta tag not found on /epl page"
+    driver.get(f"{live_server}/bbl")
+    WebDriverWait(driver, 3)
+    token = get_csrf_from_meta(driver)
+    # Check the CSRF token in the meta tag
+    assert token != "", "CSRF meta tag not found on /bbl page"
 
-#     status = driver.execute_async_script(
-#         """
-#         const done  = arguments[0];
-#         const token = arguments[1];
-#         fetch('/save_comparison', {
-#             method: 'POST',
-#             headers: {
-#                 'Content-Type': 'application/json',
-#                 'X-CSRFToken': token
-#             },
-#             body: JSON.stringify({
-#                 avg_shots: 10,
-#                 avg_goals: 1,
-#                 avg_fouls: 1,
-#                 avg_cards: 1,
-#                 shot_accuracy: 0.9,
-#                 matched_team: 'Test'
-#             })
-#         }).then(r => done(r.status)).catch(_ => done(-1));
-#         """,
-#         token,
-#     )
+    # Fill in batting stats
+    driver.find_element(By.NAME, "bat_innings").send_keys("100")
+    driver.find_element(By.NAME, "bat_runs").send_keys("2300")
+    driver.find_element(By.NAME, "bat_high").send_keys("120")
+    driver.find_element(By.NAME, "bat_avg").send_keys("23")
+    driver.find_element(By.NAME, "bat_sr").send_keys("130")
 
-#     assert status == 200
+    # Fill in bowling stats
+    driver.find_element(By.NAME, "bowl_overs").send_keys("100")
+    driver.find_element(By.NAME, "bowl_wkts").send_keys("34")
+    driver.find_element(By.NAME, "bowl_runs").send_keys("700")
+    driver.find_element(By.NAME, "bowl_avg").send_keys("20")
+    driver.find_element(By.NAME, "bowl_eco").send_keys("7.0")
+
+    # Submit the form
+    driver.find_element(By.CLASS_NAME, "submit-btn").click()
+    # Wait for the page to load after submission
+    WebDriverWait(driver, 3)
+
+    # Get the table data
+    table = driver.find_element(By.CLASS_NAME, "similar-table")
+    assert table, "Table not found on the page"
+
+    # Check if the table contains the submitted data by simple check for names in the table source
+    table_source = table.get_attribute("innerHTML")
+    assert "Alex Hales" in table_source, "Table does not contain or is not the correct result of the submitted batting data!"
+    assert "Josh Philippe" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
+    assert "Daniel Hughes" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
+
+
+
+def test_csrf_protected_save_incomplete(driver, live_server):
+    register(driver, live_server, "csuser", "pw")
+    login(driver, live_server, "csuser", "pw")
+
+    driver.get(f"{live_server}/epl")
+    token = get_csrf_from_meta(driver)
+    # Check the CSRF token in the meta tag
+    assert token, "CSRF meta tag not found on /epl page"
+
+    driver.find_element(By.NAME, "avgShots").send_keys("10")
+    driver.find_element(By.NAME, "avgGoals").send_keys("1.5")
+    driver.find_element(By.NAME, "avgFouls").send_keys("8")
+    driver.find_element(By.NAME, "avgCards").send_keys("1.2")
+    driver.find_element(By.NAME, "shotAccuracy").send_keys("0.5" + Keys.RETURN)
+
 
