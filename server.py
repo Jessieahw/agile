@@ -52,14 +52,31 @@ class Comparison(db.Model):
     user = db.relationship('User', backref='comparisons')
 
 # Team model
-# class Team(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(80), nullable=False)
-#     avg_shots = db.Column(db.Float, nullable=False)
-#     avg_goals = db.Column(db.Float, nullable=False)
-#     avg_fouls = db.Column(db.Float, nullable=False)
-#     avg_cards = db.Column(db.Float, nullable=False)
-#     shot_accuracy = db.Column(db.Float, nullable=False)
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    avg_shots = db.Column(db.Float, nullable=False)
+    avg_goals = db.Column(db.Float, nullable=False)
+    avg_fouls = db.Column(db.Float, nullable=False)
+    avg_cards = db.Column(db.Float, nullable=False)
+    shot_accuracy = db.Column(db.Float, nullable=False)
+
+def load_team_data_from_csv():
+    csv_file_path = os.path.join(os.path.dirname(__file__), 'static', 'epl_data', 'team_comparison_stats.csv')
+    teams = []
+    with open(csv_file_path, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            teams.append({
+                'name': row['Team'],
+                'avg_shots': float(row['Average Shots per Match']),
+                'avg_goals': float(row['Average Goals per Match']),
+                'avg_fouls': float(row['Average Fouls per Match']),
+                'avg_cards': float(row['Average Cards per Match']),
+                'shot_accuracy': float(row['Shot Accuracy'])
+            })
+    return teams
+
 
 def create_app(test_config=None):
     
@@ -76,6 +93,7 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     db.init_app(app)
+    migrate = Migrate(app, db) # Bringing this back from last commit
     login_manager.init_app(app)
     csrf.init_app(app)
     login_manager.login_view = 'login'    
@@ -136,16 +154,9 @@ def create_app(test_config=None):
     @app.route('/epl')
     @login_required
     def epl_page():
-        team_data = Team.query.all()
-        serialized = [{
-            'name': team.name,
-            'avg_shots': team.avg_shots,
-            'avg_goals': team.avg_goals,
-            'avg_fouls': team.avg_fouls,
-            'avg_cards': team.avg_cards,
-            'shot_accuracy': team.shot_accuracy
-        } for team in team_data]
-        return render_template('epl/epl.html', team_data=serialized, csrf_token=generate_csrf())
+        form = EPLTeamForm()
+        team_data = load_team_data_from_csv()
+        return render_template('epl/epl.html', team_data=team_data, form=form)
 
     @app.route('/afl')
     @login_required
@@ -296,6 +307,12 @@ def create_app(test_config=None):
     @app.route('/static/<path:filename>')
     def serve_static(filename):
         return send_from_directory('static', filename)
+    
+    @app.route('/all_posts')
+    @login_required
+    def all_posts():
+        # You can render a template or return posts here
+        return render_template('all_posts.html')
 
     # Register routes (move your existing routes here or import from views.py)
     return app

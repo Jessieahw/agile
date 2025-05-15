@@ -150,7 +150,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')    // Include CSRF token in the request headers
+                    'X-CSRFToken': csrfToken    // Include CSRF token in the request headers
                 },
                 body: JSON.stringify({
                     avg_shots: avgShots,
