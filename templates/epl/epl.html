@@ -15,7 +15,7 @@
         <h1>Which EPL Team Are You?</h1>
     </header>
     <script>
-        const eplTeams = JSON.parse('{{ team_data|tojson }}');
+        const eplTeams = {{ team_data|tojson|safe }};
     </script>
 
     <!-- Part 1: Team Recommendation -->
