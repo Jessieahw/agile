@@ -102,7 +102,7 @@ def test_bbl_submission_with_csrf(driver, live_server):
 
 
 
-def test_csrf_protected_save_incomplete(driver, live_server):
+def test_epl_recommended_team_search(driver, live_server):
     register(driver, live_server, "csuser", "pw")
     login(driver, live_server, "csuser", "pw")
 
@@ -116,5 +116,11 @@ def test_csrf_protected_save_incomplete(driver, live_server):
     driver.find_element(By.NAME, "avgFouls").send_keys("8")
     driver.find_element(By.NAME, "avgCards").send_keys("1.2")
     driver.find_element(By.NAME, "shotAccuracy").send_keys("0.5" + Keys.RETURN)
+    driver.find_element(By.XPATH, "//button[text()='Find Your EPL Team']").click()
+    WebDriverWait(driver, 3)
+    # Get the recommended team:
+    team = driver.find_element(By.ID, "modalText").text
+    assert team != "", "No recommended team found in the modal!"
+    assert "tottenham" in team.lower(), "The recommended team is not Tottenham Hotspur!"
 
 
