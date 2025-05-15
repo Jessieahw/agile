@@ -94,7 +94,9 @@ def create_app(test_config=None):
     migrate = Migrate(app, db) # Bringing this back from last commit
     login_manager.init_app(app)
     csrf.init_app(app)
-    login_manager.login_view = 'login'    
+    login_manager.login_view = 'login' 
+    app.register_blueprint(nba_bp, url_prefix='/nba')
+ 
 
     # Create tables
     with app.app_context():
@@ -206,20 +208,6 @@ def create_app(test_config=None):
         return jsonify(BBL_BMF.get_team_stats(team)) if team else jsonify({})
 
  
-    @app.route('/teams')
-    @login_required
-    def teams():
-        return render_template('teams.html')
-
-    @app.route('/data')
-    @login_required
-    def data():
-        form = TemplateDataNBA()
-        # If it is a POST request, process the form data
-        if form.validate_on_submit():
-            return render_template('data.html', form=form)
-        # If it is a GET request, just render the template
-        return render_template('data.html', form=form)
 
     @app.route('/get_comparison')
     @login_required
