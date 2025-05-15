@@ -32,7 +32,7 @@ let playersData = null;
 // Function to load the CSV file from the server
 async function loadCSV() {
     try {
-        const response = await fetch('stats.csv');
+        const response = await fetch('/static/stats.csv'); // Ensure the path is correct
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -95,7 +95,7 @@ function displaySimilarPlayer(player) {
 // Function to handle form submission
 async function submitStats() {
     try {
-        // If data isn't loaded yet, load it
+        // Ensure data is loaded before proceeding
         if (!playersData) {
             await loadCSV();
         }
@@ -122,4 +122,14 @@ async function submitStats() {
 document.addEventListener('DOMContentLoaded', () => {
     const compareButton = document.querySelector('.center-button');
     compareButton.addEventListener('click', submitStats);
-}); 
+
+    const shareButton = document.getElementById('shareButton');
+    if (shareButton) {
+        shareButton.addEventListener('click', () => {
+            const playerName = document.querySelector('#playerInfo h3').textContent;
+            const postText = `My recent performance playing AFL is looking a lot like ${playerName}'s right now.`;
+            const params = new URLSearchParams({ postText });
+            window.location.href = `/forum?${params.toString()}`;
+        });
+    }
+});

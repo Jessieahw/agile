@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Posts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum_style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .posts-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 10px;
+        }
+        .post-box {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .post-header {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .post-header span {
+            font-weight: bold;
+        }
+        .post-text {
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('landing_page') }}">Home</a>
+        <a href="{{ url_for('forum_page') }}">Forum</a>
+    </nav>
+
+    <div class="posts-container">
+        <h1>All Posts</h1>
+        {% if posts %}
+            {% for post in posts %}
+                <div class="post-box">
+                    <div class="post-header">
+                        <span>{{ post['username'] }}</span> - {{ post['timestamp'].strftime('%Y-%m-%d %H:%M:%S') }}
+                    </div>
+                    <div class="post-text">
+                        {{ post['text'] }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No posts yet. Be the first to share!</p>
+        {% endif %}
+    </div>
+</body>
+</html>

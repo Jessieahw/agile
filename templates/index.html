@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/landing_style.css') }}">
 </head>
 <body>
-    <nav class="main-nav">
-        <a href="{{ url_for('forum_page') }}" class="nav-link">Forum</a>
+    <nav class="navbar">
+        <a href="{{ url_for('landing_page') }}">Home</a>
+        <a href="{{ url_for('forum_page') }}">Forum</a>
+        <a href="{{ url_for('all_posts') }}">Posts</a>
+        <a href="{{ url_for('logout') }}" class="logout-button">Log Out</a>
     </nav>
 
     <div class="header-background">

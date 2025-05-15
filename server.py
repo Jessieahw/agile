@@ -1,6 +1,9 @@
+
 from config import Config
 
 from functools import wraps
+from flask import Flask, request, jsonify, send_from_directory, render_template
+from threading import Thread
 import sqlite3
 import os
 
@@ -20,7 +23,7 @@ from datetime import datetime
 import sqlite3
 import os
 from bbl import BBLBestMatchFunctions as BBL_BMF
-from form import EPLTeamForm
+from functools import wraps
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -99,7 +102,7 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
-    logout_user()
+    session.pop('user_id', None)
     return redirect(url_for('login'))
 
 @app.route('/')
@@ -266,10 +269,6 @@ def search_users():
         return jsonify({"users": []})
     matching_users = User.query.filter(User.username.ilike(f"%{query}%")).all()
     return jsonify({"users": [user.username for user in matching_users]})
-
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, use_reloader=False)

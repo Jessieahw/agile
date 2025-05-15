@@ -30,12 +30,14 @@
         <div class="forum-section active" id="epl-forum">
             <h2>English Premier League Forum</h2>
             <div class="post-form">
-                <textarea placeholder="I'm so good I matched [player name]'s stats this week..." class="post-textarea"></textarea>
-                <div class="media-buttons">
-                    <button class="media-button">Add Image</button>
-                    <button class="media-button">Add Video</button>
-                </div>
-                <button class="submit-button">Create Post</button>
+                <form action="/submit_post" method="POST">
+                    <textarea name="postText" placeholder="I'm so good I matched [player name]'s stats this week..." class="post-textarea"></textarea>
+                    <div class="media-buttons">
+                        <button type="button" class="media-button">Add Image</button>
+                        <button type="button" class="media-button">Add Video</button>
+                    </div>
+                    <button type="submit" class="submit-button">Create Post</button>
+                </form>
             </div>
         </div>
 
@@ -43,12 +45,14 @@
         <div class="forum-section" id="bbl-forum">
             <h2>Big Bash League Forum</h2>
             <div class="post-form">
-                <textarea placeholder="I'm so good I matched [player name]'s stats this week..." class="post-textarea"></textarea>
-                <div class="media-buttons">
-                    <button class="media-button">Add Image</button>
-                    <button class="media-button">Add Video</button>
-                </div>
-                <button class="submit-button">Create Post</button>
+                <form action="/submit_post" method="POST">
+                    <textarea name="postText" placeholder="I'm so good I matched [player name]'s stats this week..." class="post-textarea"></textarea>
+                    <div class="media-buttons">
+                        <button type="button" class="media-button">Add Image</button>
+                        <button type="button" class="media-button">Add Video</button>
+                    </div>
+                    <button type="submit" class="submit-button">Create Post</button>
+                </form>
             </div>
         </div>
 
@@ -56,15 +60,26 @@
         <div class="forum-section" id="afl-forum">
             <h2>Australian Football League Forum</h2>
             <div class="post-form">
-                <textarea placeholder="I'm so good I matched [player name]'s stats this week..." class="post-textarea"></textarea>
-                <div class="media-buttons">
-                    <button class="media-button">Add Image</button>
-                    <button class="media-button">Add Video</button>
-                </div>
-                <button class="submit-button">Create Post</button>
+                <form action="/submit_post" method="POST">
+                    <textarea name="postText" placeholder="I'm so good I matched [player name]'s stats this week..." class="post-textarea"></textarea>
+                    <div class="media-buttons">
+                        <button type="button" class="media-button">Add Image</button>
+                        <button type="button" class="media-button">Add Video</button>
+                    </div>
+                    <button type="submit" class="submit-button">Create Post</button>
+                </form>
             </div>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postText = urlParams.get('postText');
+            if (postText) {
+                document.querySelector('.post-textarea').value = postText;
+            }
+        });
+    </script>
 </body>
-</html> 
+</html>
