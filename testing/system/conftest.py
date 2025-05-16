@@ -8,7 +8,15 @@ import threading, time, pytest, tempfile, os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from server import create_app, db  # if you're using SQLAlchemy like db - SQLAlchemy(app)
+import logging
 
+def pytest_configure(config):
+    logging.basicConfig(
+        level=logging.INFO,  # Change to DEBUG for more verbosity
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
+    logging.getLogger("selenium").setLevel(logging.WARNING)
+    
 @pytest.fixture(scope="session")
 def live_server():
     db_fd, db_path = tempfile.mkstemp()

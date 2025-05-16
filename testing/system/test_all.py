@@ -2,13 +2,42 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.remote.webelement import WebElement
+from typing import Set, Tuple
+import logging
 
 # ---------- helper utilities ----------
+LOGGER = logging.getLogger(__name__)
 
 def _grab_csrf_token(driver, base):
     """Open /login once and pull the hidden WTForms token so we can reuse it."""
     driver.get(f"{base}/login")
     return driver.find_element(By.NAME, "csrf_token").get_attribute("value")
+
+def _extract_table_data(table: WebElement) -> Set[Tuple[str, ...]]:
+    """
+    Given a confirmed Selenium table WebElement, extract and return the table rows
+    as a set of tuples (one tuple per row).
+    
+    It efficiently grabs both <th> and <td> cells in each row using CSS selectors.
+
+    Args:
+        table (WebElement): The <table> element to extract data from.
+
+    Returns:
+        Set[Tuple[str, ...]]: A set of tuples containing the row cell texts.
+    """
+    data = set()
+    rows = table.find_elements(By.CSS_SELECTOR, "tr")
+    
+    for row in rows:
+        cells = row.find_elements(By.CSS_SELECTOR, "th, td")
+        if not cells:
+            continue
+        row_data = tuple(cell.text.strip() for cell in cells)
+        data.add(row_data)
+
+    return data
 
 
 def register(driver, base, user, pw):
@@ -16,10 +45,11 @@ def register(driver, base, user, pw):
 
     # token already correct - just read it if you later want to inspect
     # token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
-
+    WebDriverWait(driver, 5).until(
+        expected_conditions.presence_of_element_located((By.NAME, "username"))
+    )
     driver.find_element(By.NAME, "username").send_keys(user)
     driver.find_element(By.NAME, "password").send_keys(pw)
-    WebDriverWait(driver, 3)
     driver.find_element(By.CLASS_NAME, "form-button").click()
 
     # Wait until we’re redirected away from /register (302 → /login)
@@ -35,7 +65,7 @@ def login(driver, base, user, pw):
     driver.find_element(By.NAME, "password").send_keys(pw)
     driver.find_element(By.CLASS_NAME, "form-button").click()
     WebDriverWait(driver, 1)
-    print(f"After login: {driver.current_url}")
+    LOGGER.info(f"After login: {driver.current_url}")
     WebDriverWait(driver, 5).until(lambda d: "/login" not in d.current_url)
 
 
@@ -67,7 +97,6 @@ def test_bbl_similarity_search_submission_with_csrf(driver, live_server):
     login(driver, live_server, "bbluser0", "pw")
 
     driver.get(f"{live_server}/bbl")
-    WebDriverWait(driver, 3)
     token = get_csrf_from_meta(driver)
     # Check the CSRF token in the meta tag
     assert token != "", "CSRF meta tag not found on /bbl page"
@@ -89,7 +118,6 @@ def test_bbl_similarity_search_submission_with_csrf(driver, live_server):
     # Submit the form
     driver.find_element(By.CLASS_NAME, "submit-btn").click()
     # Wait for the page to load after submission
-    WebDriverWait(driver, 3)
 
     # Get the table data
     table = driver.find_element(By.CLASS_NAME, "similar-table")
@@ -102,47 +130,49 @@ def test_bbl_similarity_search_submission_with_csrf(driver, live_server):
     assert "Daniel Hughes" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
 
 def test_bbl_player_search(driver, live_server):
-    # Build up the user account and get authenticated.
+    
+    LOGGER.info("Registering and logging in test user for BBL player search.")
+    
     register(driver, live_server, "bbluser1", "pw")
     login(driver, live_server, "bbluser1", "pw")
 
-    # Get to the page
+    LOGGER.info("Navigating to BBL player search page.")
     driver.get(f"{live_server}/bbl")
 
-    # Wait for the nav button to appear, then click it
+    LOGGER.info("Waiting for player search button and clicking.")
     WebDriverWait(driver, 3).until(
         expected_conditions.presence_of_element_located((By.ID, "playersbtn"))
     )
     playersbtn = driver.find_element(By.ID, "playersbtn")
     playersbtn.click()
 
-    # Wait for the search box to appear
+    LOGGER.info("Waiting for player search input to appear.")
     WebDriverWait(driver, 5).until(
         expected_conditions.visibility_of_element_located((By.ID, "player-search-input"))
     )
 
-    # No token needed for this page (not a form). Just enter a player name
     player_name = "Chris"
+    LOGGER.info(f"Entering player name: {player_name}")
     player_input = driver.find_element(By.ID, "player-search-input")
     player_input.send_keys(player_name)
-    # Submit and wait for the result table to appear and fill out
+
+    LOGGER.info("Submitting player search.")
     input_button = driver.find_element(By.ID, "player-search-btn")
     input_button.click()
-    WebDriverWait(driver, 3).until(
-        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "similar-table"))
+    # Wait for the results table to appear
+    LOGGER.info("Waiting for results table to appear.")
+    WebDriverWait(driver, 5).until(
+        expected_conditions.presence_of_all_elements_located((By.CLASS_NAME, "similar-results"))
     )
+
     # Get the table data
     table = driver.find_element(By.CLASS_NAME, "similar-table")
     assert table, "Table not found on the page"
 
-    # Parse the table
-    rows = table.find_elements(By.TAG_NAME, "tr")
-    data: set[tuple[str, str]] = set([])
-    for row in rows:
-        cells = row.find_elements(By.TAG_NAME, "th") or row.find_elements(By.TAG_NAME, "td")
-        data.add(tuple(cell.text.strip() for cell in cells))
-
-    # Set expected row data:
+    # Extract the table data
+    LOGGER.info("Parsing table rows.")
+    data = _extract_table_data(table)
+    LOGGER.info("Found table rows.")
     expected_rows: set[tuple[str,str]] = {
         ("#", "Name", "Inn", "Runs", "HS", "Avg", "SR", "Wkts", "BAvg", "Eco"),
         ("1", "Chris Lynn", "113", "3632", "101", "32.14", "132.55", "3", "25.00", "6.82"),
@@ -150,9 +180,12 @@ def test_bbl_player_search(driver, live_server):
         ("4", "Chris Gayle", "20", "645", "100", "32.25", "125.48", "6", "30.50", "7.04")
     }
 
-    # Print the table data for debugging
-    print(f"Expected: {expected_rows}.\nActual: {data}\nDifference: {expected_rows.difference(data)}")
+    LOGGER.info(f"Expected rows:\n{expected_rows}")
+    LOGGER.info(f"Actual data:\n{data}")
+    LOGGER.info(f"Difference: {expected_rows.difference(data)}")
+
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
+
 
 def test_bbl_team_select(driver, live_server):
     # Build up the user account and get authenticated.
@@ -187,11 +220,7 @@ def test_bbl_team_select(driver, live_server):
     assert table, "Table not found on the page"
 
     # Parse the table
-    rows = table.find_elements(By.TAG_NAME, "tr")
-    data: set[tuple[str, str]] = set([])
-    for row in rows:
-        cells = row.find_elements(By.TAG_NAME, "th") + row.find_elements(By.TAG_NAME, "td")
-        data.add(tuple(cell.text.strip() for cell in cells))
+    data = _extract_table_data(table)
 
     # Set expected row data:
     expected_rows: set[tuple[str,str]] = {
@@ -205,7 +234,7 @@ def test_bbl_team_select(driver, live_server):
     }
 
     # Print the table data for debugging
-    print(f"Expected: {expected_rows}.\nActual: {data}\nDifference: {expected_rows.difference(data)}")
+    LOGGER.info(f"Expected: {expected_rows}.\nActual: {data}\nDifference: {expected_rows.difference(data)}")
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
 
 
@@ -224,12 +253,9 @@ def test_epl_recommended_team_search(driver, live_server):
     driver.find_element(By.NAME, "avgCards").send_keys("1.2")
     driver.find_element(By.NAME, "shotAccuracy").send_keys("0.5" + Keys.RETURN)
     driver.find_element(By.XPATH, "//button[text()='Find Your EPL Team']").click()
-    WebDriverWait(driver, 3)
     # Get the recommended team:
     team = driver.find_element(By.ID, "modalText").text
-    WebDriverWait(driver, 3)
     driver.find_element(By.CLASS_NAME, "close").click() # Close the modal text popup
-    WebDriverWait(driver, 3)
     assert team != "", "No recommended team found in the modal!"
     assert "tottenham" in team.lower(), "The recommended team is not Tottenham Hotspur!"
 
@@ -254,11 +280,7 @@ def test_nba_team_search(driver, live_server):
     )
     # Parse the table
     table =driver.find_element(By.CLASS_NAME, "stats-table")
-    rows = table.find_elements(By.TAG_NAME, "tr")
-    data: set[tuple[str, str]] = set([])
-    for row in rows:
-        cells = row.find_elements(By.TAG_NAME, "th") or row.find_elements(By.TAG_NAME, "td")
-        data.add(tuple(cell.text.strip() for cell in cells))
+    data = _extract_table_data(table)
 
     # Set expected row data:
     expected_rows: set[tuple[str,str]] = {
@@ -267,7 +289,7 @@ def test_nba_team_search(driver, live_server):
         ("Conference", "Eastern"),
         ("Division", "Atlantic")
     }
-    print(f"Data: {data}")
+    LOGGER.info(f"Data: {data}")
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
 
 def test_nba_team_match(driver, live_server):
@@ -300,7 +322,7 @@ def test_nba_team_match(driver, live_server):
 
     # Read the modal content and verify expected team appears
     modal_text = driver.find_element(By.ID, "modalBody").text
-    print("Modal loaded text:", modal_text)
+    LOGGER.info(f"Modal loaded text: {modal_text}")
     assert "Orlando Magic (ORL)" in modal_text, f"Unexpected modal content: {modal_text}"
 
 
@@ -334,11 +356,7 @@ def test_nba_player_match(driver, live_server):
     )
     # Get the table data
     table = driver.find_element(By.CLASS_NAME, "table")
-    rows = table.find_elements(By.TAG_NAME, "tr")
-    data: set[tuple[str, str]] = set([])
-    for row in rows:
-        cells = row.find_elements(By.TAG_NAME, "th") + row.find_elements(By.TAG_NAME, "td")
-        data.add(tuple(cell.text.strip() for cell in cells))
+    data = _extract_table_data(table)
 
     # Set expected row data:
     expected_rows: set[tuple[str,str]] = {
@@ -349,7 +367,7 @@ def test_nba_player_match(driver, live_server):
         ("Blocks", "10", "10"),
         ("Rebounds", "7", "7")
     }
-    print(f"Expected: {expected_rows}.\nActual: {data}")
+    LOGGER.info(f"Expected: {expected_rows}.\nActual: {data}")
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
 
 def test_nba_team_standings(driver, live_server):
@@ -372,7 +390,7 @@ def test_nba_team_standings(driver, live_server):
             (By.CLASS_NAME, "table"), "New York Knicks (NY)"
         )
     )
-    print(f"Current Table Text: {driver.find_element(By.CLASS_NAME, 'table').text}")
+    LOGGER.info(f"Current Table Text: {driver.find_element(By.CLASS_NAME, 'table').text}")
 
     
 
