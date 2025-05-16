@@ -138,11 +138,9 @@ def test_nba_team_search(driver, live_server):
     select_element.click()
     sel = Select(select_element)
     sel.select_by_visible_text("Boston Celtics (BOS)")
-    # select_element.click()
-    # Get the table
-    # WebDriverWait(driver, 1).until(
-    #     expected_conditions.presence_of_element_located((By.CLASS_NAME, "stats-table"))
-    # )
+    # Close the box:
+    select_element = driver.find_element(By.CLASS_NAME, "form-select")
+    select_element.click()
     WebDriverWait(driver, 1).until(
         expected_conditions.text_to_be_present_in_element((By.CLASS_NAME, "table"), "Boston Celtics (BOS)")
     )
@@ -169,28 +167,29 @@ def test_nba_team_match(driver, live_server):
     login(driver, live_server, "nbauser1", "pw")
 
     driver.get(f"{live_server}/nba/data.html")
+
+    # Get the CSRF token from the form
     token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
-    # Check the CSRF token in the form
-    assert token, "CSRF meta tag not found on /nba page"
-    # Fill in win percentage input
-    winpct = driver.find_element(By.ID, "wpct")
-    winpct.send_keys("50")
-    # Fill in points / game for:
-    ppg_for = driver.find_element(By.ID, "pf")
-    ppg_for.send_keys("107")
-    # Fill in points / game against:
-    ppg_against = driver.find_element(By.ID, "pa")
-    ppg_against.send_keys("103")
-    # Click the button to save the match:
-    submit_button = driver.find_element(By.ID, "submit")
-    submit_button.click()
-    WebDriverWait(driver, 5).until(
-    expected_conditions.text_to_be_present_in_element(
-            (By.ID, "modalBody"), "Orlando Magic"
-        )
+    assert token, "CSRF token not found in form on /nba/data.html"
+
+    # Fill in the form fields
+    driver.find_element(By.ID, "wpct").send_keys("50")
+    driver.find_element(By.ID, "pf").send_keys("107")
+    driver.find_element(By.ID, "pa").send_keys("103")
+
+    # Submit the form
+    driver.find_element(By.ID, "submit").click()
+
+    # Wait for the modal content to be visible
+    WebDriverWait(driver, 10).until(
+        expected_conditions.visibility_of_element_located((By.ID, "modalBody"))
     )
+
+    # Read the modal content and verify expected team appears
     modal_text = driver.find_element(By.ID, "modalBody").text
+    print("Modal loaded text:", modal_text)
     assert "Orlando Magic (ORL)" in modal_text, f"Unexpected modal content: {modal_text}"
+
 
 def test_nba_player_match(driver, live_server):
     register(driver, live_server, "nbauser2", "pw")
@@ -238,6 +237,28 @@ def test_nba_player_match(driver, live_server):
     }
     print(f"Expected: {expected_rows}.\nActual: {data}")
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
+
+def test_nba_team_standings(driver, live_server):
+    register(driver, live_server, "nbauser3", "pw")
+    login(driver, live_server, "nbauser3", "pw")
+    # Get to the page and grab the CSRF token
+    driver.get(f"{live_server}/nba/")
+    # No CSRF token needed for this page (not a form)
+
+    # Now quantify the selected team:
+    select_element = driver.find_element(By.CLASS_NAME, "form-select")
+    sel = Select(select_element)
+    sel.select_by_visible_text("New York Knicks (NY)")
+    # Close the box:
+    select_element = driver.find_element(By.CLASS_NAME, "form-select")
+    select_element.click()
+    # Wait for the table to load
+    WebDriverWait(driver, 5).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.CLASS_NAME, "table"), "New York Knicks (NY)"
+        )
+    )
+    print(f"Current Table Text: {driver.find_element(By.CLASS_NAME, 'table').text}")
 
     
 
