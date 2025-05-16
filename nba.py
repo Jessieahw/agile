@@ -146,7 +146,7 @@ def team_players(team_key):
     """
     Return 3 players for <team_key> in 2025:
      1) the overall highest scorer,
-     2–3) two other distinct players (random from the next best games).
+     2-3) two other distinct players (random from the next best games).
     """
     # 1) key‐mapping
     key_map = {

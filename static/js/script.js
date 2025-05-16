@@ -382,7 +382,7 @@ carouselEl.addEventListener('slide.bs.carousel', e => {
  * Jump to the slide for `key`, lock the carousel,
  * and after 5 minutes, resume auto-rotation from that slide.
  *
- * @param {string} key  – the team code, e.g. "LAL"
+ * @param {string} key  - the team code, e.g. "LAL"
  */
 function slideToTeam(key) {
   if (!carouselEl) return;

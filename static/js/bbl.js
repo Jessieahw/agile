@@ -27,6 +27,21 @@ function initBBL() {
       <td>${Number(p.eco     ).toFixed(2)}</td>
     </tr>`).join('');
 
+  const buildSearchRows = list => list.map((p, i) => `
+  <tr>
+    <td class="rank">${i+1}</td>
+    <td>${p.name}</td>
+    <td>${p.innings ?? '-'}</td>
+    <td>${p.runs ?? '-'}</td>
+    <td>${p.high_score ?? '-'}</td>
+    <td>${Number(p.bat_avg ?? 0).toFixed(2)}</td>
+    <td>${Number(p.bat_sr ?? 0).toFixed(2)}</td>
+    <td>${p.wickets ?? '-'}</td>
+    <td>${p.bowl_avg != null ? Number(p.bowl_avg).toFixed(2) : '-'}</td>
+    <td>${p.eco != null ? Number(p.eco).toFixed(2) : '-'}</td>
+  </tr>
+`).join('');
+
   /* ---------- form submit via fetch ---------- */
   const formEl = $('#user-stats-form');
   if (formEl) {
@@ -116,11 +131,11 @@ function initBBL() {
           <th class="rank">#</th><th>Name</th><th>Inn</th><th>Runs</th>
           <th>HS</th><th>Avg</th><th>SR</th><th>Wkts</th><th>BAvg</th><th>Eco</th>
         </tr></thead>
-        <tbody>${buildBowlerRows(res)}</tbody>
+        <tbody>${buildSearchRows(res)}</tbody>
       </table></div>` : '<p>No players found.</p>';
   };
 
-  /* team list / stats stripped for brevity – unchanged */
+  /* team list / stats stripped for brevity - unchanged */
 
 
   /* -------------------------------------------------------------------
@@ -152,16 +167,16 @@ function initBBL() {
         <tr><td>Losses</td><td>${d.losses}</td></tr>
         <tr><td>Win %</td><td>${d.win_pct}</td></tr>
         <tr><td>Favoured opponent</td>
-            <td>${d.best_vs} (${d.best_vs_wins})</td></tr>
+            <td>${d.best_vs} (${d.best_vs_wins} wins)</td></tr>
         <tr><td>Toughest opponent</td>
-            <td>${d.worst_vs} (${d.worst_vs_losses})</td></tr>
+            <td>${d.worst_vs} (${d.worst_vs_losses} losses)</td></tr>
         <tr><td>Seasons won</td>
-            <td>${d.seasons_won.join(', ') || '–'}</td></tr>
+            <td>${d.seasons_won.join(', ') || '-'}</td></tr>
       </table>` : '';
   }
 
   /* -------------------------------------------------------------------
-     RADAR CHARTS  (ECharts 5) – unchanged except for dispose()
+     RADAR CHARTS  (ECharts 5) - unchanged except for dispose()
      ----------------------------------------------------------------- */
   const CAPS = { batting:{ innings:150,runs:3000,high:200,avg:100,sr:220 },
                  bowling:{ overs:400,wkts:150,runsCon:3000,avg:100,eco:15 } };

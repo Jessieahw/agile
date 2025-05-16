@@ -1,13 +1,13 @@
 """
 System-test fixtures
-– Spins up a live Flask server on port 5001
-– Provides a headless-Chrome WebDriver managed by Selenium 4
+- Spins up a live Flask server on port 5001
+- Provides a headless-Chrome WebDriver managed by Selenium 4
    (no webdriver_manager needed)
 """
 import threading, time, pytest, tempfile, os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from server import create_app, db  # if you're using SQLAlchemy like db = SQLAlchemy(app)
+from server import create_app, db  # if you're using SQLAlchemy like db - SQLAlchemy(app)
 
 @pytest.fixture(scope="session")
 def live_server():

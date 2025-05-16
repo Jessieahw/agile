@@ -14,7 +14,7 @@ def _grab_csrf_token(driver, base):
 def register(driver, base, user, pw):
     driver.get(f"{base}/register")
 
-    # token already correct – just read it if you later want to inspect
+    # token already correct - just read it if you later want to inspect
     # token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
 
     driver.find_element(By.NAME, "username").send_keys(user)
@@ -171,19 +171,19 @@ def test_bbl_team_select(driver, live_server):
 
     # Wait for the search selection box to appear
     WebDriverWait(driver, 1).until(
-        expected_conditions.visibility_of_element_located((By.ID, "team‑select"))
+        expected_conditions.visibility_of_element_located((By.ID, "team-select"))
     )
     # No token needed for this page (not a form). Just select the Perth Scorchers option
-    select_element = driver.find_element(By.ID, "team‑select")
+    select_element = driver.find_element(By.ID, "team-select")
     sel = Select(select_element)
     sel.select_by_visible_text("PERTH SCORCHERS")
     
     # Wait for the table to appear
     WebDriverWait(driver, 0.5).until(
-        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "team‑table"))
+        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "team-table"))
     )
     # Get the table data
-    table = driver.find_element(By.CLASS_NAME, "team‑table")
+    table = driver.find_element(By.CLASS_NAME, "team-table")
     assert table, "Table not found on the page"
 
     # Parse the table
@@ -279,7 +279,9 @@ def test_nba_team_match(driver, live_server):
     # Get the CSRF token from the form
     token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
     assert token, "CSRF token not found in form on /nba/data.html"
-
+    WebDriverWait(driver, 5).until(
+        expected_conditions.element_to_be_clickable((By.ID, "wpct"))
+    )
     # Fill in the form fields
     driver.find_element(By.ID, "wpct").send_keys("50")
     driver.find_element(By.ID, "pf").send_keys("107")

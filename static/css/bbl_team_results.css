@@ -1,4 +1,4 @@
-.team‑select{
+.team-select{
   font: 600 1rem Montserrat, sans-serif;
   padding: .4rem;
   width:100%;
@@ -7,17 +7,17 @@
   margin-bottom: 1rem;
 }
 
-.team‑table{
+.team-table{
   width: 100%;
   border-collapse: collapse;
   font-family: Montserrat, sans-serif;
 }
-.team‑table th{
+.team-table th{
   background:#111; color:#fff; 
   padding:.5rem 0;
   font-size:1.1rem;
 }
-.team‑table td{
+.team-table td{
   padding:.4rem .6rem;
   border-bottom:1px solid #ddd;
 }
