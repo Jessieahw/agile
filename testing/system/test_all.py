@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions
 
 # ---------- helper utilities ----------
 
@@ -100,8 +101,6 @@ def test_bbl_submission_with_csrf(driver, live_server):
     assert "Josh Philippe" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
     assert "Daniel Hughes" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
 
-
-
 def test_epl_recommended_team_search(driver, live_server):
     register(driver, live_server, "csuser", "pw")
     login(driver, live_server, "csuser", "pw")
@@ -120,7 +119,48 @@ def test_epl_recommended_team_search(driver, live_server):
     WebDriverWait(driver, 3)
     # Get the recommended team:
     team = driver.find_element(By.ID, "modalText").text
+    WebDriverWait(driver, 3)
+    driver.find_element(By.CLASS_NAME, "close").click() # Close the modal text popup
+    WebDriverWait(driver, 3)
     assert team != "", "No recommended team found in the modal!"
     assert "tottenham" in team.lower(), "The recommended team is not Tottenham Hotspur!"
+
+def test_nba_team_search(driver, live_server):
+    register(driver, live_server, "nbauser", "pw")
+    login(driver, live_server, "nbauser", "pw")
+
+    driver.get(f"{live_server}/nba")
+    # token = get_csrf_from_meta(driver)
+    # # Check the CSRF token in the meta tag
+    # assert token, "CSRF meta tag not found on /nba page"
+
+    select_element = driver.find_element(By.CLASS_NAME, "form-select")
+    select_element.click()
+    WebDriverWait(driver, 1)
+    sel = Select(select_element)
+    WebDriverWait(driver, 1)
+    sel.select_by_visible_text("Boston Celtics (BOS)")
+    # Get the table
+    WebDriverWait(driver, 1).until(
+        expected_conditions.presence_of_element_located((By.CLASS_NAME, "stats-table"))
+    )
+    # Parse the table
+    table =driver.find_element(By.CLASS_NAME, "stats-table")
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    data: set[tuple[str, str]] = set([])
+    for row in rows:
+        cells = row.find_elements(By.TAG_NAME, "th") or row.find_elements(By.TAG_NAME, "td")
+        data.add(tuple(cell.text.strip() for cell in cells))
+
+    # Set expected row data:
+    expected_rows: set[tuple[str,str]] = {
+        ("Season", "2025"),
+        ("Team", "Boston Celtics (BOS)"),
+        ("Conference", "Eastern"),
+        ("Division", "Atlantic")
+    }
+    print(f"Data: {data}")
+    assert expected_rows.issubset(data), "The table does not contain the expected data!"
+
 
 
