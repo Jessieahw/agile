@@ -1,6 +1,6 @@
 .hero-section {
   /* full-screen background */
-  background: url('../images/hero-bg.jpg') center/cover no-repeat;
+  background:  rgba(255, 255, 255, 0.5);
   padding: 80px 0;
 
   /* flex centering */
@@ -16,7 +16,7 @@
   border-radius: 8px;            /* soften the corners */
   box-sizing: border-box; 
   max-width: 900px;   /* whatever max width you like */
-  margin: 40px auto;
+  margin: 150px auto;
 }
 
 .hero-section h2 {
@@ -51,4 +51,15 @@
   bottom: 10px;          /* adjust to sit just below the footer */
   right: 20px;           /* align it to the right */
   z-index: 1050;         /* above the modal backdrop */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  /* point at your image in static/nba_logos */
+  background: url('../nba_logos/basketball.jpg') center/cover no-repeat; 
+              
 }
