@@ -1,0 +1,11 @@
+# .coveragerc
+
+[run]
+omit =
+    */testing/*
+    # Add other files or directories to omit here
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
