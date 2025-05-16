@@ -299,7 +299,6 @@ document.getElementById('sharePrivateBtn').onclick = function() {
             .then(response => response.json())
             .then(data => {
                 alert('Shared privately!');
-                // Optionally redirect or update UI
             })
             .catch(error => {
                 alert('Error sharing privately');

@@ -381,7 +381,7 @@ def create_app(test_config=None):
             ).order_by(ForumPost.timestamp.desc()).all()
         return render_template('all_posts.html', posts=posts)
 
-
+    return app
 
 app = create_app()
 
