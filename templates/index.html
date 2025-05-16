@@ -10,11 +10,11 @@
 <body>
     <nav class="navbar">
         <a href="{{ url_for('landing_page') }}">Home</a>
-        <a href="{{ url_for('forum_page') }}">Forum</a>
         <a href="{{ url_for('all_posts') }}">Posts</a>
         <a href="{{ url_for('all_posts') }}?private=1">
-            <button type="button" class="btn btn-warning">View Private Shares</button>
+            <button type="button" class="btn btn-warning">View Received PMs</button>
         </a>
+        <a href="{{ url_for('all_posts') }}?view=sent" class="btn btn-warning">View Sent PMs</a>
         <a href="{{ url_for('logout') }}" class="logout-button">Log Out</a>
     </nav>
 
