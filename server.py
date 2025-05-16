@@ -8,7 +8,8 @@ import sqlite3
 from threading import Thread
 from datetime import datetime
 from functools import wraps
-
+import base64
+import time
 # Flask-related imports
 from flask import (
     Flask, request, jsonify, send_from_directory, render_template,
@@ -323,6 +324,30 @@ def create_app(test_config=None):
     @app.route('/static/<path:filename>')
     def serve_static(filename):
         return send_from_directory('static', filename)
+    
+
+
+    @app.route('/submit_post', methods=['POST'])
+    @login_required
+    def submit_post():
+        data = request.get_json()
+        image_data = data['image']
+        team = data.get('team', '')
+        # Decode the image and save to file or database
+        header, encoded = image_data.split(",", 1)
+        img_bytes = base64.b64decode(encoded)
+        filename = f"static/forum_images/{current_user.username}_{int(time.time())}.png"
+        with open(filename, "wb") as f:
+            f.write(img_bytes)
+        # Save post info (including image path) to your Post model/table
+        post = ForumPost(
+            user_id=current_user.id,
+            text=f"My EPL team is {team}",
+            image_path=filename
+        )
+        db.session.add(post)
+        db.session.commit()
+        return jsonify({'message': 'Post created!'})
     
     @app.route('/all_posts')
     @login_required
