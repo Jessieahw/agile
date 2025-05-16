@@ -2,14 +2,12 @@
 
 .hero-section {
     position: relative;
-    overflow: hidden;      /* contain the pseudo-element */
-    display: flex;
+    overflow: hidden;      
     align-items: center;
     justify-content: center;
-  /* give it some vertical breathing room */
     padding: 2rem 0;
-    margin-top: 200px;       /* push below fixed navbar */
-         /* solid black */
+    margin-top: 200px;   
+      
   
    
     
@@ -20,7 +18,7 @@
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: url('../images/aesthetic-nba-ba4w0pe75y02ux5q.jpg') center/cover no-repeat;
+    
     filter: brightness(0.4) blur(4px);
     z-index: 0;
   }
@@ -194,6 +192,14 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-  
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
 
+body {
+  /* point at your image in static/nba_logos */
+  background: url("/static/nba_logos/aesthetic-nba-ba4w0pe75y02ux5q.jpg")
+              center/cover no-repeat fixed;
+}
