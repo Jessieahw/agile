@@ -393,5 +393,98 @@ def test_nba_team_standings(driver, live_server):
     )
     LOGGER.info(f"Current Table Text: {driver.find_element(By.CLASS_NAME, 'table').text}")
 
+# ------------------------------------------------------------------
+# NEW end-to-end test: private NBA team-card share visibility
+# ------------------------------------------------------------------
+def test_nba_private_share_visibility(driver, live_server):
+    """
+    • u_sender creates a team-match card and shares it **privately** with u_recipient
+    • u_sender must see the post in ?view=sent
+    • u_bystander sees nothing in any timeline
+    • u_recipient sees the post only in ?view=received
+    """
+
+    # ----- constants ------------------------------------------------
+    sender, bystander, recipient, pw = "u_sender", "u_bystander", "u_recipient", "pw"
+    share_pattern = "forum_images/{}_"            # part of the file-name we expect
+
+    # ----- create three users --------------------------------------
+    for uname in (sender, bystander, recipient):
+        register(driver, live_server, uname, pw)
+
+    # ---------------------------------------------------------------
+    # 1)  sender logs in and makes a private share
+    # ---------------------------------------------------------------
+    login(driver, live_server, sender, pw)
+    driver.get(f"{live_server}/nba/data.html")
+
+    # fill the team-match form quickly
+    driver.find_element(By.ID, "wpct").send_keys("55")
+    driver.find_element(By.ID, "pf").send_keys("110.5")
+    driver.find_element(By.ID, "pa").send_keys("105.3")
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+    # wait for the share modal to appear
+    WebDriverWait(driver, 5).until(
+        expected_conditions.visibility_of_element_located((By.ID, "shareResultBtn"))
+    )
+    # click the share button
+    sharebtn = driver.find_element(By.ID, "shareResultBtn")
+    sharebtn.click()
+    WebDriverWait(driver, 5).until(
+        expected_conditions.visibility_of_element_located((By.ID, "shareRecipient"))
+    )
+    # enter private recipient and click “Post to Forum”
+    driver.find_element(By.ID, "shareRecipient").send_keys(recipient)
+    driver.find_element(By.ID, "shareCardBtn").click()
+
+    # the helper JS redirects to /all_posts?view=sent on success
+    WebDriverWait(driver, 8).until(
+        expected_conditions.url_contains("view=sent")
+    )
+    assert "view=sent" in driver.current_url
+
+    # grab the image src so we can look for the same file
+
+    first_box = driver.find_element(By.CSS_SELECTOR, "div[class='post-box']")
+    img_src = first_box.find_element(By.CSS_SELECTOR, "img").get_attribute("src")
+    rel_img_src = img_src.replace(live_server, "")
+    assert share_pattern.format(sender) in img_src
+
+    # ---------------------------------------------------------------
+    # 2)  bystander must NOT see the post anywhere
+    # ---------------------------------------------------------------
+    driver.get(f"{live_server}/logout")
+    login(driver, live_server, bystander, pw)
+
+    for url in (
+        "/all_posts",                    # public
+        "/all_posts?view=sent",          # their own sent timeline (empty)
+        "/all_posts?view=received"       # inbox (also empty)
+    ):
+        driver.get(f"{live_server}{url}")
+        assert rel_img_src not in driver.page_source
+
+    # ---------------------------------------------------------------
+    # 3)  recipient sees it only in ?view=received
+    # ---------------------------------------------------------------
+    driver.get(f"{live_server}/logout")
+    login(driver, live_server, recipient, pw)
+
+    # public should still hide it
+    driver.get(f"{live_server}/all_posts")
+    assert rel_img_src not in driver.page_source
+
+    # inbox must show it
+    driver.get(f"{live_server}/all_posts?view=received")
+    WebDriverWait(driver, 5).until(
+        expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div[class='post-box']"))
+    )
+    # Get the first post box
+    # first_box = driver.find_element(By.CSS_SELECTOR, "div[class='post-box']")
+    # # Check if the image source is in the page source
+    # img_src2 = first_box.find_element(By.CSS_SELECTOR, "img").get_attribute("src")
+    assert rel_img_src in driver.page_source, "The image source does not match the expected value!"
+
     
 
