@@ -3,3 +3,5 @@
 
 *.db
 *.sqlite3
+/static/forum_images/*.png
+/static/forum_images/*.jpg

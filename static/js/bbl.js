@@ -277,3 +277,67 @@ function initBBL() {
     }
   }
 }
+
+// Needs html2canvas (already linked right above the fragment)
+document.addEventListener('DOMContentLoaded', () => {
+  const btn   = document.getElementById('share-btn');
+  const users = document.getElementById('share-users');
+  const text  = document.getElementById('share-text');
+  const csrf  = document.querySelector('meta[name="csrf-token"]').content;
+
+  btn.addEventListener('click', async () => {
+    // 1. Work out which radar divs exist & are rendered
+    const radarIds = ['bat-radar', 'bowl-radar']
+                      .map(id => document.getElementById(id))
+                      .filter(el => el && el.childElementCount);
+
+    if (!radarIds.length) {
+      alert('No charts to share yet!');
+      return;
+    }
+
+    // 2. Snapshot each radar
+    const canvases = await Promise.all(
+      radarIds.map(el => html2canvas(el, {backgroundColor: null}))
+    );
+
+    // 3. Stitch vertically into one image
+    const combo = document.createElement('canvas');
+    combo.width  = Math.max(...canvases.map(c => c.width));
+    combo.height = canvases.reduce((h, c) => h + c.height, 0);
+    const ctx = combo.getContext('2d');
+    let y = 0;
+    canvases.forEach(c => { ctx.drawImage(c, 0, y); y += c.height; });
+    const imgData = combo.toDataURL('image/png');
+
+    // 4. Build payload
+    const payload = {
+      league      : 'bbl',
+      image       : imgData,
+      text        : text.value || 'BBL radar comparison',
+      shared_with : (users.value || 'ALL').split(',').map(u => u.trim())
+    };
+
+    // 5. POST to the existing endpoint
+    try {
+      const res = await fetch('/submit_post', {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken' : csrf
+        },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        // alert('Posted to forum!');
+        users.value = ''; text.value = '';
+        window.location.href = '/all_posts';
+      } else {
+        alert('Error posting: ' + res.statusText + ': ' + res.text());
+        throw new Error(await res.text());
+      }
+    } catch (err) {
+      alert('Error posting: ' + err.message);
+    }
+  });
+});
