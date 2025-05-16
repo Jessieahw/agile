@@ -355,7 +355,7 @@ def create_app(test_config=None):
     @app.route('/all_posts')
     @login_required
     def all_posts():
-        # You can render a template or return posts here
+        posts = ForumPost.query.order_by(ForumPost.timestamp.desc()).all()
         return render_template('all_posts.html')
 
     # Register routes (move your existing routes here or import from views.py)

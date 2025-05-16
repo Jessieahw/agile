@@ -66,10 +66,10 @@
             {% for post in posts %}
                 <div class="post-box">
                     <div class="post-header">
-                        <span>{{ post['username'] }}</span> - {{ post['timestamp'].strftime('%Y-%m-%d %H:%M:%S') }}
+                        <span>{{ post.username }}</span> - {{ post.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                     </div>
                     <div class="post-text">
-                        {{ post['text'] }}
+                        {{ post.text }}
                     </div>
                     {% if post.image_path %}
                         <img src="{{ url_for('static', filename=post.image_path.split('static/')[1]) }}" alt="Comparison Graph" style="max-width:100%;margin-top:10px;">
