@@ -182,6 +182,10 @@
     <h3>Visualize Your Stats and Matched Team</h3>
     <canvas id="statsChart"></canvas>
 </div>
+<div style="margin-bottom:10px;">
+    <label for="recipientUsername">Send privately to (username, optional):</label>
+    <input type="text" id="recipientUsername" placeholder="Leave blank to post publicly">
+</div>
 <button id="postToForumBtn">Post to Forum</button>
 
 
@@ -234,22 +238,24 @@
     document.getElementById('postToForumBtn').onclick = function() {
     // Capture the chart as an image
     html2canvas(document.getElementById('statsChart')).then(function(canvas) {
-        // Convert canvas to data URL (base64 PNG)
         var imageData = canvas.toDataURL('image/png');
-        // Prepare post data (add any text or stats you want)
         var postText = `My EPL team is ${closestTeam}!`;
+        var recipientUsername = document.getElementById('recipientUsername').value.trim();
+
         var postData = {
             image: imageData,
             team: closestTeam,
-            text: postText,
-            // Add more fields as needed
+            text: postText
         };
-        // Send to backend
+        if (recipientUsername) {
+            postData.recipient_username = recipientUsername;
+        }
+
         fetch('/submit_post', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken // if you use CSRF protection
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify(postData)
         })
