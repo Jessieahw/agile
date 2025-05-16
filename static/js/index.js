@@ -125,11 +125,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const shareButton = document.getElementById('shareButton');
     if (shareButton) {
-        shareButton.addEventListener('click', () => {
+        shareButton.addEventListener('click', async () => {
             const playerName = document.querySelector('#playerInfo h3').textContent;
             const postText = `My recent performance playing AFL is looking a lot like ${playerName}'s right now.`;
-            const params = new URLSearchParams({ postText });
-            window.location.href = `/forum?${params.toString()}`;
+
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Prepare post data
+            const postData = { text: postText };
+
+            // Send POST request to /submit_post
+            const response = await fetch('/submit_post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(postData)
+            });
+
+            if (response.ok) {
+                alert('Shared to forum!');
+                window.location.href = '/all_posts';
+            } else {
+                alert('Failed to share to forum.');
+            }
         });
     }
 });
