@@ -155,7 +155,7 @@ async function renderCards(players) {
     col.className = 'col-sm-6 col-md-4 col-lg-3';
     col.innerHTML = `
       <div class="card h-100 shadow-sm">
-        <img src="${imgUrls[idx]}" class="card-img-top" alt="${p.FirstName} ${p.LastName}">
+        <img src="${imgUrls[idx]}"  style="width:100%;height:350px;object-fit:cover;object-position:50% 15%;" class="card-img-top player-photo" alt="${p.FirstName} ${p.LastName}">
         <span class="badge badge-jersey text-white">#${p.Jersey}</span>
         <div class="card-body text-center py-3">
           <h5 class="card-title mb-1">${p.FirstName} ${p.LastName}</h5>
@@ -382,7 +382,7 @@ carouselEl.addEventListener('slide.bs.carousel', e => {
  * Jump to the slide for `key`, lock the carousel,
  * and after 5 minutes, resume auto-rotation from that slide.
  *
- * @param {string} key  - the team code, e.g. "LAL"
+ * @param {string} key  – the team code, e.g. "LAL"
  */
 function slideToTeam(key) {
   if (!carouselEl) return;
