@@ -136,14 +136,15 @@ def test_nba_team_search(driver, live_server):
 
     select_element = driver.find_element(By.CLASS_NAME, "form-select")
     select_element.click()
-    WebDriverWait(driver, 1)
     sel = Select(select_element)
-    WebDriverWait(driver, 1)
     sel.select_by_visible_text("Boston Celtics (BOS)")
-    select_element.click()
+    # select_element.click()
     # Get the table
+    # WebDriverWait(driver, 1).until(
+    #     expected_conditions.presence_of_element_located((By.CLASS_NAME, "stats-table"))
+    # )
     WebDriverWait(driver, 1).until(
-        expected_conditions.presence_of_element_located((By.CLASS_NAME, "stats-table"))
+        expected_conditions.text_to_be_present_in_element((By.CLASS_NAME, "table"), "Boston Celtics (BOS)")
     )
     # Parse the table
     table =driver.find_element(By.CLASS_NAME, "stats-table")
@@ -168,7 +169,7 @@ def test_nba_team_match(driver, live_server):
     login(driver, live_server, "nbauser1", "pw")
 
     driver.get(f"{live_server}/nba/data.html")
-    token = token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
+    token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
     # Check the CSRF token in the form
     assert token, "CSRF meta tag not found on /nba page"
     # Fill in win percentage input
@@ -191,6 +192,52 @@ def test_nba_team_match(driver, live_server):
     modal_text = driver.find_element(By.ID, "modalBody").text
     assert "Orlando Magic (ORL)" in modal_text, f"Unexpected modal content: {modal_text}"
 
+def test_nba_player_match(driver, live_server):
+    register(driver, live_server, "nbauser2", "pw")
+    login(driver, live_server, "nbauser2", "pw")
+    # Get to the page and grab the CSRF token
+    driver.get(f"{live_server}/nba/player.html")
+    token  = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
+    assert token, "CSRF meta tag not found on /nba page"
+
+    # Now fill in the form:
+    points = driver.find_element(By.ID, "pts")
+    points.send_keys("30")
+    assists = driver.find_element(By.ID, "ast")
+    assists.send_keys("3")
+    steals = driver.find_element(By.ID, "stl")
+    steals.send_keys("0")
+    blocks = driver.find_element(By.ID, "blk")
+    blocks.send_keys("10")
+    rebounds = driver.find_element(By.ID, "trb")
+    rebounds.send_keys("7")
+    submit = driver.find_element(By.CLASS_NAME, "btn-primary")
+    submit.click()
+    # Wait for the modal to appear
+    WebDriverWait(driver, 5).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, "resultModalLabel"), "You vs. Victor Wembanyama"
+        )
+    )
+    # Get the table data
+    table = driver.find_element(By.CLASS_NAME, "table")
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    data: set[tuple[str, str]] = set([])
+    for row in rows:
+        cells = row.find_elements(By.TAG_NAME, "th") + row.find_elements(By.TAG_NAME, "td")
+        data.add(tuple(cell.text.strip() for cell in cells))
+
+    # Set expected row data:
+    expected_rows: set[tuple[str,str]] = {
+        ("Stat", "You", "Victor Wembanyama"),
+        ("Points", "30", "30"),
+        ("Assists", "3", "3"),
+        ("Steals", "0", "0"),
+        ("Blocks", "10", "10"),
+        ("Rebounds", "7", "7")
+    }
+    print(f"Expected: {expected_rows}.\nActual: {data}")
+    assert expected_rows.issubset(data), "The table does not contain the expected data!"
 
     
 

@@ -30,7 +30,7 @@ def live_server():
     yield "http://localhost:5001"
 
     os.close(db_fd)
-    os.unlink(db_path)
+    # os.unlink(db_path) # Causes too m
 
 
 # ----------------------------------------------------------------------
