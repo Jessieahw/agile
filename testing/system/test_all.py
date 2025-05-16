@@ -154,6 +154,60 @@ def test_bbl_player_search(driver, live_server):
     print(f"Expected: {expected_rows}.\nActual: {data}\nDifference: {expected_rows.difference(data)}")
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
 
+def test_bbl_team_select(driver, live_server):
+    # Build up the user account and get authenticated.
+    register(driver, live_server, "bbluser2", "pw")
+    login(driver, live_server, "bbluser2", "pw")
+
+    # Get to the page
+    driver.get(f"{live_server}/bbl")
+
+    # Wait for the nav button to appear, then click it
+    WebDriverWait(driver, 1).until(
+        expected_conditions.presence_of_element_located((By.ID, "teamsbtn"))
+    )
+    playersbtn = driver.find_element(By.ID, "teamsbtn")
+    playersbtn.click()
+
+    # Wait for the search selection box to appear
+    WebDriverWait(driver, 1).until(
+        expected_conditions.visibility_of_element_located((By.ID, "team‑select"))
+    )
+    # No token needed for this page (not a form). Just select the Perth Scorchers option
+    select_element = driver.find_element(By.ID, "team‑select")
+    sel = Select(select_element)
+    sel.select_by_visible_text("PERTH SCORCHERS")
+    
+    # Wait for the table to appear
+    WebDriverWait(driver, 0.5).until(
+        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "team‑table"))
+    )
+    # Get the table data
+    table = driver.find_element(By.CLASS_NAME, "team‑table")
+    assert table, "Table not found on the page"
+
+    # Parse the table
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    data: set[tuple[str, str]] = set([])
+    for row in rows:
+        cells = row.find_elements(By.TAG_NAME, "th") + row.find_elements(By.TAG_NAME, "td")
+        data.add(tuple(cell.text.strip() for cell in cells))
+
+    # Set expected row data:
+    expected_rows: set[tuple[str,str]] = {
+        ("Matches", "158"),
+        ("Wins", "94"),
+        ("Losses", "64"),
+        ("Win %", "59.49"),
+        ("Favoured opponent", "MELBOURNE RENEGADES (16 wins)"),
+        ("Toughest opponent", "SYDNEY SIXERS (13 losses)"),
+        ("Seasons won", "2013-2014, 2014-2015, 2016-2017, 2021-2022, 2022-2023")
+    }
+
+    # Print the table data for debugging
+    print(f"Expected: {expected_rows}.\nActual: {data}\nDifference: {expected_rows.difference(data)}")
+    assert expected_rows.issubset(data), "The table does not contain the expected data!"
+
 
 def test_epl_recommended_team_search(driver, live_server):
     register(driver, live_server, "csuser", "pw")
