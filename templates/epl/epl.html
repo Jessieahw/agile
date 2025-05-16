@@ -186,6 +186,7 @@
     <label for="recipientUsername">Send privately to (username, optional):</label>
     <input type="text" id="recipientUsername" placeholder="Leave blank to post publicly">
 </div>
+<button id="sharePrivateBtn" style="margin-left:10px;">Share Privately</button>
 <button id="postToForumBtn">Post to Forum</button>
 
 
@@ -269,6 +270,42 @@
         });
     });
 };
+
+document.getElementById('sharePrivateBtn').onclick = function() {
+        var recipientUsername = document.getElementById('recipientUsername').value.trim();
+        if (!recipientUsername) {
+            alert("Please enter a username to share privately.");
+            return;
+        }
+        html2canvas(document.getElementById('statsChart')).then(function(canvas) {
+            var imageData = canvas.toDataURL('image/png');
+            var postText = `My EPL team is ${closestTeam}!`;
+
+            var postData = {
+                image: imageData,
+                team: closestTeam,
+                text: postText,
+                recipient_username: recipientUsername
+            };
+
+            fetch('/submit_post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(postData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Shared privately!');
+                // Optionally redirect or update UI
+            })
+            .catch(error => {
+                alert('Error sharing privately');
+            });
+        });
+    };
 </script>
 
 

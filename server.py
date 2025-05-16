@@ -366,15 +366,20 @@ def create_app(test_config=None):
     @app.route('/all_posts')
     @login_required
     def all_posts():
-        posts = ForumPost.query.filter(
-            (ForumPost.recipient_id == None) |  # public
-            (ForumPost.recipient_id == current_user.id) |  # sent to me
-            (ForumPost.user_id == current_user.id)  # my own posts
-        ).order_by(ForumPost.timestamp.desc()).all()
+        show_private = request.args.get('private')
+        if show_private:
+            # Only show posts sent to the current user
+            posts = ForumPost.query.filter(
+                ForumPost.recipient_id == current_user.id
+            ).order_by(ForumPost.timestamp.desc()).all()
+        else:
+            # Show public, sent to me, or my own posts
+            posts = ForumPost.query.filter(
+                (ForumPost.recipient_id == None) |
+                (ForumPost.recipient_id == current_user.id) |
+                (ForumPost.user_id == current_user.id)
+            ).order_by(ForumPost.timestamp.desc()).all()
         return render_template('all_posts.html', posts=posts)
-
-    # Register routes (move your existing routes here or import from views.py)
-    return app
 
 
 
