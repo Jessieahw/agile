@@ -4,6 +4,7 @@
 omit =
     */testing/*
     # Add other files or directories to omit here
+    catch.py
 
 [report]
 exclude_lines =

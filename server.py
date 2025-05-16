@@ -187,25 +187,43 @@ def create_app(test_config=None):
             conn.close()
         user_stats = {**bat_data, **bowl_data} if request.method == 'POST' else {}
         return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl, user_stats=user_stats, form=form)
-    @app.route('/bbl/similarity_api', methods=['POST'])
 
-    @app.route("/bbl/compare", methods=["POST"])
+    @app.route('/bbl/json', methods=['POST'])
     @login_required
-    def bbl_compare():
-        data = request.get_json(force=True)
+    @csrf.exempt                       # tell Flask-WTF we are handling CSRF manually
+    def bbl_json():                    # NEW: JSON version of the similarity search
+        """
+        Accepts the form via fetch(), returns JSON:
+            {
+            "user" : { …user stats… },
+            "bat"  : [ …top 10 similar batters… ],
+            "bowl" : [ …top 10 similar bowlers… ]
+            }
+        """
+        # ---- 1. parse user input ------------------------------------------------
+        f = request.form     # same names as the original form fields
+        bat_fields  = ['bat_innings', 'bat_runs', 'bat_high', 'bat_avg', 'bat_sr']
+        bowl_fields = ['bowl_overs', 'bowl_wkts', 'bowl_runs', 'bowl_avg', 'bowl_eco']
 
-        bat_data  = {k: float(data.get(k, 0)) for k in ("bat_innings","bat_runs","bat_high","bat_avg","bat_sr")}
-        bowl_data = {k: float(data.get(k, 0)) for k in ("bowl_overs","bowl_wkts","bowl_runs","bowl_avg","bowl_eco")}
+        bat_data  = {k: float(f.get(k, 0) or 0) for k in bat_fields}
+        bowl_data = {k: float(f.get(k, 0) or 0) for k in bowl_fields}
 
-        db_path = os.path.join(app.root_path, "static", "bbl", "data", "data.db")
-        conn    = sqlite3.connect(db_path); conn.row_factory = sqlite3.Row
+        # ---- 2. query DB for similar players ------------------------------------
+        db_path = os.path.join(app.root_path, 'static', 'bbl', 'data', 'data.db')
+        conn    = sqlite3.connect(db_path, check_same_thread=False)
+        conn.row_factory = sqlite3.Row
 
         matches_bat  = BBL_BMF.get_top_batters(conn, bat_data)  if all(bat_data.values())  else []
         matches_bowl = BBL_BMF.get_top_bowlers(conn, bowl_data) if all(bowl_data.values()) else []
+        conn.close()
 
+        user_stats = {**bat_data, **bowl_data}
+
+        # ---- 3. return JSON ------------------------------------------------------
         return jsonify({
-            "bat" : [dict(r) for r in matches_bat],
-            "bowl": [dict(r) for r in matches_bowl]
+            "user": user_stats,
+            "bat" : matches_bat,
+            "bowl": matches_bowl
         })
     @app.route('/bbl/player_search')
     @login_required
