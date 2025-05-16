@@ -15,7 +15,7 @@
   border: 4px solid #000;        /* white 4px border */
   border-radius: 8px;            /* soften the corners */
   box-sizing: border-box; 
-  max-width: 900px;   /* whatever max width you like */
+  max-width: 900px;  
   margin: 150px auto;
 }
 
@@ -35,7 +35,7 @@
 
 .hero-section .form-label {
   display: block;
-  color: #000;         /* or #000 if you switch to a light bg */
+  color: #000;        
   margin-bottom: 0.25rem;
   font-weight: 600;
 }
@@ -59,7 +59,7 @@ html, body {
 }
 
 body {
-  /* point at your image in static/nba_logos */
+
   background: url('../nba_logos/basketball.jpg') center/cover no-repeat; 
               
 }

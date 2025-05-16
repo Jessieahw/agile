@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Grab the carousel element and Bootstrap instance
 const carouselEl = document.getElementById('logoCarousel');
 const carousel   = bootstrap.Carousel.getOrCreateInstance(carouselEl, {
-  interval: 5000,  // or whatever auto‐rotate interval you want
+  interval: 5000,  
   wrap:     true   // allow wrap once auto‐rotation restarts
 });
 

@@ -5,7 +5,7 @@ const axios = require('axios');
 const path = require('path');
 
 const app = express();
-const port = 3000;  // You can change the port if needed
+const port = 3000;  
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));

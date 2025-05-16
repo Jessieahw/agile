@@ -87,7 +87,6 @@
     border: 2px solid #fff;
     border-radius: 12px;
     overflow: hidden;
-    /* use your team’s colours: fallback to primary dark */
     background: linear-gradient(135deg, var(--team-light), var(--team-dark));
     box-shadow: 0 8px 16px rgba(0,0,0,0.4);
     font-family: 'Segoe UI', sans-serif;
@@ -170,7 +169,7 @@
   background: #fcb216;
 }
 
-/* Style your heading */
+
 .hero-top h2 {
   color: #fff;
   font-family: 'Oswald', sans-serif;
@@ -183,7 +182,6 @@
 
 .hero-section h2 {
   font-family: 'Oswald', sans-serif;
-  /* you can also adjust the weight if you imported multiples: */
   font-weight: 600;
   /* other existing rules… */
   color: #fff;
@@ -197,7 +195,7 @@ html, body {
 }
 
 body {
-  /* point at your image in static/nba_logos */
+
   background: url("/static/nba_logos/aesthetic-nba-ba4w0pe75y02ux5q.jpg")
               center/cover no-repeat fixed;
 }

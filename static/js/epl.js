@@ -1,4 +1,4 @@
-// Use the correct IDs for your search input and results list
+
 document.getElementById("search-user").addEventListener("input", function () {
     const query = this.value;
 
@@ -15,7 +15,7 @@ document.getElementById("search-user").addEventListener("input", function () {
 
             data.users.forEach(user => {
                 const li = document.createElement("li");
-                li.textContent = user; // If your backend returns usernames as strings
+                li.textContent = user; 
                 li.addEventListener("click", function () {
                     fetch(`/get_comparison?username=${encodeURIComponent(user)}`)
                         .then(response => response.json())
