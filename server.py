@@ -35,7 +35,7 @@ from config import Config
 from forms import BBLStatsForm, LoginForm, RegisterForm, TemplateDataNBA, EPLTeamForm
 from bbl import BBLBestMatchFunctions as BBL_BMF
 
-from models import User, PlayerComparison, Submission
+from models import User, PlayerComparison, Submission, ForumPost
 from nba import nba_bp
 
 # Setup the flask extensions
@@ -336,12 +336,15 @@ def create_app(test_config=None):
         # Decode the image and save to file or database
         header, encoded = image_data.split(",", 1)
         img_bytes = base64.b64decode(encoded)
+        directory = 'static/forum_images'
+        os.makedirs(directory, exist_ok=True) 
         filename = f"static/forum_images/{current_user.username}_{int(time.time())}.png"
         with open(filename, "wb") as f:
             f.write(img_bytes)
         # Save post info (including image path) to your Post model/table
         post = ForumPost(
             user_id=current_user.id,
+            username=current_user.username,
             text=f"My EPL team is {team}",
             image_path=filename
         )
@@ -352,7 +355,7 @@ def create_app(test_config=None):
     @app.route('/all_posts')
     @login_required
     def all_posts():
-        # You can render a template or return posts here
+        posts = ForumPost.query.order_by(ForumPost.timestamp.desc()).all()
         return render_template('all_posts.html')
 
     # Register routes (move your existing routes here or import from views.py)
