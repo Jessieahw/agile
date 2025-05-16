@@ -106,7 +106,7 @@
         {{ form.result(id="result") }}
         {{ form.submit(class="btn btn-primary") }}
       </form>
-      <button type="button" id="compareBtn" class="btn btn-secondary mt-2">Preview Match</button>
+      <button type="button" id="compareBtn" class="btn btn-secondary mt-2 d-none">Preview Match</button>
     </div>
   </section>
 
@@ -271,7 +271,7 @@
               <h6 class="px-3">Players</h6>
               <div class="players-grid">
           `;
-  
+   
           // placeholder images with data-player-name
           stars.forEach(p => {
             card += `
@@ -356,5 +356,6 @@
   </script>
 </body>
 </html>
+
 
 
