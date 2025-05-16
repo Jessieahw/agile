@@ -154,3 +154,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+document.getElementById('sharePrivateBtn').onclick = function() {
+    var recipientUsername = document.getElementById('recipientUsername').value.trim();
+    if (!recipientUsername) {
+        alert("Please enter a username to share privately.");
+        return;
+    }
+    // Capture the chart or relevant content as an image (adjust selector as needed)
+    html2canvas(document.getElementById('yourChartOrContent')).then(function(canvas) {
+        var imageData = canvas.toDataURL('image/png');
+        var postText = "My AFL stats comparison!"; // Or customize as needed
+
+        var postData = {
+            image: imageData,
+            text: postText,
+            recipient_username: recipientUsername
+        };
+
+        fetch('/submit_post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Shared privately!');
+        })
+        .catch(error => {
+            alert('Error sharing privately');
+        });
+    });
+};
