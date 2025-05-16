@@ -12,7 +12,9 @@
         <a href="{{ url_for('landing_page') }}">Home</a>
         <a href="{{ url_for('forum_page') }}">Forum</a>
         <a href="{{ url_for('all_posts') }}">Posts</a>
-        <a href="{{ url_for('all_posts') }}?private=1" class="league-button">View Private Shares</a>
+        <a href="{{ url_for('all_posts') }}?private=1">
+            <button type="button" class="btn btn-warning">View Private Shares</button>
+        </a>
         <a href="{{ url_for('logout') }}" class="logout-button">Log Out</a>
     </nav>
 
