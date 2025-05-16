@@ -23,13 +23,13 @@
   <!-- ===== HEADER / NAV ===== -->
   <header>
     <nav class="navbar">
-      <button class="nav-btn" data-target="home">Home</button>
-      <button class="nav-btn" data-target="stats">Stats & You</button>
+      <button class="nav-btn" data-target="home" id="homebtn">Home</button>
+      <button class="nav-btn" data-target="stats" id="statsbtn">Stats & You</button>
 
       <img src="{{ url_for('static', filename='assets/bbl_nav_logo.png') }}" alt="Big Bash League Logo" class="nav-logo">
 
-      <button class="nav-btn" data-target="players">Players</button>
-      <button class="nav-btn" data-target="teams">Teams</button>
+      <button class="nav-btn" data-target="players" id="playersbtn">Players</button>
+      <button class="nav-btn" data-target="teams" id="teamsbtn">Teams</button>
     </nav>
   </header>
 

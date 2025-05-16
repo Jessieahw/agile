@@ -62,9 +62,9 @@ def test_register_login_logout_flow(driver, live_server):
     assert "/login" in driver.current_url
 
 
-def test_bbl_submission_with_csrf(driver, live_server):
-    register(driver, live_server, "bbluser", "pw")
-    login(driver, live_server, "bbluser", "pw")
+def test_bbl_similarity_search_submission_with_csrf(driver, live_server):
+    register(driver, live_server, "bbluser0", "pw")
+    login(driver, live_server, "bbluser0", "pw")
 
     driver.get(f"{live_server}/bbl")
     WebDriverWait(driver, 3)
@@ -100,6 +100,60 @@ def test_bbl_submission_with_csrf(driver, live_server):
     assert "Alex Hales" in table_source, "Table does not contain or is not the correct result of the submitted batting data!"
     assert "Josh Philippe" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
     assert "Daniel Hughes" in table_source, "Table does not contain or is not the correct result of the submitted bowling data!"
+
+def test_bbl_player_search(driver, live_server):
+    # Build up the user account and get authenticated.
+    register(driver, live_server, "bbluser1", "pw")
+    login(driver, live_server, "bbluser1", "pw")
+
+    # Get to the page
+    driver.get(f"{live_server}/bbl")
+
+    # Wait for the nav button to appear, then click it
+    WebDriverWait(driver, 3).until(
+        expected_conditions.presence_of_element_located((By.ID, "playersbtn"))
+    )
+    playersbtn = driver.find_element(By.ID, "playersbtn")
+    playersbtn.click()
+
+    # Wait for the search box to appear
+    WebDriverWait(driver, 5).until(
+        expected_conditions.visibility_of_element_located((By.ID, "player-search-input"))
+    )
+
+    # No token needed for this page (not a form). Just enter a player name
+    player_name = "Chris"
+    player_input = driver.find_element(By.ID, "player-search-input")
+    player_input.send_keys(player_name)
+    # Submit and wait for the result table to appear and fill out
+    input_button = driver.find_element(By.ID, "player-search-btn")
+    input_button.click()
+    WebDriverWait(driver, 3).until(
+        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "similar-table"))
+    )
+    # Get the table data
+    table = driver.find_element(By.CLASS_NAME, "similar-table")
+    assert table, "Table not found on the page"
+
+    # Parse the table
+    rows = table.find_elements(By.TAG_NAME, "tr")
+    data: set[tuple[str, str]] = set([])
+    for row in rows:
+        cells = row.find_elements(By.TAG_NAME, "th") or row.find_elements(By.TAG_NAME, "td")
+        data.add(tuple(cell.text.strip() for cell in cells))
+
+    # Set expected row data:
+    expected_rows: set[tuple[str,str]] = {
+        ("#", "Name", "Inn", "Runs", "HS", "Avg", "SR", "Wkts", "BAvg", "Eco"),
+        ("1", "Chris Lynn", "113", "3632", "101", "32.14", "132.55", "3", "25.00", "6.82"),
+        ("2", "Daniel Christian", "119", "1917", "73", "16.11", "117.34", "92", "27.02", "8.33"),
+        ("4", "Chris Gayle", "20", "645", "100", "32.25", "125.48", "6", "30.50", "7.04")
+    }
+
+    # Print the table data for debugging
+    print(f"Expected: {expected_rows}.\nActual: {data}\nDifference: {expected_rows.difference(data)}")
+    assert expected_rows.issubset(data), "The table does not contain the expected data!"
+
 
 def test_epl_recommended_team_search(driver, live_server):
     register(driver, live_server, "csuser", "pw")
