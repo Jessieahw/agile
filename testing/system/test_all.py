@@ -279,16 +279,19 @@ def test_nba_team_match(driver, live_server):
     # Get the CSRF token from the form
     token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
     assert token, "CSRF token not found in form on /nba/data.html"
-    WebDriverWait(driver, 5).until(
-        expected_conditions.element_to_be_clickable((By.ID, "wpct"))
-    )
+    WebDriverWait(driver, 5).until(expected_conditions.all_of(
+        expected_conditions.element_to_be_clickable((By.ID, "wpct")),
+        expected_conditions.element_to_be_clickable((By.ID, "pf")),
+        expected_conditions.element_to_be_clickable((By.ID, "pa")),
+        expected_conditions.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))
+    ))
     # Fill in the form fields
     driver.find_element(By.ID, "wpct").send_keys("50")
     driver.find_element(By.ID, "pf").send_keys("107")
     driver.find_element(By.ID, "pa").send_keys("103")
 
     # Submit the form
-    driver.find_element(By.ID, "submit").click()
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 
     # Wait for the modal content to be visible
     WebDriverWait(driver, 10).until(
@@ -320,8 +323,9 @@ def test_nba_player_match(driver, live_server):
     blocks.send_keys("10")
     rebounds = driver.find_element(By.ID, "trb")
     rebounds.send_keys("7")
-    submit = driver.find_element(By.CLASS_NAME, "btn-primary")
+    submit = driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
     submit.click()
+
     # Wait for the modal to appear
     WebDriverWait(driver, 5).until(
         expected_conditions.text_to_be_present_in_element(

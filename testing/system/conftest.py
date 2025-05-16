@@ -40,6 +40,9 @@ def live_server():
 def driver():
     opts = Options()
     # opts.add_argument("--headless=new")    # Chrome > 109 headless mode
+    opts.add_argument("--start-maximized") # Start maximized
+    opts.add_experimental_option("excludeSwitches", ["enable-automation"])
+    opts.add_experimental_option("useAutomationExtension", False)
     drv = webdriver.Chrome(options=opts)   # Selenium downloads driver
     drv.implicitly_wait(3)
     yield drv
