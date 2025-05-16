@@ -237,20 +237,16 @@
 <script>
     const csrfToken = document.querySelector('#teamForm input[name="csrf_token"]').value;
     document.getElementById('postToForumBtn').onclick = function() {
-    // Capture the chart as an image
     html2canvas(document.getElementById('statsChart')).then(function(canvas) {
         var imageData = canvas.toDataURL('image/png');
         var postText = `My EPL team is ${closestTeam}!`;
-        var recipientUsername = document.getElementById('recipientUsername').value.trim();
 
         var postData = {
             image: imageData,
             team: closestTeam,
             text: postText
         };
-        if (recipientUsername) {
-            postData.recipient_username = recipientUsername;
-        }
+        // Do NOT include recipient_username here!
 
         fetch('/submit_post', {
             method: 'POST',
@@ -263,7 +259,6 @@
         .then(response => response.json())
         .then(data => {
             alert('Posted to forum!');
-            // Optionally redirect or update UI
         })
         .catch(error => {
             alert('Error posting to forum');
