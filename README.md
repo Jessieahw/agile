@@ -32,18 +32,24 @@ This web application allows users to compare their sports stats with professiona
     pip install -r requirements.txt
     ```
 
-4. **Set up the database:**
+4. **Set Flask secret key (required):**
+
+
+
+5. **Set up the database:**
     ```bash
     flask db upgrade
     ```
 
-5. **Run the application:**
+6. **Run the application:**
     ```bash
     flask run
     ```
 
-6. **Access the app:**
+7. **Access the app:**
     Open [http://localhost:5000](http://localhost:5000) in your browser.
+
+
 
 ## Usage
 
