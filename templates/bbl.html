@@ -137,8 +137,8 @@
       <div class="share-box">
         <h3>Share your data radar graphs!</h3>
 
-        <label for="share-users">Share with (comma-separated usernames or “ALL”):</label>
-        <input type="text" id="share-users" placeholder="ALL" class="share-input">
+        <label for="share-recipient">Share with (username – leave blank or type “ALL” for public):</label>
+        <input type="text" id="share-recipient" placeholder="ALL" class="share-input">
 
         <label for="share-text">Caption:</label>
         <textarea id="share-text" rows="2"
@@ -154,12 +154,12 @@
     </article>
     <!-- Dump the three data blobs so bbl.js can reuse them -->
     {% if user_stats %}
-    <script>
+    <!-- <script>
       window.userStats  = {{ user_stats  | tojson }};
       window.matchesBat = {{ matches_bat | tojson }};
       window.matchesBowl= {{ matches_bowl| tojson }};
     </script>
-    {% endif %}
+    {% endif %} -->
 
     <article id="players" class="page-content">
       <div class="intro-box">

@@ -279,29 +279,32 @@ function initBBL() {
 }
 
 // Needs html2canvas (already linked right above the fragment)
+/* ────────────────────────────────────────────────────────────
+   SHARE-BUTTON  (single optional recipient → /submit_post)
+   ─────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-  const btn   = document.getElementById('share-btn');
-  const users = document.getElementById('share-users');
-  const text  = document.getElementById('share-text');
-  const csrf  = document.querySelector('meta[name="csrf-token"]').content;
+  const btn       = document.getElementById('share-btn');
+  const toField   = document.getElementById('share-recipient');   // one username or “ALL”
+  const textBox   = document.getElementById('share-text');
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-  btn.addEventListener('click', async () => {
-    // 1. Work out which radar divs exist & are rendered
-    const radarIds = ['bat-radar', 'bowl-radar']
-                      .map(id => document.getElementById(id))
-                      .filter(el => el && el.childElementCount);
+  btn?.addEventListener('click', async () => {
 
-    if (!radarIds.length) {
+    /* 1️⃣  find every radar that has actually rendered */
+    const radarEls = ['bat-radar', 'bowl-radar']
+      .map(id => document.getElementById(id))
+      .filter(el => el && el.childElementCount);
+
+    if (!radarEls.length) {
       alert('No charts to share yet!');
       return;
     }
 
-    // 2. Snapshot each radar
+    /* 2️⃣  snapshot each radar and stitch them vertically */
     const canvases = await Promise.all(
-      radarIds.map(el => html2canvas(el, {backgroundColor: null}))
+      radarEls.map(el => html2canvas(el, { backgroundColor: null }))
     );
 
-    // 3. Stitch vertically into one image
     const combo = document.createElement('canvas');
     combo.width  = Math.max(...canvases.map(c => c.width));
     combo.height = canvases.reduce((h, c) => h + c.height, 0);
@@ -310,32 +313,33 @@ document.addEventListener('DOMContentLoaded', () => {
     canvases.forEach(c => { ctx.drawImage(c, 0, y); y += c.height; });
     const imgData = combo.toDataURL('image/png');
 
-    // 4. Build payload
-    const payload = {
-      league      : 'bbl',
-      image       : imgData,
-      text        : text.value || 'BBL radar comparison',
-      shared_with : (users.value || 'ALL').split(',').map(u => u.trim())
-    };
+    /* 3️⃣  work out the recipient (“ALL” or blank → public) */
+    const rawInput  = (toField.value || '').trim();
+    const recipient = rawInput === '' || rawInput.toUpperCase() === 'ALL' ? null
+                                                                           : rawInput;
 
-    // 5. POST to the existing endpoint
+    /* 4️⃣  fire the POST */
     try {
       const res = await fetch('/submit_post', {
         method : 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken' : csrf
+          'X-CSRFToken' : csrfToken
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          text              : textBox.value || 'BBL radar comparison',
+          image             : imgData,
+          recipient_username: recipient          // null ⇒ public post
+        })
       });
-      if (res.ok) {
-        // alert('Posted to forum!');
-        users.value = ''; text.value = '';
-        window.location.href = '/all_posts';
-      } else {
-        alert('Error posting: ' + res.statusText + ': ' + res.text());
-        throw new Error(await res.text());
-      }
+
+      if (!res.ok) throw new Error(await res.text());
+
+      /* 5️⃣  success → land on the right view */
+      window.location.href = recipient
+        ? '/all_posts?view=sent'   // private: show “My posts”
+        : '/all_posts?view=public';// public: show public feed
+
     } catch (err) {
       alert('Error posting: ' + err.message);
     }
