@@ -182,13 +182,14 @@
     <h3>Visualize Your Stats and Matched Team</h3>
     <canvas id="statsChart"></canvas>
 </div>
-<div style="margin-bottom:10px;">
-    <label for="recipientUsername">Send privately to (username, optional):</label>
-    <input type="text" id="recipientUsername" placeholder="Leave blank to post publicly">
+<div style="margin-bottom:10px; text-align:center;">
+    <label for="recipientUsername">Send privately to a user:</label>
+    <input type="text" id="recipientUsername" >
 </div>
-<button id="sharePrivateBtn" style="margin-left:10px;">Share Privately</button>
-<button id="postToForumBtn">Post to Forum</button>
-
+<div style="text-align:center; margin-bottom:20px;">
+    <button id="sharePrivateBtn" style="margin-left:10px;">Share Privately</button>
+    <button id="postToForumBtn">Post to Forum</button>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
