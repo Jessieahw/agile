@@ -270,6 +270,7 @@ def test_nba_team_search(driver, live_server):
 
     select_element = driver.find_element(By.CLASS_NAME, "form-select")
     select_element.click()
+    select_element = driver.find_element(By.CLASS_NAME, "form-select") # Block stale reference exception
     sel = Select(select_element)
     sel.select_by_visible_text("Boston Celtics (BOS)")
     # Close the box:

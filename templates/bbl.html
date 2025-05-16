@@ -13,7 +13,9 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_main.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_results.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_team_results.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_share.css') }}">
   <!-- Add EChart.js to show graphs and other visualization -->
+   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script src="{{ url_for('static', filename='js/bbl.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/navbarscript.js') }}" defer></script>
@@ -131,6 +133,23 @@
           <div id="bat-radar"  style="width:550px;height:420px"></div>
           <h3>Bowling Comparison</h3>
           <div id="bowl-radar" style="width:550px;height:420px"></div>
+      </div>
+      <div class="share-box">
+        <h3>Share your data radar graphs!</h3>
+
+        <label for="share-users">Share with (comma-separated usernames or “ALL”):</label>
+        <input type="text" id="share-users" placeholder="ALL" class="share-input">
+
+        <label for="share-text">Caption:</label>
+        <textarea id="share-text" rows="2"
+                  placeholder="I’m closest to …" class="share-textarea"></textarea>
+
+        <button id="share-btn" class="submit-btn">
+          <span class="flip-box">
+            <span class="flip-face flip-face-front">Share</span>
+            <span class="flip-face flip-face-back">Posting…</span>
+          </span>
+        </button>
       </div>
     </article>
     <!-- Dump the three data blobs so bbl.js can reuse them -->
