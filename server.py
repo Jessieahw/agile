@@ -344,6 +344,7 @@ def create_app(test_config=None):
         # Save post info (including image path) to your Post model/table
         post = ForumPost(
             user_id=current_user.id,
+            username=current_user.username,
             text=f"My EPL team is {team}",
             image_path=filename
         )
