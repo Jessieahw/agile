@@ -41,13 +41,15 @@ class PlayerComparison(db.Model):
 
 from datetime import datetime
 from extensions import db
-
+# models.py
 class ForumPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     username = db.Column(db.String(80), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     text = db.Column(db.Text, nullable=False)
-    image_path = db.Column(db.String(255))  # Optional, for image posts
+    image_path = db.Column(db.String(255))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # <-- add this
 
-    user = db.relationship('User', backref='forum_posts')
+    user = db.relationship('User', foreign_keys=[user_id], backref='forum_posts')
+    recipient = db.relationship('User', foreign_keys=[recipient_id])

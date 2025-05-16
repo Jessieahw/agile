@@ -330,9 +330,16 @@ def create_app(test_config=None):
     @login_required
     def submit_post():
         data = request.get_json()
-        text = data.get('text', '')  # Use the text sent from the frontend (AFL or EPL/NBA)
+        text = data.get('text', '')
         image_data = data.get('image', None)
+        recipient_username = data.get('recipient_username', None)
         image_path = None
+        recipient_id = None
+
+        if recipient_username:
+            recipient = User.query.filter_by(username=recipient_username).first()
+            if recipient:
+                recipient_id = recipient.id
 
         if image_data:
             header, encoded = image_data.split(",", 1)
@@ -347,8 +354,9 @@ def create_app(test_config=None):
         post = ForumPost(
             user_id=current_user.id,
             username=current_user.username,
-            text=text,  # Always use the provided text
-            image_path=image_path
+            text=text,
+            image_path=image_path,
+            recipient_id=recipient_id
         )
         db.session.add(post)
         db.session.commit()
@@ -358,7 +366,11 @@ def create_app(test_config=None):
     @app.route('/all_posts')
     @login_required
     def all_posts():
-        posts = ForumPost.query.order_by(ForumPost.timestamp.desc()).all()
+        posts = ForumPost.query.filter(
+            (ForumPost.recipient_id == None) |  # public
+            (ForumPost.recipient_id == current_user.id) |  # sent to me
+            (ForumPost.user_id == current_user.id)  # my own posts
+        ).order_by(ForumPost.timestamp.desc()).all()
         return render_template('all_posts.html', posts=posts)
 
     # Register routes (move your existing routes here or import from views.py)
