@@ -95,7 +95,7 @@ def test_registration_writes_user(client, csrf_token):
     assert User.query.filter_by(username="eve").count() == 1
 
 def test_login_on_prior_registered_user(client, csrf_token):
-    # register
+    # login via prior test's registration
     res = client.post("/login", data={
         "username":"eve",
         "password":"pw",
@@ -103,3 +103,59 @@ def test_login_on_prior_registered_user(client, csrf_token):
     }, follow_redirects=True)
 
     assert res.status_code == 200
+
+def test_no_login_user_using_bbl_player_search(client):
+    PATH = "/bbl/player_search"
+    player_name = "Chris".replace(" ", "%20")
+    res = client.get(f"{PATH}?player_name={player_name}")
+    assert res.status_code == 302 # Flask redirects to login page rather than rejecting via 401 Forbidden Errors.
+
+def test_logged_user_using_bbl_player_search(client, csrf_token):
+    # Fail safe registration if test run in isolation
+    res = client.post("/register", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+    assert res.status_code == 200
+
+    # Login via prior test's registration
+    res = client.post("/login", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+    assert res.status_code == 200
+    # We need to get session cookie to use in the next request
+    PATH = "/bbl/player_search"
+    player_name = "Chris".replace(" ", "%20")
+    res = client.get(f"{PATH}?player_name={player_name}")
+    assert res.status_code == 200 # Should return 200 OK
+
+def test_no_login_user_using_bbl_team_search(client):
+    PATH = "/bbl/player_search"
+    team = "Chris".replace(" ", "%20")
+    res = client.get(f"{PATH}?player_name={player_name}")
+    assert res.status_code == 302 # Flask redirects to login page rather than rejecting via 401 Forbidden Errors.
+
+def test_logged_user_using_bbl_team_search(client, csrf_token):
+    # Fail safe registration if test run in isolation
+    res = client.post("/register", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+    assert res.status_code == 200
+
+    # Login via prior test's registration
+    res = client.post("/login", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+    assert res.status_code == 200
+    # We need to get session cookie to use in the next request
+    PATH = "/bbl/player_search"
+    player_name = "Chris".replace(" ", "%20")
+    res = client.get(f"{PATH}?player_name={player_name}")
+    assert res.status_code == 200 # Should return 200 OK
