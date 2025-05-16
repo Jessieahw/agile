@@ -155,38 +155,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-document.getElementById('sharePrivateBtn').onclick = function() {
+document.getElementById('sharePrivateBtn').onclick = async function() {
     var recipientUsername = document.getElementById('recipientUsername').value.trim();
     if (!recipientUsername) {
         alert("Please enter a username to share privately.");
         return;
     }
-    // Capture the chart or relevant content as an image (adjust selector as needed)
-    html2canvas(document.getElementById('yourChartOrContent')).then(function(canvas) {
-        var imageData = canvas.toDataURL('image/png');
-        var postText = "My AFL stats comparison!"; // Or customize as needed
+    const playerName = document.querySelector('#playerInfo h3').textContent;
+    const postText = `My recent performance playing AFL is looking a lot like ${playerName}'s right now.`;
 
-        var postData = {
-            image: imageData,
-            text: postText,
-            recipient_username: recipientUsername
-        };
+    // Get CSRF token from meta tag
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        fetch('/submit_post', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify(postData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert('Shared privately!');
-        })
-        .catch(error => {
-            alert('Error sharing privately');
-        });
+    // Prepare post data
+    const postData = {
+        text: postText,
+        recipient_username: recipientUsername
+    };
+
+    // Send POST request to /submit_post
+    const response = await fetch('/submit_post', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(postData)
     });
+
+    if (response.ok) {
+        alert('Shared privately!');
+    } else {
+        alert('Failed to share privately.');
+    }
 };
