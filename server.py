@@ -326,31 +326,34 @@ def create_app(test_config=None):
         return send_from_directory('static', filename)
     
 
-
     @app.route('/submit_post', methods=['POST'])
     @login_required
     def submit_post():
         data = request.get_json()
-        image_data = data['image']
-        team = data.get('team', '')
-        # Decode the image and save to file or database
-        header, encoded = image_data.split(",", 1)
-        img_bytes = base64.b64decode(encoded)
-        directory = 'static/forum_images'
-        os.makedirs(directory, exist_ok=True) 
-        filename = f"static/forum_images/{current_user.username}_{int(time.time())}.png"
-        with open(filename, "wb") as f:
-            f.write(img_bytes)
-        # Save post info (including image path) to your Post model/table
+        text = data.get('text', '')  # Use the text sent from the frontend (AFL or EPL/NBA)
+        image_data = data.get('image', None)
+        image_path = None
+
+        if image_data:
+            header, encoded = image_data.split(",", 1)
+            img_bytes = base64.b64decode(encoded)
+            directory = 'static/forum_images'
+            os.makedirs(directory, exist_ok=True)
+            filename = f"{directory}/{current_user.username}_{int(time.time())}.png"
+            with open(filename, "wb") as f:
+                f.write(img_bytes)
+            image_path = filename
+
         post = ForumPost(
             user_id=current_user.id,
             username=current_user.username,
-            text=f"My EPL team is {team}",
-            image_path=filename
+            text=text,  # Always use the provided text
+            image_path=image_path
         )
         db.session.add(post)
         db.session.commit()
         return jsonify({'message': 'Post created!'})
+
     
     @app.route('/all_posts')
     @login_required
