@@ -237,6 +237,7 @@
         // Convert canvas to data URL (base64 PNG)
         var imageData = canvas.toDataURL('image/png');
         // Prepare post data (add any text or stats you want)
+        var postText = `My EPL team is ${closestTeam}!`;
         var postData = {
             image: imageData,
             team: closestTeam,
