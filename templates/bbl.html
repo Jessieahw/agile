@@ -7,6 +7,7 @@
   <title>BBL Stats</title>
   <meta name="description" content="Big Bash League – compare players, teams and seasons">
   <meta name="author"      content="praj107">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- styles & scripts -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bbl_main.css') }}">
@@ -51,7 +52,7 @@
       </div>
 
       <!-- ===== USER INPUT TABLES ===== -->
-      <form id="user-stats-form" class="stats-form" action="" method="post">
+      <form id="user-stats-form" class="stats-form" method="POST">
         <!-- CSRF Token -->
         {{ form.hidden_tag() }}
         <!-- Batting -->
@@ -108,7 +109,7 @@
           </tbody>
         </table>
 
-        <button class="submit-btn" type="submit">
+        <button type="button" id="submit-stats" class="submit-btn">
           <span class="flip-box">
             <span class="flip-face flip-face-front">Compare my stats</span>
             <span class="flip-face flip-face-back">Submit</span>
@@ -232,11 +233,11 @@
         <h2>Teams</h2>
         <p>Explore team-level performance across all seasons.</p>
       </div>
-      <article id="team‑search" class="section‐panel">
-        <select id="team‑select" class="team‑select">
+      <article id="team-search" class="section-panel">
+        <select id="team-select" class="team-select">
           <option value="">Select a team…</option>
         </select>
-        <div id="team‑results" class="team‑results"></div>
+        <div id="team-results" class="team-results"></div>
       </article>
       
   </main>

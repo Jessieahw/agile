@@ -187,7 +187,26 @@ def create_app(test_config=None):
             conn.close()
         user_stats = {**bat_data, **bowl_data} if request.method == 'POST' else {}
         return render_template('bbl.html', matches_bat=matches_bat, matches_bowl=matches_bowl, user_stats=user_stats, form=form)
+    @app.route('/bbl/similarity_api', methods=['POST'])
 
+    @app.route("/bbl/compare", methods=["POST"])
+    @login_required
+    def bbl_compare():
+        data = request.get_json(force=True)
+
+        bat_data  = {k: float(data.get(k, 0)) for k in ("bat_innings","bat_runs","bat_high","bat_avg","bat_sr")}
+        bowl_data = {k: float(data.get(k, 0)) for k in ("bowl_overs","bowl_wkts","bowl_runs","bowl_avg","bowl_eco")}
+
+        db_path = os.path.join(app.root_path, "static", "bbl", "data", "data.db")
+        conn    = sqlite3.connect(db_path); conn.row_factory = sqlite3.Row
+
+        matches_bat  = BBL_BMF.get_top_batters(conn, bat_data)  if all(bat_data.values())  else []
+        matches_bowl = BBL_BMF.get_top_bowlers(conn, bowl_data) if all(bowl_data.values()) else []
+
+        return jsonify({
+            "bat" : [dict(r) for r in matches_bat],
+            "bowl": [dict(r) for r in matches_bowl]
+        })
     @app.route('/bbl/player_search')
     @login_required
     def bbl_player_search():
