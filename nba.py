@@ -79,14 +79,13 @@ def teams(team_key=None):
 @nba_bp.route('/data.html', methods=['GET','POST'])
 @login_required
 def data():
-    form = NBADataForm()
-    if form.validate_on_submit():
-        wpct = form.wpct.data
-        pf = form.pf.data
-        pa = form.pa.data
-        result = form.result.data or 'Unknown'
+    if request.method == 'POST':
+        wpct   = float(request.form.get('wpct', 0))
+        pf     = float(request.form.get('pf',   0))
+        pa     = float(request.form.get('pa',   0))
+        result = request.form.get('result', 'Unknown')
         try:
-            sub = Submission(wpct=wpct, pf=pf, pa=pa, result=result)
+            sub = Submission(user_id=current_user.id, wpct=wpct, pf=pf, pa=pa, result=result)
             db.session.add(sub)
             db.session.commit()
             current_app.logger.info(f"Saved submission {sub.id}")
@@ -96,7 +95,7 @@ def data():
             current_app.logger.error(f"Error saving submission: {e}")
             flash('There was an error saving your submission.', 'danger')
         return redirect(url_for('nba.data'))
-    return render_template('data.html', form=form)
+    return render_template('data.html')
 
 
 @nba_bp.route('/player', methods=['GET', 'POST'])
@@ -146,7 +145,7 @@ def team_players(team_key):
     """
     Return 3 players for <team_key> in 2025:
      1) the overall highest scorer,
-     2-3) two other distinct players (random from the next best games).
+     2–3) two other distinct players (random from the next best games).
     """
     # 1) key‐mapping
     key_map = {
