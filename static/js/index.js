@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 alert('Shared to forum!');
                 window.location.href = '/all_posts';
+                
             } else {
                 alert('Failed to share to forum.');
             }
@@ -183,9 +184,9 @@ document.getElementById('sharePrivateBtn').onclick = async function() {
         body: JSON.stringify(postData)
     });
 
-    if (response.ok) {
-        alert('Shared privately!');
-    } else {
-        alert('Failed to share privately.');
-    }
+    // if (response.ok) {
+    //     alert('Shared privately!');
+    // } else {
+    //     alert('Failed to share privately.');
+    // }
 };

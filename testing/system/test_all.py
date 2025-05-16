@@ -391,28 +391,24 @@ def test_nba_team_standings(driver, live_server):
     )
     LOGGER.info(f"Current Table Text: {driver.find_element(By.CLASS_NAME, 'table').text}")
 
-# ------------------------------------------------------------------
-# NEW end-to-end test: private NBA team-card share visibility
-# ------------------------------------------------------------------
+
 def test_nba_private_share_team_comp_visibility(driver, live_server):
     """
-    • u_sender creates a team-match card and shares it **privately** with u_recipient
-    • u_sender must see the post in ?view=sent
-    • u_bystander sees nothing in any timeline
-    • u_recipient sees the post only in ?view=received
+    u_sender creates a team-match card and shares it privately with u_recipient
+    u_sender must see the post in ?view=sent
+    u_bystander sees nothing in any timeline
+    u_recipient sees the post only in ?view=received
     """
 
-    # ----- constants ------------------------------------------------
+    #  constants 
     sender, bystander, recipient, pw = "u_sender0", "u_bystander0", "u_recipient0", "pw0"
     share_pattern = "forum_images/{}_"            # part of the file-name we expect
 
-    # ----- create three users --------------------------------------
+    #  create three users 
     for uname in (sender, bystander, recipient):
         register(driver, live_server, uname, pw)
 
-    # ---------------------------------------------------------------
-    # 1)  sender logs in and makes a private share
-    # ---------------------------------------------------------------
+
     login(driver, live_server, sender, pw)
     driver.get(f"{live_server}/nba/data.html")
 
@@ -449,9 +445,7 @@ def test_nba_private_share_team_comp_visibility(driver, live_server):
     rel_img_src = img_src.replace(live_server, "")
     assert share_pattern.format(sender) in img_src
 
-    # ---------------------------------------------------------------
-    # 2)  bystander must NOT see the post anywhere
-    # ---------------------------------------------------------------
+
     driver.get(f"{live_server}/logout")
     login(driver, live_server, bystander, pw)
 
@@ -463,9 +457,6 @@ def test_nba_private_share_team_comp_visibility(driver, live_server):
         driver.get(f"{live_server}{url}")
         assert rel_img_src not in driver.page_source
 
-    # ---------------------------------------------------------------
-    # 3)  recipient sees it only in ?view=received
-    # ---------------------------------------------------------------
     driver.get(f"{live_server}/logout")
     login(driver, live_server, recipient, pw)
 
@@ -478,31 +469,26 @@ def test_nba_private_share_team_comp_visibility(driver, live_server):
     WebDriverWait(driver, 5).until(
         expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div[class='post-box']"))
     )
-    # Get the first post box
-    # first_box = driver.find_element(By.CSS_SELECTOR, "div[class='post-box']")
-    # # Check if the image source is in the page source
-    # img_src2 = first_box.find_element(By.CSS_SELECTOR, "img").get_attribute("src")
+
     assert rel_img_src in driver.page_source, "The image source does not match the expected value!"
 
 def test_nba_private_share_player_comp_visibility(driver, live_server):
     """
-    • u_sender creates a user-match card and shares it **privately** with u_recipient
-    • u_sender must see the post in ?view=sent
-    • u_bystander sees nothing in any timeline
-    • u_recipient sees the post only in ?view=received
+    u_sender creates a user-match card and shares it privately with u_recipient
+    u_sender must see the post in ?view=sent
+    u_bystander sees nothing in any timeline
+    u_recipient sees the post only in ?view=received
     """
 
-    # ----- constants ------------------------------------------------
+    #  constants 
     sender, bystander, recipient, pw = "u_sender1", "u_bystander1", "u_recipient1", "pw1"
     share_pattern = "forum_images/{}_"            # part of the file-name we expect
 
-    # ----- create three users --------------------------------------
+    #  create three users 
     for uname in (sender, bystander, recipient):
         register(driver, live_server, uname, pw)
 
-    # ---------------------------------------------------------------
-    # 1)  sender logs in and makes a private share
-    # ---------------------------------------------------------------
+
     login(driver, live_server, sender, pw)
     driver.get(f"{live_server}/nba/player.html")
 
@@ -518,13 +504,7 @@ def test_nba_private_share_player_comp_visibility(driver, live_server):
     WebDriverWait(driver, 5).until(
         expected_conditions.visibility_of_element_located((By.ID, "playerShareBtn"))
     )
-    # click the share button
-    # sharebtn = driver.find_element(By.ID, "playerShareBtn")
-    # sharebtn.click()
-    # WebDriverWait(driver, 5).until(
-    #     expected_conditions.visibility_of_element_located((By.ID, "shareRecipient"))
-    # )
-    # enter private recipient and click “Post to Forum”
+
     driver.find_element(By.ID, "playerShareRecipient").send_keys(recipient)
     driver.find_element(By.ID, "playerShareBtn").click()
 
@@ -541,9 +521,7 @@ def test_nba_private_share_player_comp_visibility(driver, live_server):
     rel_img_src = img_src.replace(live_server, "")
     assert share_pattern.format(sender) in img_src
 
-    # ---------------------------------------------------------------
-    # 2)  bystander must NOT see the post anywhere
-    # ---------------------------------------------------------------
+
     driver.get(f"{live_server}/logout")
     login(driver, live_server, bystander, pw)
 
@@ -555,9 +533,7 @@ def test_nba_private_share_player_comp_visibility(driver, live_server):
         driver.get(f"{live_server}{url}")
         assert rel_img_src not in driver.page_source
 
-    # ---------------------------------------------------------------
-    # 3)  recipient sees it only in ?view=received
-    # ---------------------------------------------------------------
+
     driver.get(f"{live_server}/logout")
     login(driver, live_server, recipient, pw)
 
@@ -578,23 +554,20 @@ def test_nba_private_share_player_comp_visibility(driver, live_server):
 
 def test_bbl_private_radar_graph_visibility(driver, live_server):
     """
-    • u_sender creates a radar graph post and shares it **privately** with u_recipient
-    • u_sender must see the post in ?view=sent
-    • u_bystander sees nothing in any timeline
-    • u_recipient sees the post only in ?view=received
+    u_sender creates a radar graph post and shares it privately with u_recipient
+    u_sender must see the post in ?view=sent
+    u_bystander sees nothing in any timeline
+    u_recipient sees the post only in ?view=received
     """
 
-    # ----- constants ------------------------------------------------
+    # constants 
     sender, bystander, recipient, pw = "u_sender2", "u_bystander2", "u_recipient2", "pw2"
     share_pattern = "forum_images/{}_"            # part of the file-name we expect
 
-    # ----- create three users --------------------------------------
+    # create three users 
     for uname in (sender, bystander, recipient):
         register(driver, live_server, uname, pw)
 
-    # ---------------------------------------------------------------
-    # 1)  sender logs in and makes a private share
-    # ---------------------------------------------------------------
     login(driver, live_server, sender, pw)
     driver.get(f"{live_server}/bbl")
 
@@ -622,10 +595,6 @@ def test_bbl_private_radar_graph_visibility(driver, live_server):
     WebDriverWait(driver, 5).until(
         expected_conditions.visibility_of_element_located((By.ID, "radars"))
     )
-    # # wait for the share modal to appear
-    # WebDriverWait(driver, 5).until(
-    #     expected_conditions.visibility_of_element_located((By.ID, "playerShareBtn"))
-    # )
 
     # enter private recipient and click “Post to Forum”
     driver.find_element(By.ID, "share-recipient").send_keys(recipient)
@@ -645,9 +614,7 @@ def test_bbl_private_radar_graph_visibility(driver, live_server):
     rel_img_src = img_src.replace(live_server, "")
     assert share_pattern.format(sender) in img_src
 
-    # ---------------------------------------------------------------
-    # 2)  bystander must NOT see the post anywhere
-    # ---------------------------------------------------------------
+
     driver.get(f"{live_server}/logout")
     login(driver, live_server, bystander, pw)
 
@@ -674,11 +641,94 @@ def test_bbl_private_radar_graph_visibility(driver, live_server):
     WebDriverWait(driver, 5).until(
         expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div[class='post-box']"))
     )
-    # Get the first post box
-    # first_box = driver.find_element(By.CSS_SELECTOR, "div[class='post-box']")
-    # # Check if the image source is in the page source
-    # img_src2 = first_box.find_element(By.CSS_SELECTOR, "img").get_attribute("src")
+
     assert rel_img_src in driver.page_source, "The image source does not match the expected value!"
+
+def test_afl_private_post_visibility(driver, live_server):
+    """
+    u_sender creates a radar graph post and shares it privately with u_recipient
+    u_sender must see the post in ?view=sent
+    u_bystander sees nothing in any timeline
+    u_recipient sees the post only in ?view=received
+    """
+
+    # ----- constants ------------------------------------------------
+    sender, bystander, recipient, pw = "u_sender3", "u_bystander3", "u_recipient3", "pw3"
+    share_pattern = "forum_images/{}_"            # part of the file-name we expect
+
+    # ----- create three users --------------------------------------
+    for uname in (sender, bystander, recipient):
+        register(driver, live_server, uname, pw)
+
+    # ---------------------------------------------------------------
+    # 1)  sender logs in and makes a private share
+    # ---------------------------------------------------------------
+    login(driver, live_server, sender, pw)
+    driver.get(f"{live_server}/afl")
+    # Wait for the page to load
+    WebDriverWait(driver, 5).until(
+        expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "button[class='center-button']"))
+    )
+    # Fill in batting stats
+    driver.find_element(By.NAME, "Kicks").send_keys("10")
+    driver.find_element(By.NAME, "Handballs").send_keys("10")
+    driver.find_element(By.NAME, "Marks").send_keys("10")
+    driver.find_element(By.NAME, "Goals").send_keys("10")
+    driver.find_element(By.NAME, "Behinds").send_keys("10")
+    driver.find_element(By.NAME, "Tackles").send_keys("10")
+    driver.find_element(By.NAME, "HitOuts").send_keys("10")
+    driver.find_element(By.NAME, "Clearances").send_keys("10")
+    # Submit the form
+    driver.find_element(By.CSS_SELECTOR, "button[class='center-button']").click()
+    WebDriverWait(driver, 5).until(
+        expected_conditions.visibility_of_element_located((By.ID, "similarPlayerContainer"))
+    )
+
+    # enter private recipient and click “Post to Forum”
+    driver.find_element(By.ID, "recipientUsername").send_keys(recipient)
+    driver.find_element(By.ID, "sharePrivateBtn").click()
+    # Redirect to the post page
+    driver.get(f"{live_server}/all_posts?view=sent")
+
+    # the helper JS redirects to /all_posts?view=sent on success
+    WebDriverWait(driver, 8).until(
+        expected_conditions.url_contains("view=sent")
+    )
+    assert "view=sent" in driver.current_url
+
+    # grab the image src so we can look for the same file
+
+    first_box = driver.find_element(By.CSS_SELECTOR, "div[class='post-box']")
+    assert first_box, "No post box found on the page"
+
+    driver.get(f"{live_server}/logout")
+    login(driver, live_server, bystander, pw)
+
+    for url in (
+        "/all_posts",                    # public
+        "/all_posts?view=sent",          # their own sent timeline (empty)
+        "/all_posts?view=received"       # inbox (also empty)
+    ):
+        driver.get(f"{live_server}{url}")
+        first_box = driver.find_elements(By.CSS_SELECTOR, "div[class='post-box']")
+        assert first_box == [], "Bystander should not see the post!"
+
+
+    driver.get(f"{live_server}/logout")
+    login(driver, live_server, recipient, pw)
+
+    # public should still hide it
+    driver.get(f"{live_server}/all_posts")
+    first_box = driver.find_elements(By.CSS_SELECTOR, "div[class='post-box']")
+    assert first_box == [], "Recipient should not see the post in public timeline!"
+
+    # inbox must show it
+    driver.get(f"{live_server}/all_posts?view=received")
+    WebDriverWait(driver, 5).until(
+        expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div[class='post-box']"))
+    )
+    first_box = driver.find_elements(By.CSS_SELECTOR, "div[class='post-box']")
+    assert first_box != [], "The image source does not match the expected value!"
 
     
 
