@@ -126,8 +126,8 @@ def test_epl_recommended_team_search(driver, live_server):
     assert "tottenham" in team.lower(), "The recommended team is not Tottenham Hotspur!"
 
 def test_nba_team_search(driver, live_server):
-    register(driver, live_server, "nbauser", "pw")
-    login(driver, live_server, "nbauser", "pw")
+    register(driver, live_server, "nbauser0", "pw")
+    login(driver, live_server, "nbauser0", "pw")
 
     driver.get(f"{live_server}/nba")
     # token = get_csrf_from_meta(driver)
@@ -140,6 +140,7 @@ def test_nba_team_search(driver, live_server):
     sel = Select(select_element)
     WebDriverWait(driver, 1)
     sel.select_by_visible_text("Boston Celtics (BOS)")
+    select_element.click()
     # Get the table
     WebDriverWait(driver, 1).until(
         expected_conditions.presence_of_element_located((By.CLASS_NAME, "stats-table"))
@@ -162,5 +163,34 @@ def test_nba_team_search(driver, live_server):
     print(f"Data: {data}")
     assert expected_rows.issubset(data), "The table does not contain the expected data!"
 
+def test_nba_team_match(driver, live_server):
+    register(driver, live_server, "nbauser1", "pw")
+    login(driver, live_server, "nbauser1", "pw")
 
+    driver.get(f"{live_server}/nba/data.html")
+    token = token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
+    # Check the CSRF token in the form
+    assert token, "CSRF meta tag not found on /nba page"
+    # Fill in win percentage input
+    winpct = driver.find_element(By.ID, "wpct")
+    winpct.send_keys("50")
+    # Fill in points / game for:
+    ppg_for = driver.find_element(By.ID, "pf")
+    ppg_for.send_keys("107")
+    # Fill in points / game against:
+    ppg_against = driver.find_element(By.ID, "pa")
+    ppg_against.send_keys("103")
+    # Click the button to save the match:
+    submit_button = driver.find_element(By.ID, "submit")
+    submit_button.click()
+    WebDriverWait(driver, 5).until(
+    expected_conditions.text_to_be_present_in_element(
+            (By.ID, "modalBody"), "Orlando Magic"
+        )
+    )
+    modal_text = driver.find_element(By.ID, "modalBody").text
+    assert "Orlando Magic (ORL)" in modal_text, f"Unexpected modal content: {modal_text}"
+
+
+    
 
