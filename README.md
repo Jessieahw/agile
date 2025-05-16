@@ -1,25 +1,82 @@
-# Sports Team Reccomendation Website
+# Pro Player Comparison Web App
 
-## Landing Page
+This web application allows users to compare their sports stats with professional athletes across multiple leagues, including the English Premier League (EPL), Australian Football League (AFL), National Basketball Association (NBA), and Big Bash League (BBL). Users can discover which pro player they are most similar to, visualize their stats, and share results publicly or privately with other users.
 
-### Page 1: English Premier League Team Reccomendation Page
-Jessie
-### Page 2: NBA Basketball Team Reccomendation
-Darryl Max (breeke)
-### Page 3: BBL (Cricket):
-Pranav Rajput (praj107).
+## Features
 
-### Page 4: AFL etc. 
-Max (Robert Turner) (vfbmdcccxciii)
+- **Stat Comparison:** Enter your stats and find the closest matching professional player in EPL, AFL, NBA, or BBL.
+- **Data Visualization:** View your stats and matched player/team stats in interactive charts.
+- **Forum Posting:** Share your results publicly to the forum.
+- **Private Messaging:** Share your results privately with another registered user.
+- **Post Management:** View all posts, received private messages (PMs), and sent PMs.
+- **User Authentication:** Secure login and logout functionality.
 
-## Algorithm
+## Getting Started
 
-- User can upload their own casual or semi pro data set (think local or college level team data: W/L + draw ratios, team counts, etc).
-- The algorithm will match by ratio to closest matching team by these ratios in that sport and area (say the English Premier League for casual soccer in that area).
-- This is based on an observation that people range from casual to competitive interest, and data of their own local play will reflect that in W/L or other quanitifiable metrics.
-- This makes it useful to recommend certain teams to them in a quantifiable way.
-- This can be specified down further from team to even player stats, in different roles for that team.
+### Installation
 
-## User input example
-The user will enter their own data from the same sport into columns that match the stats to that of the league stats we have compiled.
-This will be most suited to a table format.
+1. **Clone the repository:**
+    ```bash
+    git clone <your-repo-url>
+    cd agile\ group\ project
+    ```
+
+2. **Create and activate a virtual environment:**
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+
+3. **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. **Set up the database:**
+    ```bash
+    flask db upgrade
+    ```
+
+5. **Run the application:**
+    ```bash
+    flask run
+    ```
+
+6. **Access the app:**
+    Open [http://localhost:5000](http://localhost:5000) in your browser.
+
+## Usage
+
+- **Compare Stats:** Choose a league from the home page, enter your stats, and see which pro you match with.
+- **Share Results:** Use the "Share to Forum" button to post publicly, or enter a username and click "Share Privately" to send a private message.
+- **View Posts:** Use the navigation bar to view all posts, received PMs, or sent PMs.
+
+## Project Structure
+
+```
+agile group project/
+│
+├── agile/
+│   ├── static/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── assets/
+│   ├── templates/
+│   │   ├── index.html
+│   │   ├── epl.html
+│   │   ├── afl.html
+│   │   ├── nba.html
+│   │   └── bbl.html
+│   ├── server.py
+│   └── ...
+├── migrations/
+│   └── ...
+├── requirements.txt
+└── README.md
+```
+
+## Notes
+
+- Make sure to run database migrations if you change the models.
+- Static assets (logos, icons) are in `static/assets/`.
+- For development, debug mode can be enabled by setting `FLASK_ENV=development`.
