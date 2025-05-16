@@ -47,7 +47,7 @@ def live_server():
 @pytest.fixture(scope="session")
 def driver():
     opts = Options()
-    # opts.add_argument("--headless=new")    # Chrome > 109 headless mode
+    opts.add_argument("--headless=new")    # Chrome > 109 headless mode
     opts.add_argument("--start-maximized") # Start maximized
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
     opts.add_experimental_option("useAutomationExtension", False)

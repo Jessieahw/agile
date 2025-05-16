@@ -730,5 +730,6 @@ def test_afl_private_post_visibility(driver, live_server):
     first_box = driver.find_elements(By.CSS_SELECTOR, "div[class='post-box']")
     assert first_box != [], "The image source does not match the expected value!"
 
+
     
 
