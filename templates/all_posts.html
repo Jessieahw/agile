@@ -71,6 +71,9 @@
                     <div class="post-text">
                         {{ post['text'] }}
                     </div>
+                    {% if post.image_path %}
+                        <img src="{{ url_for('static', filename=post.image_path.split('static/')[1]) }}" alt="Comparison Graph" style="max-width:100%;margin-top:10px;">
+                    {% endif %}
                 </div>
             {% endfor %}
         {% else %}

@@ -17,7 +17,9 @@
     </header>
     <script>
         const eplTeams = {{ team_data|tojson|safe }};
+        let closestTeam = null;
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- Part 1: Team Recommendation -->
      <div class="content">
@@ -104,7 +106,7 @@
                 return;
             }
 
-            let closestTeam = null;
+
             let smallestDistance = Infinity;
             let matchedTeamStats = {};
 
@@ -176,6 +178,8 @@
     <h3>Visualize Your Stats and Matched Team</h3>
     <canvas id="statsChart"></canvas>
 </div>
+<button id="postToForumBtn">Post to Forum</button>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -221,7 +225,39 @@
     }
 </script>
 
-
+<script>
+    const csrfToken = document.querySelector('#teamForm input[name="csrf_token"]').value;
+    document.getElementById('postToForumBtn').onclick = function() {
+    // Capture the chart as an image
+    html2canvas(document.getElementById('statsChart')).then(function(canvas) {
+        // Convert canvas to data URL (base64 PNG)
+        var imageData = canvas.toDataURL('image/png');
+        // Prepare post data (add any text or stats you want)
+        var postData = {
+            image: imageData,
+            team: closestTeam,
+            // Add more fields as needed
+        };
+        // Send to backend
+        fetch('/submit_post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken // if you use CSRF protection
+            },
+            body: JSON.stringify(postData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Posted to forum!');
+            // Optionally redirect or update UI
+        })
+        .catch(error => {
+            alert('Error posting to forum');
+        });
+    });
+};
+</script>
 
 
 <!-- Part 3: User Comparison -->
@@ -239,6 +275,7 @@
 
 </div>
 <script src="{{ url_for('static', filename='js/epl.js') }}"></script>
+
 
 </body>
 </html>
