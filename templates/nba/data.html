@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>NBA Team Matcher</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Bootstrap CSS -->
@@ -149,13 +150,23 @@
         <div class="modal-body" id="shareModalBody">
           <p>Loading your shareable card…</p>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" id="copyShareBtn" class="btn btn-primary">Copy to Clipboard</button>
-          <button id="downloadCardBtn" class="btn btn-outline-primary">
-            Download as PNG
+        <div class="modal-footer flex-column flex-sm-row gap-2">
+          <div class="flex-grow-1 w-100">
+            <label for="shareRecipient" class="form-label mb-1">
+              Share with (blank / <kbd>ANY</kbd> = public)
+            </label>
+            <input type="text" id="shareRecipient"
+                  class="form-control" placeholder="ANY">
+          </div>
+
+          <button id="shareCardBtn"    class="btn btn-info mt-2 mt-sm-0">Post to Forum</button>
+          <button id="copyShareBtn"    class="btn btn-primary">Copy to Clipboard</button>
+          <button id="downloadCardBtn" class="btn btn-outline-primary">Download PNG</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
           </button>
         </div>
+
       </div>
     </div>
   </div>
@@ -361,5 +372,39 @@
 });
 
   </script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const shareBtn   = document.getElementById('shareCardBtn');
+  const shareInput = document.getElementById('shareRecipient');
+  const bodyEl     = document.getElementById('shareModalBody');
+  const csrf       = document.querySelector('meta[name="csrf-token"]').content;
+
+  shareBtn.addEventListener('click', () => {
+    const card = bodyEl.querySelector('.trading-card');
+    if (!card) { alert('Nothing to share yet!'); return; }
+
+    domtoimage.toPng(card, { bgcolor:'#fff' }).then(dataUrl => {
+      const raw = shareInput.value.trim();
+      const recip = raw === '' || raw.toUpperCase() === 'ANY' ? null : raw;
+
+      fetch('/submit_post', {
+        method : 'POST',
+        headers: { 'Content-Type':'application/json', 'X-CSRFToken': csrf },
+        body   : JSON.stringify({
+          text : 'My NBA team match card',
+          image: dataUrl,
+          recipient_username: recip          // null ⇒ public
+        })
+      })
+      .then(r => {
+        if (!r.ok) return r.text().then(t => Promise.reject(t));
+        window.location.href = recip ? '/all_posts?view=sent'
+                                    : '/all_posts?view=public';
+      })
+      .catch(err => alert('Share failed: ' + err));
+    });
+  });
+});
+</script>
 </body>
 </html>

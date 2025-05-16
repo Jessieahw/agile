@@ -366,18 +366,37 @@ def create_app(test_config=None):
     @app.route('/all_posts')
     @login_required
     def all_posts():
-        show_private = request.args.get('private')
-        if show_private:
-            # Only show posts sent to the current user
-            posts = ForumPost.query.filter(
-                ForumPost.recipient_id == current_user.id
-            ).order_by(ForumPost.timestamp.desc()).all()
+        """
+        view=public     → everyone’s public posts  
+        view=received   → private posts addressed **to** me  
+        view=sent       → private posts I **sent** to someone else  
+
+        The old …?private=1 alias still works so existing links don’t break.
+        """
+        # Back-compat for legacy ?private=1 links
+        if request.args.get('private'):
+            view = 'received'
         else:
-            # Show only public posts
-            posts = ForumPost.query.filter(
-                ForumPost.recipient_id == None
-            ).order_by(ForumPost.timestamp.desc()).all()
-        return render_template('all_posts.html', posts=posts)
+            view = request.args.get('view', 'public').lower()
+
+        q = ForumPost.query.order_by(ForumPost.timestamp.desc())
+
+        if view == 'public':
+            q = q.filter(ForumPost.recipient_id.is_(None))
+
+        elif view == 'received':
+            q = q.filter(ForumPost.recipient_id == current_user.id)
+
+        elif view == 'sent':
+            q = q.filter(
+                ForumPost.user_id == current_user.id,
+                ForumPost.recipient_id.is_not(None)
+            )
+
+        else:                       # unknown ⇒ public
+            q = q.filter(ForumPost.recipient_id.is_(None))
+
+        return render_template('all_posts.html', posts=q.all())
 
     return app
 
