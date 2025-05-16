@@ -9,12 +9,12 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="{{ url_for('landing_page') }}">Home</a>
-        <a href="{{ url_for('forum_page') }}">Forum</a>
+        <a href="{{ url_for('landing_page') }}" style="min-width:170px; text-align:center; display:inline-block; margin:0 5px;">Home</a>
         <a href="{{ url_for('all_posts') }}">Posts</a>
         <a href="{{ url_for('all_posts') }}?private=1">
-            <button type="button" class="btn btn-warning">View Private Shares</button>
+            <button type="button" class="btn btn-warning" style="min-width:170px; text-align:center; display:inline-block; margin:0 5px;">View Received PMs</button>
         </a>
+        <a href="{{ url_for('all_posts') }}?view=sent" class="btn btn-warning" style="min-width:170px; text-align:center; display:inline-block; margin:0 5px;">View Sent PMs</a>
         <a href="{{ url_for('logout') }}" class="logout-button">Log Out</a>
     </nav>
 
