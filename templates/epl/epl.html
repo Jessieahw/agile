@@ -14,12 +14,11 @@
     <header class="header-bar">
         <img src="{{ url_for('static', filename='assets/Premier_League_Logo.svg') }}" alt="Premier League Logo" class="logo">
         <h1>Which EPL Team Are You?</h1>
-    </header>
-    <div style="position: fixed; top: 20px; right: 30px; z-index: 100;">
-        <a href="{{ url_for('all_posts') }}">
+        <a href="{{ url_for('all_posts') }}" style="position: absolute; top: 15px; right: 30px;">
             <button type="button" class="btn btn-info">View All Posts</button>
         </a>
-    </div>
+    </header>
+
     <script>
         const eplTeams = {{ team_data|tojson|safe }};
         let closestTeam = null;
