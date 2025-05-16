@@ -34,51 +34,6 @@ This web application allows users to compare their sports stats with professiona
     pip install -r requirements.txt
     ```
 
-
-4. **Set your Flask secret key (required):**
-
-    On Mac/Linux:
-    ```bash
-    export FLASK_SECRET_KEY='default_secret_key'
-    ```
-
-    On Windows (CMD):
-    ```cmd
-    set FLASK_SECRET_KEY=default_secret_key
-    ```
-
-    Or, create a `.env` file (not tracked by git) and add:
-    ```
-    FLASK_SECRET_KEY=default_secret_key
-    ```
-
-5. **Set up the database:**
-    ```bash
-    flask db upgrade
-    ```
-
-6. **Run the application:**
-    ```bash
-    flask run
-    ```
-
-7. **Access the app:**
-    Open [http://localhost:5000](http://localhost:5000) in your browser.
-
-    cd agile\ group\ project
-    ```
-
-2. **Create and activate a virtual environment:**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-3. **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
 4. **Set Flask secret key (required):**
 
 
