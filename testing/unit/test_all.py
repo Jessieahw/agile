@@ -133,9 +133,9 @@ def test_logged_user_using_bbl_player_search(client, csrf_token):
     assert res.status_code == 200 # Should return 200 OK
 
 def test_no_login_user_using_bbl_team_search(client):
-    PATH = "/bbl/player_search"
-    team = "Chris".replace(" ", "%20")
-    res = client.get(f"{PATH}?player_name={player_name}")
+    PATH = "/bbl/team_stats"
+    team = "ADELAIDE STRIKERS".replace(" ", "%20")
+    res = client.get(f"{PATH}?player_name={team}")
     assert res.status_code == 302 # Flask redirects to login page rather than rejecting via 401 Forbidden Errors.
 
 def test_logged_user_using_bbl_team_search(client, csrf_token):
@@ -155,7 +155,31 @@ def test_logged_user_using_bbl_team_search(client, csrf_token):
     }, follow_redirects=True)
     assert res.status_code == 200
     # We need to get session cookie to use in the next request
-    PATH = "/bbl/player_search"
-    player_name = "Chris".replace(" ", "%20")
-    res = client.get(f"{PATH}?player_name={player_name}")
+    PATH = "/bbl/team_stats"
+    team = "ADELAIDE STRIKERS".replace(" ", "%20")
+    res = client.get(f"{PATH}?player_name={team}")
     assert res.status_code == 200 # Should return 200 OK
+
+def test_logged_user_using_bbl_team_search_invalid_team(client, csrf_token):
+    # Fail safe registration if test run in isolation
+    res = client.post("/register", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+    assert res.status_code == 200
+
+    # Login via prior test's registration
+    res = client.post("/login", data={
+        "username":"eve",
+        "password":"pw",
+        "csrf_token": csrf_token
+    }, follow_redirects=True)
+    assert res.status_code == 200
+    # We need to get session cookie to use in the next request
+    PATH = "/bbl/team_stats"
+    team = "ADELAIDE STRyKERS".replace(" ", "%20") # Invalid team name
+    res = client.get(f"{PATH}?player_name={team}")
+    print(f"Response: {res.data}")
+    assert res.status_code == 200 # Should still return 200 OK
+    assert res.data.decode().strip() == "{}" # Should return empty string
