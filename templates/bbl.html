@@ -116,75 +116,7 @@
           </span>
         </button>
       </form>
-      {% if matches_bat or matches_bowl %}
-        <div class="similar-results-flex">
-
-          {% if matches_bat %}
-            <div class="similar-results">
-              <h3>Top 10 Similar Batters</h3>
-              <table class="similar-table">
-                <thead>
-                  <tr>
-                    <th class="rank">#</th>
-                    <th>Name</th>
-                    <th>Innings Played</th>
-                    <th>Total Runs</th>
-                    <th>Highest Score</th>
-                    <th>Batting Average</th>
-                    <th>Strike Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for p in matches_bat %}
-                  <tr>
-                    <td class="rank">{{ loop.index }}</td>
-                    <td>{{ p.name }}</td>
-                    <td>{{ p.innings }}</td>
-                    <td>{{ p.runs }}</td>
-                    <td>{{ p.high_score }}</td>
-                    <td>{{ '%.2f' % p.bat_avg }}</td>
-                    <td>{{ '%.2f' % p.bat_sr }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% endif %}
-
-          {% if matches_bowl %}
-            <div class="similar-results">
-              <h3>Top 10 Similar Bowlers</h3>
-              <table class="similar-table">
-                <thead>
-                  <tr>
-                    <th class="rank">#</th>
-                    <th>Name</th>
-                    <th>Overs Bowled</th>
-                    <th>Wickets</th>
-                    <th>Runs Conceded</th>
-                    <th>Bowling Average</th>
-                    <th>Economy Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for p in matches_bowl %}
-                  <tr>
-                    <td class="rank">{{ loop.index }}</td>
-                    <td>{{ p.name }}</td>
-                    <td>{{ p.overs }}</td>
-                    <td>{{ p.wickets }}</td>
-                    <td>{{ p.runs_conceded }}</td>
-                    <td>{{ '%.2f' % p.bowl_avg }}</td>
-                    <td>{{ '%.2f' % p.eco }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% endif %}
-
-        </div>
-      {% endif %}
+      
     </article>
 
     <!-- other articles unchanged -->
@@ -194,18 +126,12 @@
         <p>Visual comparison of your numbers vs the five most similar pros.</p>
       </div>
 
-      {% if user_stats %}
-      <div class="radar-container">
-        {% if user_stats.bat_innings %}
+      <div class="radar-container" id="radars" style="display: none">
           <h3>Batting Comparison</h3>
           <div id="bat-radar"  style="width:550px;height:420px"></div>
-        {% endif %}
-        {% if user_stats.bowl_overs %}
           <h3>Bowling Comparison</h3>
           <div id="bowl-radar" style="width:550px;height:420px"></div>
-        {% endif %}
       </div>
-      {% endif %}
     </article>
     <!-- Dump the three data blobs so bbl.js can reuse them -->
     {% if user_stats %}

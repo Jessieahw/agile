@@ -51,8 +51,9 @@ function initBBL() {
     window.userStats   = user;
     window.matchesBat  = bat;
     window.matchesBowl = bowl;
-    renderResultsTables();
+    renderResultsTables()
     initRadarCharts?.();            // re-draw charts (defined elsewhere)
+    document.querySelector('.radar-container')?.style.setProperty('display', 'block');
     scrollTo('#stats');
   }
 
@@ -89,7 +90,7 @@ function initBBL() {
           <table class="similar-table">
             <thead><tr>
               <th class="rank">#</th><th>Name</th><th>Ov</th><th>Wkts</th>
-              <th>Runs CCd</th><th>Avg</th><th>Eco</th>
+              <th>Runs Ccd</th><th>Avg</th><th>Eco</th>
             </tr></thead>
             <tbody>${buildBowlerRows(window.matchesBowl)}</tbody>
           </table>
