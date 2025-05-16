@@ -7,7 +7,7 @@ System-test fixtures
 import threading, time, pytest, tempfile, os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from server import create_app, db  # if you're using SQLAlchemy like db - SQLAlchemy(app)
+from server import create_app, db 
 import logging
 
 def pytest_configure(config):

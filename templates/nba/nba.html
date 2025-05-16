@@ -58,12 +58,9 @@
   position: relative;
   height: 50px;              /* ↓ smaller */
   background:
-    /* basketball-net image if you still want it: */
-    /* url('/static/images/hoop-bg.jpg') center/cover no-repeat, */
     #000;                     /* fallback black */
 }
 
-/* optional dark overlay if you kept the image */
 .standings-header::before {
   content: "";
   position: absolute;
@@ -97,7 +94,7 @@
 .standings-header h1 {
   font-family: 'Oswald', sans-serif;
   color: #fff;
-  font-size: 1.5rem;         /* you can tweak this too */
+  font-size: 1.5rem;         
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -172,7 +169,7 @@
 }
 
 /* ─── RESPONSIVE FLEX LAYOUT ─────────────────────────────── */
-/* (if you’re using the flex wrapper from before) */
+
 .d-flex.align-start {
   gap: 1.5rem;
 }

@@ -43,8 +43,6 @@ def _extract_table_data(table: WebElement) -> Set[Tuple[str, ...]]:
 def register(driver, base, user, pw):
     driver.get(f"{base}/register")
 
-    # token already correct - just read it if you later want to inspect
-    # token = driver.find_element(By.NAME, "csrf_token").get_attribute("value")
     WebDriverWait(driver, 5).until(
         expected_conditions.presence_of_element_located((By.NAME, "username"))
     )

@@ -61,7 +61,7 @@
 
 .card-img-top.player-photo {
   width: 100% !important;
-  height: 350px !important;           /* however tall you like */
+  height: 350px !important;       
   object-fit: cover !important;        /* scale & crop */
   object-position: 50% 50% !important; /* x=50% center, y=15% down from top */
 }
