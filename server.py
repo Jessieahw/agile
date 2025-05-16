@@ -356,7 +356,7 @@ def create_app(test_config=None):
     @login_required
     def all_posts():
         posts = ForumPost.query.order_by(ForumPost.timestamp.desc()).all()
-        return render_template('all_posts.html')
+        return render_template('all_posts.html', posts=posts)
 
     # Register routes (move your existing routes here or import from views.py)
     return app
