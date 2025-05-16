@@ -373,11 +373,9 @@ def create_app(test_config=None):
                 ForumPost.recipient_id == current_user.id
             ).order_by(ForumPost.timestamp.desc()).all()
         else:
-            # Show public, sent to me, or my own posts
+            # Show only public posts
             posts = ForumPost.query.filter(
-                (ForumPost.recipient_id == None) |
-                (ForumPost.recipient_id == current_user.id) |
-                (ForumPost.user_id == current_user.id)
+                ForumPost.recipient_id == None
             ).order_by(ForumPost.timestamp.desc()).all()
         return render_template('all_posts.html', posts=posts)
 
